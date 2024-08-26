@@ -35,5 +35,5 @@ public class Variety {
     @NotEmpty(message = "El id del tuberculo no pueder ir vacio")
     private Tuber tuber;
     @OneToMany(mappedBy = "variety", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderVariety> orderVarieties;
+    private List<OrderVariety> vitroOrders;
 }

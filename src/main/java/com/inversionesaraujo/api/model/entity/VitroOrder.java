@@ -65,9 +65,9 @@ public class VitroOrder {
     @Enumerated(EnumType.STRING)
     private Status status;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "invoice_id", referencedColumnName = "id")
+    @JoinColumn(name = "invoice_id")
     @NotEmpty(message = "El id del comprobante no puede ir vacio")
     private Invoice invoice;
     @OneToMany(mappedBy = "vitroOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderVariety> orderVarieties;
+    private List<OrderVariety> varieties;
 }
