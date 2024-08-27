@@ -55,4 +55,6 @@ public class Product {
     private List<LandingOfferProduct> groupOffers;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<InvoiceItem> invoiceItems;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderProduct> orderItems;
 }
