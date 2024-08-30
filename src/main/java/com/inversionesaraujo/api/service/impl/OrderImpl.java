@@ -2,6 +2,7 @@ package com.inversionesaraujo.api.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +11,9 @@ import com.inversionesaraujo.api.model.dao.OrderDao;
 import com.inversionesaraujo.api.model.entity.Order;
 import com.inversionesaraujo.api.service.IOrder;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class OrderImpl implements IOrder {
+    @Autowired
     private OrderDao orderDao;
 
     @Transactional(readOnly = true)

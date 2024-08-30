@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,11 +9,9 @@ import com.inversionesaraujo.api.model.dao.ResetDao;
 import com.inversionesaraujo.api.model.entity.Reset;
 import com.inversionesaraujo.api.service.IReset;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class ResetImpl implements IReset {
+    @Autowired
     private ResetDao resetDao;
 
     @Transactional

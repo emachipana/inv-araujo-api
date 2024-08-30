@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,11 +9,9 @@ import com.inversionesaraujo.api.model.dao.LandingOfferProductDao;
 import com.inversionesaraujo.api.model.entity.LandingOfferProduct;
 import com.inversionesaraujo.api.service.ILandingOfferProduct;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class LandingOfferProductImpl implements ILandingOfferProduct {
+    @Autowired
     private LandingOfferProductDao productDao;
 
     @Transactional

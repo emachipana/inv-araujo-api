@@ -2,6 +2,7 @@ package com.inversionesaraujo.api.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +11,9 @@ import com.inversionesaraujo.api.model.dao.ClientDao;
 import com.inversionesaraujo.api.model.entity.Client;
 import com.inversionesaraujo.api.service.IClient;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class ClientImpl implements IClient {
+    @Autowired
     private ClientDao clientDao;
 
     @Transactional(readOnly = true)

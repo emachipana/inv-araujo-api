@@ -2,6 +2,7 @@ package com.inversionesaraujo.api.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +11,9 @@ import com.inversionesaraujo.api.model.dao.ImageDao;
 import com.inversionesaraujo.api.model.entity.Image;
 import com.inversionesaraujo.api.service.I_Image;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class ImageImpl implements I_Image {
+    @Autowired
     private ImageDao imageRepo;
 
     @Transactional(readOnly = true)
