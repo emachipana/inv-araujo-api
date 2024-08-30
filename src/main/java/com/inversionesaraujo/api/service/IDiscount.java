@@ -8,6 +8,4 @@ public interface IDiscount {
     Discount findById(Integer id);
 
     void delete(Discount discount);
-
-    boolean ifExists(Integer id);
 }

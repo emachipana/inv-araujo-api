@@ -39,10 +39,4 @@ public class ImageImpl implements I_Image {
     public void delete(Image image) {
         imageRepo.delete(image);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return imageRepo.existsById(id);
-    }
 }

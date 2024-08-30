@@ -8,6 +8,4 @@ public interface IOrderProduct {
     OrderProduct findById(Integer id);
 
     void delete(OrderProduct item);
-
-    boolean ifExists(Integer id);
 }

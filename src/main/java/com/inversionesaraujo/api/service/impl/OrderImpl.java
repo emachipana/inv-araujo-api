@@ -39,10 +39,4 @@ public class OrderImpl implements IOrder {
     public void delete(Order order) {
         orderDao.delete(order);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return orderDao.existsById(id);
-    }
 }

@@ -39,10 +39,4 @@ public class ExpenseImpl implements IExpense {
     public void delete(Expense expense) {
         expenseDao.delete(expense);
     }
-
-    @Transactional
-    @Override
-    public boolean ifExists(Integer id) {
-        return expenseDao.existsById(id);
-    }
 }

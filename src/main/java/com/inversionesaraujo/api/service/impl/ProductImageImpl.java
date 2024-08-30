@@ -31,10 +31,4 @@ public class ProductImageImpl implements IProductImage {
     public void delete(ProductImage image) {
         productImageDao.delete(image);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return productImageDao.existsById(id);
-    }
 }

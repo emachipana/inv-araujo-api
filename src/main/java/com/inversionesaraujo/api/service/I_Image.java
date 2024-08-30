@@ -12,6 +12,4 @@ public interface I_Image {
     Image findById(Integer id);
 
     void delete(Image image);
-
-    boolean ifExists(Integer id);
 }

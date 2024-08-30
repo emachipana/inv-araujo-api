@@ -12,6 +12,4 @@ public interface IProduct {
     Product findById(Integer id);
 
     void delete(Product product);
-
-    boolean ifExists(Integer id);
 }

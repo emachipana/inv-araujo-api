@@ -31,10 +31,4 @@ public class DiscountImpl implements IDiscount {
     public void delete(Discount discount) {
         discountDao.delete(discount);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return discountDao.existsById(id);
-    }
 }

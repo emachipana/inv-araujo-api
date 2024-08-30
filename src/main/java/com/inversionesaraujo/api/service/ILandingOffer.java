@@ -12,6 +12,4 @@ public interface ILandingOffer {
     LandingOffer findById(Integer id);
 
     void delete(LandingOffer offer);
-
-    boolean ifExists(Integer id);
 }

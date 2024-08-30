@@ -12,6 +12,4 @@ public interface IClient {
     Client findById(Integer id);
 
     void delete(Client client);
-
-    boolean ifExists(Integer id);
 }

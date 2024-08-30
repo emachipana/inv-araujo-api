@@ -8,6 +8,4 @@ public interface ILandingOfferProduct {
     LandingOfferProduct findById(Integer id);
 
     void delete(LandingOfferProduct item);
-
-    boolean ifExists(Integer id);
 }

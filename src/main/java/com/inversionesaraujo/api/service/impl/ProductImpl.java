@@ -39,10 +39,4 @@ public class ProductImpl implements IProduct {
     public void delete(Product product) {
         productDao.delete(product);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return productDao.existsById(id);
-    }
 }

@@ -8,6 +8,4 @@ public interface IProductImage {
     ProductImage findById(Integer id);
 
     void delete(ProductImage image);
-
-    boolean ifExists(Integer id);
 }

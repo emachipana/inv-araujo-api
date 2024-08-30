@@ -39,10 +39,4 @@ public class VitroOrderImpl implements IVitroOrder {
     public void delete(VitroOrder vitroOrder) {
         orderDao.delete(vitroOrder);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return orderDao.existsById(id);
-    }
 }

@@ -39,10 +39,4 @@ public class CategoryImpl implements ICategory {
 	public void delete(Category category) {
         categoryDao.delete(category);
     }
-
-    @Transactional(readOnly = true)
-	@Override
-	public boolean ifExists(Integer id) {
-        return categoryDao.existsById(id);
-    }
 }

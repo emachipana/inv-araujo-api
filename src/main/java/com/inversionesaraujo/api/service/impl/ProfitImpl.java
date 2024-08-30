@@ -39,10 +39,4 @@ public class ProfitImpl implements IProfit {
     public void delete(Profit profit) {
         profitDao.delete(profit);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return profitDao.existsById(id);
-    }
 }

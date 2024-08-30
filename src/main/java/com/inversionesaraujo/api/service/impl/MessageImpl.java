@@ -39,10 +39,4 @@ public class MessageImpl implements IMessage {
     public void delete(Message message) {
         messageDao.delete(message);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return messageDao.existsById(id);
-    }
 }

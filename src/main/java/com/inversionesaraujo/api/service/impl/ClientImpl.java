@@ -39,10 +39,4 @@ public class ClientImpl implements IClient {
     public void delete(Client client) {
         clientDao.delete(client);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return clientDao.existsById(id);
-    }
 }

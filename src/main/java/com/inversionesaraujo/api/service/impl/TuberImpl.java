@@ -39,10 +39,4 @@ public class TuberImpl implements ITuber {
     public void delete(Tuber tuber) {
         tuberDao.delete(tuber);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return tuberDao.existsById(id);
-    }
 }

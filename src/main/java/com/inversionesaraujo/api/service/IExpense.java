@@ -12,6 +12,4 @@ public interface IExpense {
     Expense findById(Integer id);
 
     void delete(Expense expense);
-
-    boolean ifExists(Integer id);
 }

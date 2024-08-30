@@ -31,10 +31,4 @@ public class ResetImpl implements IReset {
     public void delete(Reset reset) {
         resetDao.delete(reset);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return resetDao.existsById(id);
-    }
 }

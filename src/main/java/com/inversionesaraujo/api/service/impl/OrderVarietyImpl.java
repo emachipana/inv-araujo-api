@@ -31,10 +31,4 @@ public class OrderVarietyImpl implements IOrderVariety {
     public void delete(OrderVariety item) {
         orderVarietyDao.delete(item);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return orderVarietyDao.existsById(id);
-    }
 }

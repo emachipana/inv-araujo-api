@@ -39,10 +39,4 @@ public class VarietyImpl implements IVariety {
     public void delete(Variety variety) {
         varietyDao.delete(variety);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return varietyDao.existsById(id);
-    }
 }

@@ -39,10 +39,4 @@ public class LandingOfferImpl implements ILandingOffer {
     public void delete(LandingOffer offer) {
         landingOfferDao.delete(offer);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return landingOfferDao.existsById(id);
-    }
 }

@@ -31,10 +31,4 @@ public class OrderProductImpl implements IOrderProduct {
     public void delete(OrderProduct item) {
         orderProductDao.delete(item);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return orderProductDao.existsById(id);
-    }
 }

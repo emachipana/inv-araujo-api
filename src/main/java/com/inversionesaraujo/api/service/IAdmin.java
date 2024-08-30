@@ -6,6 +6,4 @@ public interface IAdmin {
     Admin findById(Integer id);
 
     Admin save(Admin admin);
-
-    boolean ifExists(Integer id);
 }

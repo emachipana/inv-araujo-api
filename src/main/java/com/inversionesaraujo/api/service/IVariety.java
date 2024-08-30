@@ -12,6 +12,4 @@ public interface IVariety {
     Variety findById(Integer id);
 
     void delete(Variety variety);
-
-    boolean ifExists(Integer id);
 }

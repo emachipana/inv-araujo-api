@@ -31,10 +31,4 @@ public class LandingOfferProductImpl implements ILandingOfferProduct {
     public void delete(LandingOfferProduct item) {
         productDao.delete(item);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return productDao.existsById(id);
-    }
 }

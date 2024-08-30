@@ -31,10 +31,4 @@ public class InvoiceItemImpl implements I_InvoiceItem {
     public void delete(InvoiceItem item) {
         itemDao.delete(item);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return itemDao.existsById(id);
-    }
 }

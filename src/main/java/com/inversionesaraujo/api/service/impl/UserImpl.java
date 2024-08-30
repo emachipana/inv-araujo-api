@@ -39,10 +39,4 @@ public class UserImpl implements IUser {
     public void delete(User user) {
         userDao.delete(user);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return userDao.existsById(id);
-    }
 }

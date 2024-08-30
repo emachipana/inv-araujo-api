@@ -12,6 +12,4 @@ public interface I_Invoice {
     Invoice findById(Integer id);
 
     void delete(Invoice invoice);
-
-    boolean ifExists(Integer id);
 }

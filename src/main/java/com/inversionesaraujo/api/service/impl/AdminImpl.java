@@ -25,10 +25,4 @@ public class AdminImpl implements IAdmin {
     public Admin save(Admin admin) {
         return adminDao.save(admin);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return adminDao.existsById(id);
-    }
 }

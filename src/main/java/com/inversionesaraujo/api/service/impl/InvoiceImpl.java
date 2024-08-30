@@ -39,10 +39,4 @@ public class InvoiceImpl implements I_Invoice {
     public void delete(Invoice invoice) {
         invoiceRepo.delete(invoice);
     }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return invoiceRepo.existsById(id);
-    }
 }
