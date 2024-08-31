@@ -15,33 +15,32 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Category;
+import com.inversionesaraujo.api.model.entity.Client;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.CategoryRequest;
-import com.inversionesaraujo.api.service.ICategory;
+import com.inversionesaraujo.api.service.IClient;
 
 @RestController
-@RequestMapping("/api/v1/categories")
-public class CategoryController {
+@RequestMapping("/api/v1/clients")
+public class ClientController {
     @Autowired
-    private ICategory categoryService;
+    private IClient clientService;
 
     @GetMapping
-    public List<Category> getAll() {
-        return categoryService.listAll();
+    public List<Client> getAll() {
+        return clientService.listAll();
     }
 
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
         try {
-            Category category = categoryService.findById(id);
+            Client client = clientService.findById(id);
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
-                .message("La categoria se encontro con exito")
-                .data(category)
-                .build(), HttpStatus.OK);   
-        }catch (DataAccessException error) {
+                .message("El client se encontro con exito")
+                .data(client)
+                .build(), HttpStatus.OK);
+        }catch(DataAccessException error) {
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message(error.getMessage())
@@ -50,22 +49,17 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody CategoryRequest categoryRequest) {
+    public ResponseEntity<MessageResponse> create(@RequestBody Client client) {
         try {
-            Category categoryToSave = new Category();
-            if(categoryRequest.getCategoryId() != null) {
-                Category parentCategory = categoryService.findById(categoryRequest.getCategoryId());
-                categoryToSave.setCategory(parentCategory);
-            }
-            categoryToSave.setName(categoryRequest.getName());
-            categoryToSave = categoryService.save(categoryToSave);
+            client.setConsumption(0.0);
+            Client clientToSave = clientService.save(client);
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
-                .message("La categoria se creo con exito")
-                .data(categoryToSave)
-                .build(), HttpStatus.CREATED);   
-        }catch (DataAccessException error) {
+                .message("El client se creo con exito")
+                .data(clientToSave)
+                .build(), HttpStatus.CREATED);
+        }catch(DataAccessException error) {
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message(error.getMessage())
@@ -74,20 +68,18 @@ public class CategoryController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<MessageResponse> update(@RequestBody CategoryRequest categoryRequest, @PathVariable Integer id) {
+    public ResponseEntity<MessageResponse> update(@RequestBody Client clientBody, @PathVariable Integer id) {
         try {
-            Category categoryToUpdate = categoryService.findById(id);
-            if(categoryRequest.getCategoryId() != null) {
-                Category categoryParent = categoryService.findById(categoryRequest.getCategoryId());
-                categoryToUpdate.setCategory(categoryParent);
-            }
-            categoryToUpdate.setName(categoryRequest.getName());
-            Category updatedCategory = categoryService.save(categoryToUpdate);
+            Client client = clientService.findById(id);
+            clientBody.setId(id);
+            clientBody.setEmail(client.getEmail());
+            clientBody.setConsumption(client.getConsumption());
+            Client clientToUpdate = clientService.save(clientBody);
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
-                .message("La categoria se actualizo con exito")
-                .data(updatedCategory)
+                .message("El cliente se actualizo con exito")
+                .data(clientToUpdate)
                 .build(), HttpStatus.OK);
         }catch(DataAccessException error) {
             return new ResponseEntity<>(MessageResponse
@@ -100,12 +92,12 @@ public class CategoryController {
     @DeleteMapping("{id}")
     public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
         try {
-            Category category = categoryService.findById(id);
-            categoryService.delete(category);
-            
+            Client client = clientService.findById(id);
+            clientService.delete(client);
+
             return new ResponseEntity<>(MessageResponse
                 .builder()
-                .message("La categoria se elimino con exito")
+                .message("El cliente se elimino con exito")
                 .build(), HttpStatus.OK);
         }catch(DataAccessException error) {
             return new ResponseEntity<>(MessageResponse

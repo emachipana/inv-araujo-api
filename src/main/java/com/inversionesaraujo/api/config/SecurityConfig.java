@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
     private final AuthenticationProvider authProvider;
 
+    // TODO proteger rutas y definir metodos en base a la autorizacion 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -24,6 +25,7 @@ public class SecurityConfig {
                 authRequest
                     .requestMatchers("/api/v1/admins/**").permitAll()
                     .requestMatchers("/api/v1/categories/**").permitAll()
+                    .requestMatchers("/api/v1/clients/**").permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(sessionManager ->
                 sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

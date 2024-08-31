@@ -18,7 +18,7 @@ public class ClientImpl implements IClient {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Client> listAl() {
+    public List<Client> listAll() {
         return clientDao.findAll();
     }
 

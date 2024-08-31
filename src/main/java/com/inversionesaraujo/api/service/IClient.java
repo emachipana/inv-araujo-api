@@ -5,7 +5,7 @@ import java.util.List;
 import com.inversionesaraujo.api.model.entity.Client;
 
 public interface IClient {
-    List<Client> listAl();
+    List<Client> listAll();
 
     Client save(Client client);
 
