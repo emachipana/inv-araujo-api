@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.model.entity.Admin;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.AdminRequest;
 import com.inversionesaraujo.api.service.IAdmin;
 
 @RestController
@@ -41,12 +40,13 @@ public class AdminController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<MessageResponse> update(@RequestBody AdminRequest adminRequest, @PathVariable Integer id) {
+    public ResponseEntity<MessageResponse> update(@RequestBody Admin adminBody, @PathVariable Integer id) {
         try {
             Admin admin = adminService.findById(id);
-            admin.setFirstName(adminRequest.getFirstName());
-            admin.setLastName(adminRequest.getLastName());
-            Admin adminToUpdate = adminService.save(admin);
+            adminBody.setId(id);
+            adminBody.setTotalProfit(admin.getTotalProfit());
+            adminBody.setEmail(admin.getEmail());
+            Admin adminToUpdate = adminService.save(adminBody);
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
