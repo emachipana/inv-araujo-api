@@ -15,6 +15,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,13 +39,15 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     @NotEmpty(message = "La descripcion no puede ir vacia")
     private String description;
-    @NotEmpty(message = "El precio no puede ir vacio")
+    @NotNull(message = "El precio no puede ir vacio")
+    @PositiveOrZero
     private Double price;
-    @NotEmpty(message = "El stock no puede ir vacio")
+    @NotNull(message = "El stock no puede ir vacio")
+    @PositiveOrZero
     private Integer stock;
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @NotEmpty(message = "El id de la categoria no puede ir vacia")
+    @NotNull(message = "El id de la categoria no puede ir vacia")
     private Category category;
     @Column(nullable = false)
     private boolean isActive;
@@ -51,10 +55,4 @@ public class Product {
     private List<ProductImage> images;
     @OneToOne(mappedBy = "product")
     private Discount discount;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<LandingOfferProduct> groupOffers;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<InvoiceItem> invoiceItems;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderProduct> orderItems;
 }
