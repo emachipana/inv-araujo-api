@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inversionesaraujo.api.model.dao.ProductDao;
+import com.inversionesaraujo.api.model.entity.Category;
 import com.inversionesaraujo.api.model.entity.Product;
 import com.inversionesaraujo.api.service.IProduct;
 
@@ -38,5 +39,45 @@ public class ProductImpl implements IProduct {
     @Override
     public void delete(Product product) {
         productDao.delete(product);
+    }
+
+    @Override
+    public List<Product> search(String name, String description) {
+        return productDao.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, description);
+    }
+
+    @Override
+    public List<Product> findByCategory(Category category) {
+        return productDao.findByCategory(category);
+    }
+
+    @Override
+    public List<Product> findByPrice(Double priceMin, Double priceMax) {
+        return productDao.findByPriceBetween(priceMin, priceMax);
+    }
+
+    @Override
+    public List<Product> findByCategoryAndPrice(Category category, Double priceMin, Double priceMax) {
+        return productDao.findByCategoryAndPriceBetween(category, priceMin, priceMax);
+    }
+
+    @Override
+    public List<Product> findByPriceLessThan(Double price) {
+        return productDao.findByPriceLessThanEqual(price);
+    }
+
+    @Override
+    public List<Product> findByPriceGreaterThan(Double price) {
+        return productDao.findByPriceGreaterThanEqual(price);
+    }
+
+    @Override
+    public List<Product> findByCategoryAndPriceLessThan(Category category, Double price) {
+        return productDao.findByCategoryAndPriceLessThanEqual(category, price);
+    }
+
+    @Override
+    public List<Product> findByCategoryAndPriceGreaterThan(Category category, Double price) {
+        return productDao.findByCategoryAndPriceGreaterThanEqual(category, price);
     }
 }
