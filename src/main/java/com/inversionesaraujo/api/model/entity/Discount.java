@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.model.entity;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +10,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,12 +27,15 @@ public class Discount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "product_id")
-    @NotEmpty(message = "El id del producto no puede ir vacio")
+    @NotNull(message = "El id del producto no puede ir vacio")
+    @JsonIgnore
     private Product product;
-    @NotEmpty(message = "El precio no puede ir vacio")
+    @NotNull(message = "El precio no puede ir vacio")
+    @PositiveOrZero
     private Double price;
     @Column(nullable = false)
+    @PositiveOrZero
     private Integer percentage;
 }
