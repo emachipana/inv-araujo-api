@@ -50,7 +50,8 @@ public class Product {
     @NotNull(message = "El id de la categoria no puede ir vacia")
     private Category category;
     @Column(nullable = false)
-    private boolean isActive;
+    @Builder.Default
+    private boolean isActive = true;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductImage> images;
     @OneToOne(mappedBy = "product")

@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -15,12 +13,6 @@ import com.inversionesaraujo.api.service.IExpense;
 public class ExpenseImpl implements IExpense {
     @Autowired
     private ExpenseDao expenseDao;
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<Expense> listAll() {
-        return expenseDao.findAll();
-    }
 
     @Transactional
     @Override
