@@ -8,4 +8,6 @@ public interface IDiscount {
     Discount findById(Integer id);
 
     void delete(Discount discount);
+
+    Integer getPercentage(Double originalPrice, Double discountPrice);
 }

@@ -1,7 +1,6 @@
 package com.inversionesaraujo.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +30,7 @@ public class AdminController {
                 .message("El administrador se encontro con exito")
                 .data(admin)
                 .build(), HttpStatus.OK);
-        }catch (DataAccessException error) {
+        }catch (Exception error) {
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message(error.getMessage())
@@ -53,7 +52,7 @@ public class AdminController {
                 .message("El administrador fue actualizado con exito")
                 .data(adminToUpdate)
                 .build(), HttpStatus.OK);
-        }catch(DataAccessException error) {
+        }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message(error.getMessage())

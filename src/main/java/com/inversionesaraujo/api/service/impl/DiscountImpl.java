@@ -31,4 +31,9 @@ public class DiscountImpl implements IDiscount {
     public void delete(Discount discount) {
         discountDao.delete(discount);
     }
+
+    @Override
+    public Integer getPercentage(Double originalPrice, Double discountPrice) {
+        return (int) Math.ceil(100 - ((100 * discountPrice) / originalPrice));
+    }
 }

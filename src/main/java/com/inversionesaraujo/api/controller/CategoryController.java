@@ -3,7 +3,6 @@ package com.inversionesaraujo.api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,7 +40,7 @@ public class CategoryController {
                 .message("La categoria se encontro con exito")
                 .data(category)
                 .build(), HttpStatus.OK);   
-        }catch (DataAccessException error) {
+        }catch (Exception error) {
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message(error.getMessage())
@@ -65,7 +64,7 @@ public class CategoryController {
                 .message("La categoria se creo con exito")
                 .data(categoryToSave)
                 .build(), HttpStatus.CREATED);   
-        }catch (DataAccessException error) {
+        }catch (Exception error) {
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message(error.getMessage())
@@ -89,7 +88,7 @@ public class CategoryController {
                 .message("La categoria se actualizo con exito")
                 .data(updatedCategory)
                 .build(), HttpStatus.OK);
-        }catch(DataAccessException error) {
+        }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message(error.getMessage())
@@ -107,7 +106,7 @@ public class CategoryController {
                 .builder()
                 .message("La categoria se elimino con exito")
                 .build(), HttpStatus.OK);
-        }catch(DataAccessException error) {
+        }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message(error.getMessage())

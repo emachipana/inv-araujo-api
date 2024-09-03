@@ -3,7 +3,6 @@ package com.inversionesaraujo.api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,7 +39,7 @@ public class ClientController {
                 .message("El client se encontro con exito")
                 .data(client)
                 .build(), HttpStatus.OK);
-        }catch(DataAccessException error) {
+        }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message(error.getMessage())
@@ -59,7 +58,7 @@ public class ClientController {
                 .message("El client se creo con exito")
                 .data(clientToSave)
                 .build(), HttpStatus.CREATED);
-        }catch(DataAccessException error) {
+        }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message(error.getMessage())
@@ -81,7 +80,7 @@ public class ClientController {
                 .message("El cliente se actualizo con exito")
                 .data(clientToUpdate)
                 .build(), HttpStatus.OK);
-        }catch(DataAccessException error) {
+        }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message(error.getMessage())
@@ -99,7 +98,7 @@ public class ClientController {
                 .builder()
                 .message("El cliente se elimino con exito")
                 .build(), HttpStatus.OK);
-        }catch(DataAccessException error) {
+        }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message(error.getMessage())
