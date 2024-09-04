@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.inversionesaraujo.api.model.entity.Image;
-import com.inversionesaraujo.api.model.payload.ImageResponse;
+import com.inversionesaraujo.api.model.payload.FileResponse;
 
 public interface I_Image {
     Image save(Image image);
@@ -14,7 +14,7 @@ public interface I_Image {
 
     void delete(Image image);
 
-    ImageResponse upload(MultipartFile image) throws IOException;
+    FileResponse upload(MultipartFile image) throws IOException;
 
     void deleteImage(String fileName) throws IOException;
 }

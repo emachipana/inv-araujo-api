@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.inversionesaraujo.api.model.entity.Image;
-import com.inversionesaraujo.api.model.payload.ImageResponse;
+import com.inversionesaraujo.api.model.payload.FileResponse;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.service.I_Image;
 
@@ -44,11 +44,11 @@ public class ImageController {
     @PostMapping
     public ResponseEntity<MessageResponse> save(@RequestBody MultipartFile file) {
         try {
-            ImageResponse response = imageService.upload(file);
+            FileResponse response = imageService.upload(file);
             Image image = imageService.save(Image
                 .builder()
                 .firebaseId(response.getFileName())
-                .url(response.getImageUrl())
+                .url(response.getFileUrl())
                 .build());
 
             return new ResponseEntity<>(MessageResponse

@@ -14,7 +14,7 @@ import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
 import com.inversionesaraujo.api.model.dao.ImageDao;
 import com.inversionesaraujo.api.model.entity.Image;
-import com.inversionesaraujo.api.model.payload.ImageResponse;
+import com.inversionesaraujo.api.model.payload.FileResponse;
 import com.inversionesaraujo.api.service.I_Image;
 
 @Service
@@ -41,15 +41,15 @@ public class ImageImpl implements I_Image {
     }
 
     @Override
-    public ImageResponse upload(MultipartFile image) throws IOException {
+    public FileResponse upload(MultipartFile image) throws IOException {
         Bucket bucket = StorageClient.getInstance().bucket();
         String name = UUID.randomUUID().toString();
         bucket.create(name, image.getBytes(), image.getContentType());
         String imageUrl = String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media", bucket.getName(), name);
 
-        return ImageResponse
+        return FileResponse
             .builder()
-            .imageUrl(imageUrl)
+            .fileUrl(imageUrl)
             .fileName(name)
             .build();
     }

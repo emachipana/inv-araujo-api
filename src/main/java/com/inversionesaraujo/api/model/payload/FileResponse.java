@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ImageResponse {
-    private String imageUrl;
+public class FileResponse {
+    private String fileUrl;
     private String fileName;    
 }
