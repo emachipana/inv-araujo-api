@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.model.request;
 
+import java.time.LocalDateTime;
+
 import com.google.auto.value.AutoValue.Builder;
 
 import lombok.AllArgsConstructor;
@@ -12,5 +14,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProfitRequest {
     private Integer adminId;
-    private String date;
+    private LocalDateTime date;
 }

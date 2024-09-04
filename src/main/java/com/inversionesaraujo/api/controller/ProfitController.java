@@ -1,6 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
@@ -57,11 +56,10 @@ public class ProfitController {
     public ResponseEntity<MessageResponse> create(@RequestBody ProfitRequest request) {
         try {
             Admin admin = adminService.findById(request.getAdminId());
-            LocalDateTime date = LocalDateTime.parse(request.getDate());
-            Month month = date.getMonth();
+            Month month = request.getDate().getMonth();
             Profit profit = profitService.save(Profit.builder()
                 .admin(admin)
-                .date(date)
+                .date(request.getDate())
                 .month(month.toString())
                 .build());
 
