@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1, h3, h2, th { color: #333; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; border: 1px solid #ddd; font-size: 14px }
+        th { background-color: #f4f4f4; }
+        p { 
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+        span { font-weight: 500; }
+    </style>
+</head>
+<body>
+    <h1>Inversiones Araujo JL</h1>
+    <h2>Tipo de comprobante: <span th:text="${invoiceType}"></span></h2>
+    <h3>Cliente</h3>
+    <p>Nombre: <span th:text="${clientName}"></span></p>
+    <p>
+        <span style="font-weight: 600;" th:text="${documentType}"></span>: <span th:text="${document}"></span>
+    </p>
+    <p>Dirección: <span th:text="${address}"></span></p>
+    <p>Monto Total: S/. <span th:text="${total}"></span></p>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Sub Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.product.name}"></td>
+                <td>S/. <span style="font-weight: 400;" th:text="${item.price}"></span></td>
+                <td th:text="${item.quantity}"></td>
+                <td>S/. <span style="font-weight: 400;" th:text="${item.subTotal}"></span></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
