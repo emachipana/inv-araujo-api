@@ -39,6 +39,8 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     @NotEmpty(message = "La descripcion no puede ir vacia")
     private String description;
+    @NotEmpty(message = "La marca no puede ir vacia")
+    private String brand;
     @NotNull(message = "El precio no puede ir vacio")
     @PositiveOrZero
     private Double price;
