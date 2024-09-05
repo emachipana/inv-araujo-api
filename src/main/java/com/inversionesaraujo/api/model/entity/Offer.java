@@ -23,8 +23,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name = "landing_offers")
-public class LandingOffer {
+@Table(name = "offers")
+public class Offer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -35,7 +35,8 @@ public class LandingOffer {
     @Size(min = 3, max = 100)
     private String subTitle;
     @Column(nullable = false)
-    private boolean isUsed;
-    @OneToMany(mappedBy = "landingOffer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<LandingOfferProduct> products;
+    @Builder.Default
+    private boolean isUsed = false;
+    @OneToMany(mappedBy = "offer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OfferProduct> products;
 }

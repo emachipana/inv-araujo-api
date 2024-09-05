@@ -5,30 +5,30 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.inversionesaraujo.api.model.dao.LandingOfferProductDao;
-import com.inversionesaraujo.api.model.entity.LandingOfferProduct;
-import com.inversionesaraujo.api.service.ILandingOfferProduct;
+import com.inversionesaraujo.api.model.dao.OfferProductDao;
+import com.inversionesaraujo.api.model.entity.OfferProduct;
+import com.inversionesaraujo.api.service.IOfferProduct;
 
 @Service
-public class LandingOfferProductImpl implements ILandingOfferProduct {
+public class OfferProductImpl implements IOfferProduct {
     @Autowired
-    private LandingOfferProductDao productDao;
+    private OfferProductDao productDao;
 
     @Transactional
     @Override
-    public LandingOfferProduct save(LandingOfferProduct item) {
+    public OfferProduct save(OfferProduct item) {
         return productDao.save(item);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public LandingOfferProduct findById(Integer id) {
+    public OfferProduct findById(Integer id) {
         return productDao.findById(id).orElseThrow(() -> new DataAccessException("El producto para el grupo de ofertas no existe") {});
     }
 
     @Transactional
     @Override
-    public void delete(LandingOfferProduct item) {
+    public void delete(OfferProduct item) {
         productDao.delete(item);
     }
 }
