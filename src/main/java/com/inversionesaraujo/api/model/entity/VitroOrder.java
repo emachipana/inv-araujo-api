@@ -17,6 +17,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,14 +51,15 @@ public class VitroOrder {
     private String destination;
     @Column(nullable = false)
     private Double total;
-    @NotEmpty(message = "El adelanto no puede ir vacio")
+    @NotNull(message = "El adelanto no puede ir vacio")
     private Double advance;
     @Column(nullable = false)
     private Double pending;
-    @NotEmpty(message = "La fecha de inicio no puede ir vacia")
+    @NotNull(message = "La fecha de inicio no puede ir vacia")
     private LocalDateTime initDate;
-    @NotEmpty(message = "La fecha de fin no puede ir vacia")
+    @NotNull(message = "La fecha de fin no puede ir vacia")
     private LocalDateTime finishDate;
+    private LocalDateTime pickDate;
     @NotEmpty(message = "El telefono no puede ir vacio")
     @Size(max = 12)
     private String phone;
