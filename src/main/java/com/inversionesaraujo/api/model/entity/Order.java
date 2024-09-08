@@ -2,6 +2,9 @@ package com.inversionesaraujo.api.model.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,9 +17,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,26 +33,29 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @Table(name = "orders")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "client_id")
-    @NotEmpty(message = "El id del client no puede ir vacio")
+    @NotNull(message = "El id del client no puede ir vacio")
     private Client client;
     @Enumerated(EnumType.STRING)
-    @NotEmpty(message = "El tipo de envio no puede ir vacio")
+    @NotNull(message = "El tipo de envio no puede ir vacio")
     private ShipType shippingType;
     @Enumerated(EnumType.STRING)
-    @NotEmpty(message = "El tipo de pago no puede ir vacio")
+    @NotNull(message = "El tipo de pago no puede ir vacio")
     private PayType payType;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    @Builder.Default
+    private Status status = Status.PENDIENTE;
     @Column(nullable = false)
-    private Double total;
-    @OneToOne(cascade = CascadeType.ALL)
+    @Builder.Default
+    private Double total = 0.0;
+    @OneToOne
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
     @NotEmpty(message = "El destino del pedido no puede ir vacio")
