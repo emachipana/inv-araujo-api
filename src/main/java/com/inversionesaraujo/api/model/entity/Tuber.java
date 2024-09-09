@@ -28,7 +28,7 @@ public class Tuber {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotEmpty(message = "El nombre no puede ir vacio")
-    @Size(min = 5, max = 50)
+    @Size(max = 50)
     private String name;
     @OneToMany(mappedBy = "tuber", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Variety> varieties;
