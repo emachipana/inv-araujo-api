@@ -52,14 +52,16 @@ public class InvoiceItemController {
         try {
             Invoice invoice = invoiceService.findById(request.getInvoiceId());
             Product product = productService.findById(request.getProductId());
-            Double subTotal = product.getPrice() * request.getQuantity();
+            Double price = product.getPrice();
+            if(product.getDiscount() != null) price = product.getDiscount().getPrice();
+            Double subTotal = price * request.getQuantity();
 
             InvoiceItem newItem = invoiceItemService.save(InvoiceItem
                 .builder()
                 .invoice(invoice)
                 .product(product)
                 .subTotal(subTotal)
-                .price(product.getPrice())
+                .price(price)
                 .quantity(request.getQuantity())
                 .isIgvApply(request.isIgvApply())
                 .build());
