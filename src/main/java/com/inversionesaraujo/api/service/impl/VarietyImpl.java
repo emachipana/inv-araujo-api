@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -15,12 +13,6 @@ import com.inversionesaraujo.api.service.IVariety;
 public class VarietyImpl implements IVariety {
     @Autowired
     private VarietyDao varietyDao;
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<Variety> listAll() {
-        return varietyDao.findAll();
-    }
 
     @Transactional
     @Override
