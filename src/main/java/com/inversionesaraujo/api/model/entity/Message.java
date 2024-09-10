@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,7 +40,7 @@ public class Message {
     @Size(min = 5)
     @Column(columnDefinition = "TEXT")
     private String content;
-    @NotEmpty(message = "El origen no pueder ir vacio")
+    @NotNull(message = "El origen no pueder ir vacio")
     @Enumerated(EnumType.STRING)
     private Origin origin;
     @NotEmpty(message = "El email no puede ir vacio")
