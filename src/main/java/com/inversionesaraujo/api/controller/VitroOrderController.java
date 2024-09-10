@@ -99,6 +99,7 @@ public class VitroOrderController {
             order.setPhone(request.getPhone());
             order.setStatus(request.getStatus());
             order.setInvoice(invoice);
+            order.setPending(order.getTotal() - request.getAdvance());
             
             VitroOrder orderUpdated = orderService.save(order);
 
