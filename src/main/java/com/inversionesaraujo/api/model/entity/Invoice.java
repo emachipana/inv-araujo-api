@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,27 +32,25 @@ public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;  
-    @NotEmpty(message = "El tipo de comprobante no puede ir vacio")
+    @NotNull(message = "El tipo de comprobante no puede ir vacio")
     @Enumerated(EnumType.STRING)
     private InvoiceType invoiceType;
-    @NotEmpty(message = "El tipo de documento no puede ir vacio")
+    @NotNull(message = "El tipo de documento no puede ir vacio")
     @Enumerated(EnumType.STRING)
     private DocumentType documentType;
     @NotEmpty(message = "El documento no puede ir vacio")
     @Size(max = 20)
     private String document;
-    @NotEmpty(message = "Los nombres no pueden ir vacios")
-    @Size(min = 3, max = 100)
-    private String firstName;
-    @NotEmpty(message = "Los apellidos no pueden ir vacios")
-    @Size(min = 3, max = 100)
-    private String lastName;
+    @NotEmpty(message = "La razon social no puede ir vacia")
+    @Size(min = 3, max = 200)
+    private String rSocial;
+    @Column(nullable = false)
     private LocalDateTime issueDate;
     @Size(min = 5)
     @Column(columnDefinition = "TEXT")
     private String comment;
-    @NotEmpty(message = "El url del PDF no puede ir vacio")
     private String pdfUrl;
+    private String pdfFirebaseId;
     @NotEmpty(message = "La direccion no puede ir vacia")
     private String address;
     @Column(nullable = false)

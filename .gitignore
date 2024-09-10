@@ -33,3 +33,5 @@ build/
 .vscode/
 
 .env
+
+/src/main/resources/firebase-adminsdk.json

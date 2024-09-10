@@ -2,6 +2,7 @@ package com.inversionesaraujo.api.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +11,9 @@ import com.inversionesaraujo.api.model.dao.UserDao;
 import com.inversionesaraujo.api.model.entity.User;
 import com.inversionesaraujo.api.service.IUser;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class UserImpl implements IUser {
+    @Autowired
     private UserDao userDao;
 
     @Transactional(readOnly = true)
@@ -39,11 +38,5 @@ public class UserImpl implements IUser {
     @Override
     public void delete(User user) {
         userDao.delete(user);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return userDao.existsById(id);
     }
 }

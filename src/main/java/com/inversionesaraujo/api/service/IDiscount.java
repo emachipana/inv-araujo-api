@@ -9,5 +9,5 @@ public interface IDiscount {
 
     void delete(Discount discount);
 
-    boolean ifExists(Integer id);
+    Integer getPercentage(Double originalPrice, Double discountPrice);
 }

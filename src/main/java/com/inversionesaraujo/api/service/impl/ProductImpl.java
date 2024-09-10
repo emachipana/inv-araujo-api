@@ -2,19 +2,19 @@ package com.inversionesaraujo.api.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inversionesaraujo.api.model.dao.ProductDao;
+import com.inversionesaraujo.api.model.entity.Category;
 import com.inversionesaraujo.api.model.entity.Product;
 import com.inversionesaraujo.api.service.IProduct;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class ProductImpl implements IProduct {
+    @Autowired
     private ProductDao productDao;
 
     @Transactional(readOnly = true)
@@ -41,9 +41,43 @@ public class ProductImpl implements IProduct {
         productDao.delete(product);
     }
 
-    @Transactional(readOnly = true)
     @Override
-    public boolean ifExists(Integer id) {
-        return productDao.existsById(id);
+    public List<Product> search(String name, String description) {
+        return productDao.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, description);
+    }
+
+    @Override
+    public List<Product> findByCategory(Category category) {
+        return productDao.findByCategory(category);
+    }
+
+    @Override
+    public List<Product> findByPrice(Double priceMin, Double priceMax) {
+        return productDao.findByPriceBetween(priceMin, priceMax);
+    }
+
+    @Override
+    public List<Product> findByCategoryAndPrice(Category category, Double priceMin, Double priceMax) {
+        return productDao.findByCategoryAndPriceBetween(category, priceMin, priceMax);
+    }
+
+    @Override
+    public List<Product> findByPriceLessThan(Double price) {
+        return productDao.findByPriceLessThanEqual(price);
+    }
+
+    @Override
+    public List<Product> findByPriceGreaterThan(Double price) {
+        return productDao.findByPriceGreaterThanEqual(price);
+    }
+
+    @Override
+    public List<Product> findByCategoryAndPriceLessThan(Category category, Double price) {
+        return productDao.findByCategoryAndPriceLessThanEqual(category, price);
+    }
+
+    @Override
+    public List<Product> findByCategoryAndPriceGreaterThan(Category category, Double price) {
+        return productDao.findByCategoryAndPriceGreaterThanEqual(category, price);
     }
 }

@@ -8,6 +8,4 @@ public interface I_InvoiceItem {
     InvoiceItem findById(Integer id);
 
     void delete(InvoiceItem item);
-
-    boolean ifExists(Integer id);
 }

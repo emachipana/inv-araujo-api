@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,11 +9,9 @@ import com.inversionesaraujo.api.model.dao.AdminDao;
 import com.inversionesaraujo.api.model.entity.Admin;
 import com.inversionesaraujo.api.service.IAdmin;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class AdminImpl implements IAdmin {
+    @Autowired
     private AdminDao adminDao;
 
     @Transactional(readOnly = true)
@@ -25,11 +24,5 @@ public class AdminImpl implements IAdmin {
     @Override
     public Admin save(Admin admin) {
         return adminDao.save(admin);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return adminDao.existsById(id);
     }
 }

@@ -1,7 +1,6 @@
 package com.inversionesaraujo.api.service.impl;
 
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,18 +9,10 @@ import com.inversionesaraujo.api.model.dao.ExpenseDao;
 import com.inversionesaraujo.api.model.entity.Expense;
 import com.inversionesaraujo.api.service.IExpense;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class ExpenseImpl implements IExpense {
+    @Autowired
     private ExpenseDao expenseDao;
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<Expense> listAll() {
-        return expenseDao.findAll();
-    }
 
     @Transactional
     @Override
@@ -39,11 +30,5 @@ public class ExpenseImpl implements IExpense {
     @Override
     public void delete(Expense expense) {
         expenseDao.delete(expense);
-    }
-
-    @Transactional
-    @Override
-    public boolean ifExists(Integer id) {
-        return expenseDao.existsById(id);
     }
 }

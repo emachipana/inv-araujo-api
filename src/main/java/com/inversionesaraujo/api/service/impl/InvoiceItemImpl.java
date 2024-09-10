@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,11 +9,9 @@ import com.inversionesaraujo.api.model.dao.InvoiceItemDao;
 import com.inversionesaraujo.api.model.entity.InvoiceItem;
 import com.inversionesaraujo.api.service.I_InvoiceItem;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class InvoiceItemImpl implements I_InvoiceItem {
+    @Autowired
     private InvoiceItemDao itemDao;
 
     @Transactional
@@ -31,11 +30,5 @@ public class InvoiceItemImpl implements I_InvoiceItem {
     @Override
     public void delete(InvoiceItem item) {
         itemDao.delete(item);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return itemDao.existsById(id);
     }
 }

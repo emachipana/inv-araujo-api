@@ -17,6 +17,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,13 +34,12 @@ public class VitroOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotEmpty(message = "El tipo de documento no puede ir vacio")
+    @NotNull(message = "El tipo de documento no puede ir vacio")
     @Enumerated(EnumType.STRING)
     private DocumentType documentType;
     @NotEmpty(message = "El documento no puede ir vacio")
     @Size(max = 20)
     private String document;
-    @NotEmpty(message = "Los nombres no pueden ir vacios")
     @Size(min = 3, max = 100)
     private String firstName;
     @NotEmpty(message = "Los apellidos no pueden ir vacios")
@@ -49,25 +49,28 @@ public class VitroOrder {
     @Size(min = 3)
     private String destination;
     @Column(nullable = false)
-    private Double total;
-    @NotEmpty(message = "El adelanto no puede ir vacio")
+    @Builder.Default
+    private Double total = 0.0;
+    @NotNull(message = "El adelanto no puede ir vacio")
     private Double advance;
     @Column(nullable = false)
-    private Double pending;
-    @NotEmpty(message = "La fecha de inicio no puede ir vacia")
+    @Builder.Default
+    private Double pending = 0.0;
+    @NotNull(message = "La fecha de inicio no puede ir vacia")
     private LocalDateTime initDate;
-    @NotEmpty(message = "La fecha de fin no puede ir vacia")
+    @NotNull(message = "La fecha de fin no puede ir vacia")
     private LocalDateTime finishDate;
+    private LocalDateTime pickDate;
     @NotEmpty(message = "El telefono no puede ir vacio")
     @Size(max = 12)
     private String phone;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status;
+    @Builder.Default
+    private Status status = Status.PENDIENTE;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "invoice_id")
-    @NotEmpty(message = "El id del comprobante no puede ir vacio")
     private Invoice invoice;
     @OneToMany(mappedBy = "vitroOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderVariety> varieties;
+    private List<OrderVariety> items;
 }

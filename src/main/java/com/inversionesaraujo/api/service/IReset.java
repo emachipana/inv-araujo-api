@@ -8,6 +8,4 @@ public interface IReset {
     Reset findById(Integer id);
 
     void delete(Reset reset);
-
-    boolean ifExists(Integer id);
 }

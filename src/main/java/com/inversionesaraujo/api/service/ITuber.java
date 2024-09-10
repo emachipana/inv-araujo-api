@@ -12,6 +12,4 @@ public interface ITuber {
     Tuber findById(Integer id);
 
     void delete(Tuber tuber);
-
-    boolean ifExists(Integer id);
 }

@@ -2,6 +2,7 @@ package com.inversionesaraujo.api.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +11,9 @@ import com.inversionesaraujo.api.model.dao.CategoryDao;
 import com.inversionesaraujo.api.model.entity.Category;
 import com.inversionesaraujo.api.service.ICategory;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class CategoryImpl implements ICategory {
+    @Autowired
     private CategoryDao categoryDao;
 
     @Transactional(readOnly = true)
@@ -39,11 +38,5 @@ public class CategoryImpl implements ICategory {
 	@Override
 	public void delete(Category category) {
         categoryDao.delete(category);
-    }
-
-    @Transactional(readOnly = true)
-	@Override
-	public boolean ifExists(Integer id) {
-        return categoryDao.existsById(id);
     }
 }

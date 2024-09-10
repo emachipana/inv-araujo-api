@@ -12,6 +12,4 @@ public interface IVitroOrder {
     VitroOrder findById(Integer id);
 
     void delete(VitroOrder vitroOrder);
-
-    boolean ifExists(Integer id);
 }

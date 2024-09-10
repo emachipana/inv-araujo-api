@@ -12,6 +12,4 @@ public interface IOrder {
     Order findById(Integer id);
 
     void delete(Order order);
-
-    boolean ifExists(Integer id);
 }

@@ -8,6 +8,4 @@ public interface IOrderVariety {
     OrderVariety findById(Integer id);
 
     void delete(OrderVariety item);
-
-    boolean ifExists(Integer id);
 }

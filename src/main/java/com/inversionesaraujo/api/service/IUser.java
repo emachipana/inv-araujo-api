@@ -12,6 +12,4 @@ public interface IUser {
     User findById(Integer id);
 
     void delete(User user);
-
-    boolean ifExists(Integer id);
 }

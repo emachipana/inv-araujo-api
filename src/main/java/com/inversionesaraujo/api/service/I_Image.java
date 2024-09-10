@@ -1,17 +1,20 @@
 package com.inversionesaraujo.api.service;
 
-import java.util.List;
+import java.io.IOException;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.inversionesaraujo.api.model.entity.Image;
+import com.inversionesaraujo.api.model.payload.FileResponse;
 
 public interface I_Image {
-    List<Image> listAll();
-
     Image save(Image image);
 
     Image findById(Integer id);
 
     void delete(Image image);
 
-    boolean ifExists(Integer id);
+    FileResponse upload(MultipartFile image) throws IOException;
+
+    void deleteImage(String fileName) throws IOException;
 }

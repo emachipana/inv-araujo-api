@@ -3,6 +3,7 @@ package com.inversionesaraujo.api.service;
 import java.util.List;
 
 import com.inversionesaraujo.api.model.entity.Invoice;
+import com.inversionesaraujo.api.model.payload.FileResponse;
 
 public interface I_Invoice {
     List<Invoice> listAll();
@@ -13,5 +14,5 @@ public interface I_Invoice {
 
     void delete(Invoice invoice);
 
-    boolean ifExists(Integer id);
+    public FileResponse generateAndUploadPDF(Invoice invoice);
 }

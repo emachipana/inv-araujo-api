@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,11 +9,9 @@ import com.inversionesaraujo.api.model.dao.OrderProductDao;
 import com.inversionesaraujo.api.model.entity.OrderProduct;
 import com.inversionesaraujo.api.service.IOrderProduct;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class OrderProductImpl implements IOrderProduct {
+    @Autowired
     private OrderProductDao orderProductDao;
 
     @Transactional
@@ -31,11 +30,5 @@ public class OrderProductImpl implements IOrderProduct {
     @Override
     public void delete(OrderProduct item) {
         orderProductDao.delete(item);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean ifExists(Integer id) {
-        return orderProductDao.existsById(id);
     }
 }

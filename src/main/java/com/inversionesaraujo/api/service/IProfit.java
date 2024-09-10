@@ -13,5 +13,4 @@ public interface IProfit {
 
     void delete(Profit profit);
 
-    boolean ifExists(Integer id);
 }

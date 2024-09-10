@@ -12,6 +12,4 @@ public interface ICategory {
     Category findById(Integer id);
 
     void delete(Category category);
-
-    boolean ifExists(Integer id);
 }

@@ -12,6 +12,4 @@ public interface IMessage {
     Message findById(Integer id);
 
     void delete(Message message);
-
-    boolean ifExists(Integer id);
 }
