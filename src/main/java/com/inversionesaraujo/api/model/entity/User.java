@@ -43,7 +43,8 @@ public class User implements UserDetails {
     private Integer id;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    @Builder.Default
+    private Role role = Role.CLIENTE;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "client_id")
     private Client client;
