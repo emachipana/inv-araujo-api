@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,25 @@ public class UserController {
     @GetMapping
     public List<User> getAll() {
         return userService.listAll();
+    }
+
+    @GetMapping("profile/info")
+    public ResponseEntity<MessageResponse> getUserLogged(Authentication auth) {
+        try {
+            String username = auth.getName();
+            User currentUser = userService.findByUsername(username);
+
+            return new ResponseEntity<>(MessageResponse
+                .builder()
+                .message("El usuario se encontro con exito")
+                .data(currentUser)
+                .build(), HttpStatus.OK);
+        }catch(Exception error) {
+            return new ResponseEntity<>(MessageResponse
+                .builder()
+                .message(error.getMessage())
+                .build(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("{id}")
