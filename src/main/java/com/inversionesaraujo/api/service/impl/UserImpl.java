@@ -39,4 +39,9 @@ public class UserImpl implements IUser {
     public void delete(User user) {
         userDao.delete(user);
     }
+
+    @Override
+    public User findByUsername(String username) {
+        return userDao.findByUsername(username).orElseThrow(() -> new DataAccessException("El usuario no existe") {});
+    }
 }

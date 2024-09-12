@@ -11,5 +11,7 @@ public interface IUser {
 
     User findById(Integer id);
 
+    User findByUsername(String username);
+
     void delete(User user);
 }
