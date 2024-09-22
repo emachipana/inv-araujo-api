@@ -80,4 +80,9 @@ public class ProductImpl implements IProduct {
     public List<Product> findByCategoryAndPriceGreaterThan(Category category, Double price) {
         return productDao.findByCategoryAndPriceGreaterThanEqual(category, price);
     }
+
+    @Override
+    public List<Product> findBySubCategories(Category category) {
+        return productDao.findBySubCategories(category.getId());
+    }
 }

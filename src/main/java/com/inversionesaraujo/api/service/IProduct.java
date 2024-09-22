@@ -24,6 +24,8 @@ public interface IProduct {
 
     List<Product> findByCategoryAndPriceGreaterThan(Category category, Double price);
 
+    List<Product> findBySubCategories(Category category);
+
     Product save(Product product);
 
     Product findById(Integer id);

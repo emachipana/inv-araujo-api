@@ -3,6 +3,8 @@ package com.inversionesaraujo.api.model.dao;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.inversionesaraujo.api.model.entity.Category;
 import com.inversionesaraujo.api.model.entity.Product;
@@ -23,4 +25,7 @@ public interface ProductDao extends JpaRepository<Product, Integer> {
     List<Product> findByCategoryAndPriceLessThanEqual(Category category, Double price);
 
     List<Product> findByCategoryAndPriceGreaterThanEqual(Category category, Double price);
+
+    @Query("SELECT p FROM Product p WHERE p.category.category.id = :categoryId")
+    List<Product> findBySubCategories(@Param("categoryId") Integer categoryId);
 }
