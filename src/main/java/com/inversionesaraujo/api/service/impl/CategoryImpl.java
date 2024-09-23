@@ -16,12 +16,6 @@ public class CategoryImpl implements ICategory {
     @Autowired
     private CategoryDao categoryDao;
 
-    @Transactional(readOnly = true)
-	@Override
-	public List<Category> listAll() {
-        return categoryDao.findAll();
-    }
-
     @Transactional
 	@Override
 	public Category save(Category category) {
@@ -38,5 +32,11 @@ public class CategoryImpl implements ICategory {
 	@Override
 	public void delete(Category category) {
         categoryDao.delete(category);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Category> listParentCategories() {
+        return categoryDao.findByCategoryIsNull();
     }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import com.inversionesaraujo.api.model.entity.Category;
 
 public interface ICategory {
-    List<Category> listAll();
+    List<Category> listParentCategories();
 
     Category save(Category category);
 
