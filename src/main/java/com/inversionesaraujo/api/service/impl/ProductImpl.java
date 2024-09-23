@@ -47,8 +47,8 @@ public class ProductImpl implements IProduct {
     }
 
     @Override
-    public List<Product> findByCategory(Category category) {
-        return productDao.findByCategory(category);
+    public List<Product> findByCategory(Integer categoryId) {
+        return productDao.findByCategory(categoryId);
     }
 
     @Override
@@ -79,10 +79,5 @@ public class ProductImpl implements IProduct {
     @Override
     public List<Product> findByCategoryAndPriceGreaterThan(Category category, Double price) {
         return productDao.findByCategoryAndPriceGreaterThanEqual(category, price);
-    }
-
-    @Override
-    public List<Product> findBySubCategories(Category category) {
-        return productDao.findBySubCategories(category.getId());
     }
 }

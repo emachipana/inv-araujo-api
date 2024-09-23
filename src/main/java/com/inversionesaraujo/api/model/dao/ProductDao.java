@@ -11,8 +11,6 @@ import com.inversionesaraujo.api.model.entity.Product;
 
 public interface ProductDao extends JpaRepository<Product, Integer> {
     List<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description);
- 
-    List<Product> findByCategory(Category category);
 
     List<Product> findByPriceBetween(Double priceMin, Double priceMax);
 
@@ -26,6 +24,6 @@ public interface ProductDao extends JpaRepository<Product, Integer> {
 
     List<Product> findByCategoryAndPriceGreaterThanEqual(Category category, Double price);
 
-    @Query("SELECT p FROM Product p WHERE p.category.category.id = :categoryId")
-    List<Product> findBySubCategories(@Param("categoryId") Integer categoryId);
+    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId OR p.category.category.id = :categoryId")
+    List<Product> findByCategory(@Param("categoryId") Integer categoryId);
 }

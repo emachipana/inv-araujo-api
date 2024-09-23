@@ -48,9 +48,7 @@ public class ProductController {
             Category category = categoryService.findById(categoryId);
             return productService.findByCategoryAndPriceGreaterThan(category, priceMin);
         }else if(categoryId != null) {
-            Category category = categoryService.findById(categoryId);
-            List<Product> products = productService.findByCategory(category);
-            return products.isEmpty() ? productService.findBySubCategories(category) : products;
+            return productService.findByCategory(categoryId);
         }else if(priceMax != null) {
             return productService.findByPriceLessThan(priceMax);
         }else if(priceMin != null) {

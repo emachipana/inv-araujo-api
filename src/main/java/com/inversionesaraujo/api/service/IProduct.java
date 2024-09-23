@@ -10,7 +10,7 @@ public interface IProduct {
 
     List<Product> search(String name, String description);
 
-    List<Product> findByCategory(Category category);
+    List<Product> findByCategory(Integer categoryId);
 
     List<Product> findByPrice(Double priceMin, Double priceMax);
 
@@ -23,8 +23,6 @@ public interface IProduct {
     List<Product> findByCategoryAndPriceLessThan(Category category, Double price);
 
     List<Product> findByCategoryAndPriceGreaterThan(Category category, Double price);
-
-    List<Product> findBySubCategories(Category category);
 
     Product save(Product product);
 
