@@ -14,7 +14,7 @@ public interface I_Image {
 
     void delete(Image image);
 
-    FileResponse upload(MultipartFile image) throws IOException;
+    FileResponse upload(MultipartFile file) throws IOException;
 
     void deleteImage(String fileName) throws IOException;
 }

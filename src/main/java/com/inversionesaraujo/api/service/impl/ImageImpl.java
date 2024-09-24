@@ -41,10 +41,10 @@ public class ImageImpl implements I_Image {
     }
 
     @Override
-    public FileResponse upload(MultipartFile image) throws IOException {
+    public FileResponse upload(MultipartFile file) throws IOException {
         Bucket bucket = StorageClient.getInstance().bucket();
         String name = UUID.randomUUID().toString();
-        bucket.create(name, image.getBytes(), image.getContentType());
+        bucket.create(name, file.getBytes(), file.getContentType());
         String imageUrl = String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media", bucket.getName(), name);
 
         return FileResponse
