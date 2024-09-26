@@ -1,6 +1,6 @@
 package com.inversionesaraujo.api.model.entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -40,10 +40,9 @@ public class VitroOrder {
     @NotEmpty(message = "El documento no puede ir vacio")
     @Size(max = 20)
     private String document;
-    @Size(min = 3, max = 100)
+    @NotEmpty(message = "Los nombres no pueden ir vacios")
+    @Size(min = 3)
     private String firstName;
-    @NotEmpty(message = "Los apellidos no pueden ir vacios")
-    @Size(min = 3, max = 100)
     private String lastName;
     @NotEmpty(message = "El destino no puede ir vacio")
     @Size(min = 3)
@@ -51,16 +50,16 @@ public class VitroOrder {
     @Column(nullable = false)
     @Builder.Default
     private Double total = 0.0;
-    @NotNull(message = "El adelanto no puede ir vacio")
-    private Double advance;
+    @Builder.Default
+    private Double advance = 0.0;
     @Column(nullable = false)
     @Builder.Default
     private Double pending = 0.0;
     @NotNull(message = "La fecha de inicio no puede ir vacia")
-    private LocalDateTime initDate;
+    private LocalDate initDate;
     @NotNull(message = "La fecha de fin no puede ir vacia")
-    private LocalDateTime finishDate;
-    private LocalDateTime pickDate;
+    private LocalDate finishDate;
+    private LocalDate pickDate;
     @NotEmpty(message = "El telefono no puede ir vacio")
     @Size(max = 12)
     private String phone;

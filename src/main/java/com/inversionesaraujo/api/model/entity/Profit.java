@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -39,7 +39,7 @@ public class Profit {
     @JsonIgnore
     private Admin admin;
     @NotNull(message = "La fecha no puede ir vacia")
-    private LocalDateTime date;
+    private LocalDate date;
     @Column(nullable = false)
     private String month;
     @Column(nullable = false)

@@ -1,6 +1,6 @@
 package com.inversionesaraujo.api.model.request;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import com.google.auto.value.AutoValue.Builder;
 import com.inversionesaraujo.api.model.entity.DocumentType;
@@ -21,8 +21,8 @@ public class VitroOrderRequest {
     private String lastName;
     private String destination;
     private Double advance;
-    private LocalDateTime initDate;
-    private LocalDateTime finishDate;
+    private LocalDate initDate;
+    private LocalDate finishDate;
     private String phone;
     private Status status;
     private Integer invoiceId;

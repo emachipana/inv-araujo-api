@@ -1,6 +1,6 @@
 package com.inversionesaraujo.api.model.entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -45,7 +45,7 @@ public class Invoice {
     @Size(min = 3, max = 200)
     private String rSocial;
     @Column(nullable = false)
-    private LocalDateTime issueDate;
+    private LocalDate issueDate;
     @Size(min = 5)
     @Column(columnDefinition = "TEXT")
     private String comment;
