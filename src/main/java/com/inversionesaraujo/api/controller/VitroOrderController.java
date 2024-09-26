@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.model.entity.Invoice;
@@ -30,8 +31,14 @@ public class VitroOrderController {
     private I_Invoice invoiceService;
 
     @GetMapping
-    public List<VitroOrder> getAll() {
-        return orderService.listAll();
+    public List<VitroOrder> getAll(
+        @RequestParam(required = false) Integer tuberId
+    ) {
+        if(tuberId != null) {
+            return orderService.findByTuberId(tuberId);
+        }else {
+            return orderService.listAll();
+        }
     }
 
     @GetMapping("{id}")

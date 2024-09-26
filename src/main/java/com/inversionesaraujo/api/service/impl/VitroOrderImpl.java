@@ -39,4 +39,9 @@ public class VitroOrderImpl implements IVitroOrder {
     public void delete(VitroOrder vitroOrder) {
         orderDao.delete(vitroOrder);
     }
+
+    @Override
+    public List<VitroOrder> findByTuberId(Integer tuberId) {
+        return orderDao.findByTuberId(tuberId);
+    }
 }
