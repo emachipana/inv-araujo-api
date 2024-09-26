@@ -40,10 +40,9 @@ public class VitroOrder {
     @NotEmpty(message = "El documento no puede ir vacio")
     @Size(max = 20)
     private String document;
-    @Size(min = 3, max = 100)
+    @NotEmpty(message = "Los nombres no pueden ir vacios")
+    @Size(min = 3)
     private String firstName;
-    @NotEmpty(message = "Los apellidos no pueden ir vacios")
-    @Size(min = 3, max = 100)
     private String lastName;
     @NotEmpty(message = "El destino no puede ir vacio")
     @Size(min = 3)
@@ -51,7 +50,6 @@ public class VitroOrder {
     @Column(nullable = false)
     @Builder.Default
     private Double total = 0.0;
-    @NotNull(message = "El adelanto no puede ir vacio")
     @Builder.Default
     private Double advance = 0.0;
     @Column(nullable = false)
