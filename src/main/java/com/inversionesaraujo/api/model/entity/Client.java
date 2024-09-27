@@ -2,8 +2,7 @@ package com.inversionesaraujo.api.model.entity;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -30,7 +29,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @Table(name = "clients", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,7 +60,9 @@ public class Client {
     @Email(message = "El formato es incorrecto")
     private String email;
     @OneToOne(mappedBy = "client")
+    @JsonIgnore
     private User user;
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Order> orders;
 }

@@ -88,7 +88,7 @@ public class SecurityConfig {
                     // orders
                     .requestMatchers(HttpMethod.PUT, "/api/v1/orders/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/orders/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/orders").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/orders/**").permitAll()
                     // orderProducts
                     .requestMatchers(HttpMethod.PUT, "/api/v1/orderProducts/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/orderProducts/**").hasAnyAuthority("ADMINISTRADOR")

@@ -64,7 +64,7 @@ public class OrderController {
             Client client = clientService.findById(request.getClientId());
             Invoice invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
             ShipType shipType = request.getShipType();
-            LocalDate date = LocalDate.now();
+            LocalDate date = request.getDate() == null ? LocalDate.now() : request.getDate();
             LocalDate maxShipDate = date.plusDays(shipType == ShipType.NORMAL ? 5 : 2);
 
             Order order = orderService.save(Order

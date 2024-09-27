@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.model.request;
 
+import java.time.LocalDate;
+
 import com.google.auto.value.AutoValue.Builder;
 import com.inversionesaraujo.api.model.entity.PayType;
 import com.inversionesaraujo.api.model.entity.ShipType;
@@ -20,4 +22,5 @@ public class OrderRequest {
     private Integer invoiceId;
     private String destination;
     private Status status;
+    private LocalDate date;
 }
