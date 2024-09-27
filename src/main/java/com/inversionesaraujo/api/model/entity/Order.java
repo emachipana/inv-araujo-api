@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.model.entity;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -61,6 +62,10 @@ public class Order {
     @NotEmpty(message = "El destino del pedido no puede ir vacio")
     @Size(min = 3)
     private String destination;
+    @Column(nullable = false)
+    private LocalDate date;
+    @Column(nullable = false)
+    private LocalDate maxShipDate;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderProduct> items;
 }

@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inversionesaraujo.api.model.entity.Client;
 import com.inversionesaraujo.api.model.entity.Invoice;
 import com.inversionesaraujo.api.model.entity.Order;
+import com.inversionesaraujo.api.model.entity.ShipType;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.model.request.OrderRequest;
 import com.inversionesaraujo.api.service.IClient;
@@ -61,13 +63,19 @@ public class OrderController {
         try {
             Client client = clientService.findById(request.getClientId());
             Invoice invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
+            ShipType shipType = request.getShipType();
+            LocalDate date = LocalDate.now();
+            LocalDate maxShipDate = date.plusDays(shipType == ShipType.NORMAL ? 5 : 2);
+
             Order order = orderService.save(Order
                 .builder()
                 .client(client)
                 .invoice(invoice)
                 .destination(request.getDestination())
                 .payType(request.getPayType())
-                .shippingType(request.getShipType())
+                .shippingType(shipType)
+                .date(date)
+                .maxShipDate(maxShipDate)
                 .build());
 
             return new ResponseEntity<>(MessageResponse
