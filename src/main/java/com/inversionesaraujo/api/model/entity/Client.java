@@ -36,12 +36,6 @@ public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotEmpty(message = "La direccion no puede ir vacia")
-    @Size(min = 3)
-    private String address;
-    @NotEmpty(message = "El departamento no puede ir vacio")
-    @Size(min = 3, max = 50)
-    private String department;
     @NotEmpty(message = "La ciudad no puede ir vacia")
     @Size(min = 3, max = 50)
     private String city;
