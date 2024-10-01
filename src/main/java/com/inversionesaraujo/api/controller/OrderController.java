@@ -71,8 +71,8 @@ public class OrderController {
                 .builder()
                 .client(client)
                 .invoice(invoice)
-                .destination(request.getDestination())
-                .payType(request.getPayType())
+                .department(request.getDepartment())
+                .city(request.getCity())
                 .shippingType(shipType)
                 .date(date)
                 .maxShipDate(maxShipDate)
@@ -99,10 +99,10 @@ public class OrderController {
             Invoice invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
             order.setClient(client);
             order.setInvoice(invoice);
-            order.setDestination(request.getDestination());
+            order.setDepartment(request.getDepartment());
+            order.setCity(request.getCity());
             order.setShippingType(request.getShipType());
             order.setStatus(request.getStatus());
-            order.setPayType(request.getPayType());
 
             Order orderUptaded = orderService.save(order);
 

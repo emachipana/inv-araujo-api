@@ -37,8 +37,9 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotEmpty(message = "La ciudad no puede ir vacia")
-    @Size(min = 3, max = 50)
     private String city;
+    @NotEmpty(message = "El departamento no puede ir vacio")
+    private String department;
     @NotEmpty(message = "El telefono no puede ir vacio")
     @Size(max = 12)
     private String phone;

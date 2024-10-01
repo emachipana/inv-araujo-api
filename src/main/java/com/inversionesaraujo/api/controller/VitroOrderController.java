@@ -69,7 +69,8 @@ public class VitroOrderController {
                 .document(request.getDocument())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                .destination(request.getDestination())
+                .department(request.getDepartment())
+                .city(request.getCity())
                 .initDate(request.getInitDate())
                 .finishDate(request.getFinishDate())
                 .phone(request.getPhone())
@@ -98,7 +99,8 @@ public class VitroOrderController {
             order.setDocument(request.getDocument());
             order.setFirstName(request.getFirstName());
             order.setLastName(request.getLastName());
-            order.setDestination(request.getDestination());
+            order.setDepartment(request.getDepartment());
+            order.setCity(request.getCity());
             order.setInitDate(request.getInitDate());
             order.setFinishDate(request.getFinishDate());
             order.setPhone(request.getPhone());

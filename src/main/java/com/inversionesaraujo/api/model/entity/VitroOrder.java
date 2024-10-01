@@ -44,9 +44,10 @@ public class VitroOrder {
     @Size(min = 3)
     private String firstName;
     private String lastName;
-    @NotEmpty(message = "El destino no puede ir vacio")
-    @Size(min = 3)
-    private String destination;
+    @NotEmpty(message = "El departamento no puede ir vacio")
+    private String department;
+    @NotEmpty(message = "El departamento no puede ir vacio")
+    private String city;
     @Column(nullable = false)
     @Builder.Default
     private Double total = 0.0;

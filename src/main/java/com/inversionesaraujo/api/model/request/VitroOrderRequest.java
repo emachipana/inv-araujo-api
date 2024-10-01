@@ -19,7 +19,8 @@ public class VitroOrderRequest {
     private String document;
     private String firstName;
     private String lastName;
-    private String destination;
+    private String department;
+    private String city;
     private LocalDate initDate;
     private LocalDate finishDate;
     private String phone;
