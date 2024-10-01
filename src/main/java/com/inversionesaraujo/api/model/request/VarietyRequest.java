@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VarietyRequest {
     private Double price;
+    private Double minPrice;
     private String name;
     private Integer tuberId;
 }
