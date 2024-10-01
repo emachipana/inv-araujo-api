@@ -20,7 +20,6 @@ public class VitroOrderRequest {
     private String firstName;
     private String lastName;
     private String destination;
-    private Double advance;
     private LocalDate initDate;
     private LocalDate finishDate;
     private String phone;

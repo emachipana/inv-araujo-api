@@ -66,7 +66,7 @@ public class OrderVarietyController {
 
             Double total = order.getTotal() + subTotal;
             order.setTotal(total);
-            order.setPending(total - order.getAdvance());
+            order.setPending(total - order.getTotalAdvance());
             orderService.save(order);
             
             return new ResponseEntity<>(MessageResponse
@@ -96,7 +96,7 @@ public class OrderVarietyController {
 
             Double total = (order.getTotal() - oldSubTotal) + subTotal;
             order.setTotal(total);
-            order.setPending(total - order.getAdvance());
+            order.setPending(total - order.getTotalAdvance());
             orderService.save(order);
 
             return new ResponseEntity<>(MessageResponse
@@ -122,7 +122,7 @@ public class OrderVarietyController {
 
             Double total = order.getTotal() - oldSubTotal;
             order.setTotal(total);
-            order.setPending(total - order.getAdvance());
+            order.setPending(total - order.getTotalAdvance());
             orderService.save(order);
 
             return new ResponseEntity<>(MessageResponse

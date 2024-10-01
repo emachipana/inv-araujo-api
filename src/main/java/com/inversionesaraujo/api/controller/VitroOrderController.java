@@ -70,7 +70,6 @@ public class VitroOrderController {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .destination(request.getDestination())
-                .advance(request.getAdvance())
                 .initDate(request.getInitDate())
                 .finishDate(request.getFinishDate())
                 .phone(request.getPhone())
@@ -100,13 +99,12 @@ public class VitroOrderController {
             order.setFirstName(request.getFirstName());
             order.setLastName(request.getLastName());
             order.setDestination(request.getDestination());
-            order.setAdvance(request.getAdvance());
             order.setInitDate(request.getInitDate());
             order.setFinishDate(request.getFinishDate());
             order.setPhone(request.getPhone());
             order.setStatus(request.getStatus());
             order.setInvoice(invoice);
-            order.setPending(order.getTotal() - request.getAdvance());
+            order.setPending(order.getTotal() - order.getTotalAdvance());
             
             VitroOrder orderUpdated = orderService.save(order);
 
