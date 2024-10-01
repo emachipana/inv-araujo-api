@@ -53,8 +53,6 @@ public class Client {
     @NotEmpty(message = "Los nombres no pueden ir vacios")
     @Size(min = 3, max = 100)
     private String firstName;
-    @NotEmpty(message = "Los apellidos no pueden ir vacios")
-    @Size(min = 3, max = 100)
     private String lastName;
     @NotEmpty(message = "El email no puede ir vacio")
     @Email(message = "El formato es incorrecto")

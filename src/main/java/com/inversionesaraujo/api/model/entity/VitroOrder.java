@@ -51,7 +51,7 @@ public class VitroOrder {
     @Builder.Default
     private Double total = 0.0;
     @Builder.Default
-    private Double advance = 0.0;
+    private Double totalAdvance = 0.0;
     @Column(nullable = false)
     @Builder.Default
     private Double pending = 0.0;
@@ -72,4 +72,6 @@ public class VitroOrder {
     private Invoice invoice;
     @OneToMany(mappedBy = "vitroOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderVariety> items;
+    @OneToMany(mappedBy = "vitroOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Advance> advances;
 }

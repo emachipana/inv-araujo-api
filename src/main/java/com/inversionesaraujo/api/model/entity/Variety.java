@@ -28,6 +28,8 @@ public class Variety {
     private Integer id;
     @NotNull(message = "El precio no puede ir vacio")
     private Double price;
+    @NotNull(message = "El precio mínimo no puede ir vacio")
+    private Double minPrice;
     @ManyToOne
     @JoinColumn(name = "tuber_id")
     @NotNull(message = "El id del tuberculo no pueder ir vacio")

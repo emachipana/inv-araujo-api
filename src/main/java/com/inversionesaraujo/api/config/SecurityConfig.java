@@ -51,6 +51,9 @@ public class SecurityConfig {
                     // orderVarieties
                     .requestMatchers(HttpMethod.PUT, "/api/v1/orderVarieties/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/orderVarieties/**").hasAnyAuthority("ADMINISTRADOR")
+                    // advances
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/advances/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/advances/**").hasAnyAuthority("ADMINISTRADOR")
                     // invoices
                     .requestMatchers(HttpMethod.GET, "/api/v1/invoices/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.POST, "/api/v1/invoices/**").hasAnyAuthority("ADMINISTRADOR")

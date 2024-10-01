@@ -1,8 +1,9 @@
 package com.inversionesaraujo.api.model.request;
 
-import com.google.auto.value.AutoValue.Builder;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,9 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class VarietyRequest {
-    private Double price;
-    private Double minPrice;
-    private String name;
-    private Integer tuberId;
+public class AdvanceRequest {
+    private Integer vitroOrderId;
+    private Double amount;
+    private LocalDate date;
 }

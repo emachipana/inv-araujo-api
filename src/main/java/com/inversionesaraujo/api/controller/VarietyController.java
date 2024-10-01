@@ -54,7 +54,8 @@ public class VarietyController {
                 .tuber(tuber)
                 .price(request.getPrice())
                 .name(request.getName())
-                .build());   
+                .minPrice(request.getMinPrice())
+                .build());
             
             return new ResponseEntity<>(MessageResponse
                 .builder()
@@ -75,6 +76,7 @@ public class VarietyController {
             Variety variety = varietyService.findById(id);
             variety.setName(request.getName());
             variety.setPrice(request.getPrice());
+            variety.setMinPrice(request.getMinPrice());
             Variety varietyUpdated = varietyService.save(variety);
 
             return new ResponseEntity<>(MessageResponse

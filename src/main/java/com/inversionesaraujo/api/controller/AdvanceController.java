@@ -12,34 +12,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.OrderVariety;
-import com.inversionesaraujo.api.model.entity.Variety;
+import com.inversionesaraujo.api.model.entity.Advance;
 import com.inversionesaraujo.api.model.entity.VitroOrder;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.OrderVarietyRequest;
-import com.inversionesaraujo.api.service.IOrderVariety;
-import com.inversionesaraujo.api.service.IVariety;
+import com.inversionesaraujo.api.model.request.AdvanceRequest;
+import com.inversionesaraujo.api.service.IAdvance;
 import com.inversionesaraujo.api.service.IVitroOrder;
 
 @RestController
-@RequestMapping("/api/v1/orderVarieties")
-public class OrderVarietyController {
+@RequestMapping("/api/v1/advances")
+public class AdvanceController {
     @Autowired
-    private IOrderVariety itemService;
+    private IAdvance advanceService;
     @Autowired
     private IVitroOrder orderService;
-    @Autowired
-    private IVariety varietyService;
 
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
         try {
-            OrderVariety item = itemService.findById(id);
+            Advance advance = advanceService.findById(id);
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
-                .message("El item del pedido invitro se encontro con exito")
-                .data(item)
+                .message("El adelanto se encontro con exito")
+                .data(advance)
                 .build(), HttpStatus.OK);
         }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse
@@ -50,29 +46,26 @@ public class OrderVarietyController {
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody OrderVarietyRequest request) {
+    public ResponseEntity<MessageResponse> create(@RequestBody AdvanceRequest request) {
         try {
             VitroOrder order = orderService.findById(request.getVitroOrderId());
-            Variety variety = varietyService.findById(request.getVarietyId());
-            Double subTotal = request.getPrice() * request.getQuantity();
-            OrderVariety item = itemService.save(OrderVariety
+            Double amount = request.getAmount();
+            Advance advance = advanceService.save(Advance
                 .builder()
                 .vitroOrder(order)
-                .variety(variety)
-                .price(request.getPrice())
-                .quantity(request.getQuantity())
-                .subTotal(subTotal)
+                .amount(amount)
+                .date(request.getDate())
                 .build());
 
-            Double total = order.getTotal() + subTotal;
-            order.setTotal(total);
-            order.setPending(total - order.getTotalAdvance());
+            Double totalAdvance = order.getTotalAdvance() + amount;
+            order.setTotalAdvance(totalAdvance);
+            order.setPending(order.getTotal() - totalAdvance);
             orderService.save(order);
-            
+
             return new ResponseEntity<>(MessageResponse
                 .builder()
-                .message("El item del pedido invitro se creo con exito")
-                .data(item)
+                .message("El adelanto se creo con exito")
+                .data(advance)
                 .build(), HttpStatus.CREATED);
         }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse
@@ -83,26 +76,25 @@ public class OrderVarietyController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<MessageResponse> update(@PathVariable Integer id, @RequestBody OrderVarietyRequest request) {
+    public ResponseEntity<MessageResponse> update(@PathVariable Integer id, @RequestBody AdvanceRequest request) {
         try {
-            OrderVariety item = itemService.findById(id);
-            Double subTotal = request.getPrice() * request.getQuantity();
-            Double oldSubTotal =item.getSubTotal();
-            VitroOrder order = item.getVitroOrder();
-            item.setPrice(request.getPrice());
-            item.setQuantity(request.getQuantity());
-            item.setSubTotal(subTotal);
-            OrderVariety itemUpdated = itemService.save(item);
+            Advance advance = advanceService.findById(id);
+            Double amount = request.getAmount();
+            Double oldAmount = advance.getAmount();
+            advance.setAmount(amount);
+            advance.setDate(request.getDate());
+            VitroOrder order = advance.getVitroOrder();
+            Advance advanceUpdated = advanceService.save(advance);
 
-            Double total = (order.getTotal() - oldSubTotal) + subTotal;
-            order.setTotal(total);
-            order.setPending(total - order.getTotalAdvance());
+            Double totalAdvance = (order.getTotalAdvance() - oldAmount) + amount;
+            order.setTotalAdvance(totalAdvance);
+            order.setPending(order.getTotal() - totalAdvance);
             orderService.save(order);
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
-                .message("El item del pedido invitro se actualizo con exito")
-                .data(itemUpdated)
+                .message("El adelanto se actualizo con exito")
+                .data(advanceUpdated)
                 .build(), HttpStatus.OK);
         }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse
@@ -115,19 +107,19 @@ public class OrderVarietyController {
     @DeleteMapping("{id}")
     public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
         try {
-            OrderVariety item = itemService.findById(id);
-            Double oldSubTotal = item.getSubTotal();
-            VitroOrder order = item.getVitroOrder();
-            itemService.delete(item);
+            Advance advance = advanceService.findById(id);
+            Double oldAmount = advance.getAmount();
+            VitroOrder order = advance.getVitroOrder();
+            advanceService.delete(advance);
 
-            Double total = order.getTotal() - oldSubTotal;
-            order.setTotal(total);
-            order.setPending(total - order.getTotalAdvance());
+            Double totalAdvance = order.getTotalAdvance() - oldAmount;
+            order.setTotalAdvance(totalAdvance);
+            order.setPending(order.getTotal() - totalAdvance);
             orderService.save(order);
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
-                .message("El item del pedido invitro se elimino con exito")
+                .message("El adelanto se elimino con exito")
                 .build(), HttpStatus.OK);
         }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse
