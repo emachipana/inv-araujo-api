@@ -18,7 +18,8 @@ public class OrderRequest {
     private Integer clientId;
     private ShipType shipType;
     private Integer invoiceId;
-    private String destination;
+    private String department;
+    private String city;
     private Status status;
     private LocalDate date;
 }

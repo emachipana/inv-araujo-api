@@ -22,7 +22,6 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.OneToOne;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -56,9 +55,10 @@ public class Order {
     @OneToOne
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
-    @NotEmpty(message = "El destino del pedido no puede ir vacio")
-    @Size(min = 3)
-    private String destination;
+    @NotEmpty(message = "El departamento del pedido no puede ir vacio")
+    private String department;
+    @NotEmpty(message = "La ciudad del pedido no puede ir vacio")
+    private String city;
     @Column(nullable = false)
     private LocalDate date;
     @Column(nullable = false)
