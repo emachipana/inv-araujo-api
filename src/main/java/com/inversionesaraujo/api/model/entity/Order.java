@@ -47,9 +47,6 @@ public class Order {
     @NotNull(message = "El tipo de envio no puede ir vacio")
     private ShipType shippingType;
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "El tipo de pago no puede ir vacio")
-    private PayType payType;
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
     private Status status = Status.PENDIENTE;

@@ -72,7 +72,6 @@ public class OrderController {
                 .client(client)
                 .invoice(invoice)
                 .destination(request.getDestination())
-                .payType(request.getPayType())
                 .shippingType(shipType)
                 .date(date)
                 .maxShipDate(maxShipDate)
@@ -102,7 +101,6 @@ public class OrderController {
             order.setDestination(request.getDestination());
             order.setShippingType(request.getShipType());
             order.setStatus(request.getStatus());
-            order.setPayType(request.getPayType());
 
             Order orderUptaded = orderService.save(order);
 
