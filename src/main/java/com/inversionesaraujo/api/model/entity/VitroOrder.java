@@ -57,7 +57,6 @@ public class VitroOrder {
     private Double pending = 0.0;
     @NotNull(message = "La fecha de inicio no puede ir vacia")
     private LocalDate initDate;
-    @NotNull(message = "La fecha de fin no puede ir vacia")
     private LocalDate finishDate;
     private LocalDate pickDate;
     @NotEmpty(message = "El telefono no puede ir vacio")
