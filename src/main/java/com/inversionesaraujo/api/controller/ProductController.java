@@ -93,6 +93,7 @@ public class ProductController {
                 .name(product.getName())
                 .brand(product.getBrand())
                 .price(product.getPrice())
+                .purchasePrice(product.getPurchasePrice())
                 .stock(product.getStock())
                 .build());
 
@@ -116,6 +117,7 @@ public class ProductController {
             Product product = productService.findById(id);
             product.setCategory(category);
             product.setPrice(productRequest.getPrice());
+            product.setPurchasePrice(productRequest.getPurchasePrice());
             product.setActive(productRequest.getIsActive());
             product.setStock(productRequest.getStock());
             product.setName(productRequest.getName());
