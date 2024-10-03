@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class InvoiceItemRequest {
     private Integer invoiceId;
-    private Integer productId;
+    private String name;
+    private String itemCode;
+    private Double price;
     private Integer quantity;
     private boolean isIgvApply = true;
 }
