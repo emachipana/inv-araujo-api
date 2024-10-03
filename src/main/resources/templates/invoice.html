@@ -36,7 +36,7 @@
         </thead>
         <tbody>
             <tr th:each="item : ${items}">
-                <td th:text="${item.product.name}"></td>
+                <td th:text="${item.name}"></td>
                 <td>S/. <span style="font-weight: 400;" th:text="${item.price}"></span></td>
                 <td th:text="${item.quantity}"></td>
                 <td>S/. <span style="font-weight: 400;" th:text="${item.subTotal}"></span></td>

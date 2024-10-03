@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inversionesaraujo.api.model.entity.Invoice;
 import com.inversionesaraujo.api.model.payload.FileResponse;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
+import com.inversionesaraujo.api.model.request.InvoiceRequest;
 import com.inversionesaraujo.api.service.I_Image;
 import com.inversionesaraujo.api.service.I_Invoice;
 
@@ -64,6 +66,8 @@ public class InvoiceController {
             FileResponse response = invoiceService.generateAndUploadPDF(invoice);
             invoice.setPdfUrl(response.getFileUrl());
             invoice.setPdfFirebaseId(response.getFileName());
+            invoice.setIsGenerated(true);
+            invoice.setSerie("E-" + invoice.getId());
             Invoice updatedInvoice = invoiceService.save(invoice);
 
             return new ResponseEntity<>(MessageResponse
@@ -97,6 +101,27 @@ public class InvoiceController {
                 .builder()
                 .message(error.getMessage())
                 .build(), HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<MessageResponse> update(@PathVariable Integer id, @RequestBody InvoiceRequest request) {
+        try {
+            Invoice invoice = invoiceService.findById(id);
+            invoice.setIssueDate(request.getIssueDate());
+            invoice.setComment(request.getComment());
+            Invoice updatedInvoice = invoiceService.save(invoice);
+
+            return new ResponseEntity<>(MessageResponse
+                .builder()
+                .message("El comprobante se actualizo con exito")
+                .data(updatedInvoice)
+                .build(), HttpStatus.OK);
+        }catch(Exception error) {
+            return new ResponseEntity<>(MessageResponse
+                .builder()
+                .message(error.getMessage())
+                .build(), HttpStatus.NOT_FOUND);
         }
     }
 

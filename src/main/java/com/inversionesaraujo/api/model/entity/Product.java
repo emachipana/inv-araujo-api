@@ -44,6 +44,9 @@ public class Product {
     @NotNull(message = "El precio no puede ir vacio")
     @PositiveOrZero
     private Double price;
+    @NotNull(message = "El precio de compra no puede ir vacio")
+    @PositiveOrZero
+    private Double purchasePrice;
     @NotNull(message = "El stock no puede ir vacio")
     @PositiveOrZero
     private Integer stock;

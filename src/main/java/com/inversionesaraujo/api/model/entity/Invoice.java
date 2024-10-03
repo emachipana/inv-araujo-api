@@ -53,8 +53,10 @@ public class Invoice {
     private String pdfFirebaseId;
     @NotEmpty(message = "La direccion no puede ir vacia")
     private String address;
-    @NotEmpty(message = "La serie del comprobante no pude ir vacia")
     private String serie;
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isGenerated = false;
     @Column(nullable = false)
     private Double total;
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
