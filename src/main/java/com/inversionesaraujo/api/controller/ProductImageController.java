@@ -76,8 +76,11 @@ public class ProductImageController {
     @DeleteMapping("{id}")
     public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
         try {
-            ProductImage image = productImageService.findById(id);
-            productImageService.delete(image);
+            ProductImage productImage = productImageService.findById(id);
+            Image image = productImage.getImage();
+            productImageService.delete(productImage);
+            imageService.delete(image);
+            imageService.deleteImage(image.getFirebaseId());
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
