@@ -42,7 +42,7 @@ public class DiscountController {
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message(error.getMessage())
-                .build(), HttpStatus.OK);
+                .build(), HttpStatus.NOT_FOUND);
         }
     }
  
@@ -100,6 +100,8 @@ public class DiscountController {
     public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
         try {
             Discount discount = discountService.findById(id);
+            Product product = discount.getProduct();
+            product.setDiscount(null);
             discountService.delete(discount);
 
             return new ResponseEntity<>(MessageResponse
