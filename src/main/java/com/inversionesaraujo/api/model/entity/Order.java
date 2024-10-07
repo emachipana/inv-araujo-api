@@ -42,11 +42,8 @@ public class Order {
     @JoinColumn(name = "client_id")
     @NotNull(message = "El id del client no puede ir vacio")
     private Client client;
-    @Enumerated(EnumType.STRING)
-    @NotNull(message = "El tipo de envio no puede ir vacio")
-    private ShipType shippingType;
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     @Builder.Default
     private Status status = Status.PENDIENTE;
     @Column(nullable = false)
