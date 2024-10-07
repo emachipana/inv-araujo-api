@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inversionesaraujo.api.model.entity.Client;
 import com.inversionesaraujo.api.model.entity.Invoice;
 import com.inversionesaraujo.api.model.entity.Order;
-import com.inversionesaraujo.api.model.entity.ShipType;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.model.request.OrderRequest;
 import com.inversionesaraujo.api.service.IClient;
@@ -63,9 +62,8 @@ public class OrderController {
         try {
             Client client = clientService.findById(request.getClientId());
             Invoice invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
-            ShipType shipType = request.getShipType();
             LocalDate date = request.getDate() == null ? LocalDate.now() : request.getDate();
-            LocalDate maxShipDate = date.plusDays(shipType == ShipType.NORMAL ? 5 : 2);
+            LocalDate maxShipDate = date.plusDays(3);
 
             Order order = orderService.save(Order
                 .builder()
@@ -73,7 +71,6 @@ public class OrderController {
                 .invoice(invoice)
                 .department(request.getDepartment())
                 .city(request.getCity())
-                .shippingType(shipType)
                 .date(date)
                 .maxShipDate(maxShipDate)
                 .build());
@@ -97,12 +94,16 @@ public class OrderController {
             Order order = orderService.findById(id);
             Client client = clientService.findById(id);
             Invoice invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
+            LocalDate date = request.getDate();
+            LocalDate maxShipDate = date.plusDays(3);
+            
             order.setClient(client);
             order.setInvoice(invoice);
             order.setDepartment(request.getDepartment());
             order.setCity(request.getCity());
-            order.setShippingType(request.getShipType());
             order.setStatus(request.getStatus());
+            order.setDate(date);
+            order.setMaxShipDate(maxShipDate);
 
             Order orderUptaded = orderService.save(order);
 
