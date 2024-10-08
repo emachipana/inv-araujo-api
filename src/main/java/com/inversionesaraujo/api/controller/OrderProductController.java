@@ -54,6 +54,13 @@ public class OrderProductController {
         try {
             Order order = orderService.findById(request.getOrderId());
             Product product = productService.findById(request.getProductId());
+            if(request.getQuantity() > product.getStock()) {
+                return new ResponseEntity<>(MessageResponse
+                    .builder()
+                    .message("No hay suficiente stock")
+                    .build(), HttpStatus.NOT_ACCEPTABLE);
+            }
+
             Double price = product.getPrice();
             if(product.getDiscount() != null) price = product.getDiscount().getPrice();
             Double subTotal = price * request.getQuantity();
@@ -69,6 +76,9 @@ public class OrderProductController {
 
             order.setTotal(order.getTotal() + subTotal);
             orderService.save(order);
+
+            product.setStock(product.getStock() - request.getQuantity());
+            productService.save(product);
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
@@ -88,6 +98,14 @@ public class OrderProductController {
         try {
             OrderProduct item = itemService.findById(id);
             Product product = productService.findById(request.getProductId());
+            Integer firstStock = product.getStock() + item.getQuantity();
+            if(request.getQuantity() > firstStock) {
+                return new ResponseEntity<>(MessageResponse
+                    .builder()
+                    .message("No hay suficiente stock")
+                    .build(), HttpStatus.NOT_ACCEPTABLE);
+            }
+
             Double price = product.getPrice();
             if(product.getDiscount() != null) price = product.getDiscount().getPrice();
             Double subTotal = price * request.getQuantity();
@@ -102,6 +120,9 @@ public class OrderProductController {
             Order order = item.getOrder();
             order.setTotal((order.getTotal() - oldSubTotal) + subTotal);
             orderService.save(order);
+
+            product.setStock(firstStock - request.getQuantity());
+            productService.save(product);
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
@@ -122,9 +143,13 @@ public class OrderProductController {
             OrderProduct item = itemService.findById(id);
             Double subTotal = item.getSubTotal();
             Order order = item.getOrder();
+            Product product = item.getProduct();
+            Integer firstStock = product.getStock() + item.getQuantity();
             itemService.delete(item);
             order.setTotal(order.getTotal() - subTotal);
             orderService.save(order);
+            product.setStock(firstStock);
+            productService.save(product);
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
