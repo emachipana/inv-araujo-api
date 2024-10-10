@@ -41,8 +41,9 @@ public class Admin {
     @Email(message = "El formato es incorrecto")
     private String email;
     @Column(nullable = false)
-    private Double totalProfit;
-    @OneToOne(mappedBy = "admin")
+    @Builder.Default
+    private Double totalProfit = 0.0;
+    @OneToOne(mappedBy = "admin", cascade = CascadeType.ALL)
     private User user;
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Profit> profits;
