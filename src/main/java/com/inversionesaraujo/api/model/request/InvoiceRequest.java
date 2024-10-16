@@ -14,4 +14,5 @@ import lombok.NoArgsConstructor;
 public class InvoiceRequest {
     private LocalDate issueDate;
     private String comment;
+    private String address;
 }

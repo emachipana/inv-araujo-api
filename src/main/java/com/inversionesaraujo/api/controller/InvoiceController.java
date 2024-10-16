@@ -110,6 +110,7 @@ public class InvoiceController {
             Invoice invoice = invoiceService.findById(id);
             invoice.setIssueDate(request.getIssueDate());
             invoice.setComment(request.getComment());
+            invoice.setAddress(request.getAddress());
             Invoice updatedInvoice = invoiceService.save(invoice);
 
             return new ResponseEntity<>(MessageResponse
