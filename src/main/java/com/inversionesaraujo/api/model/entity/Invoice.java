@@ -46,12 +46,10 @@ public class Invoice {
     private String rSocial;
     @Column(nullable = false)
     private LocalDate issueDate;
-    @Size(min = 5)
     @Column(columnDefinition = "TEXT")
     private String comment;
     private String pdfUrl;
     private String pdfFirebaseId;
-    @NotEmpty(message = "La direccion no puede ir vacia")
     private String address;
     private String serie;
     @Column(nullable = false)

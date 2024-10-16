@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.model.entity.Invoice;
+import com.inversionesaraujo.api.model.entity.InvoiceType;
 import com.inversionesaraujo.api.model.payload.FileResponse;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.model.request.InvoiceRequest;
@@ -30,7 +32,9 @@ public class InvoiceController {
     private I_Image imageService;
 
     @GetMapping
-    public List<Invoice> getAll() {
+    public List<Invoice> getAll(@RequestParam(required = false) InvoiceType type) {
+        if(type != null) return invoiceService.findByInvoiceType(type);
+
         return invoiceService.listAll();
     }
 
@@ -110,6 +114,7 @@ public class InvoiceController {
             Invoice invoice = invoiceService.findById(id);
             invoice.setIssueDate(request.getIssueDate());
             invoice.setComment(request.getComment());
+            invoice.setAddress(request.getAddress());
             Invoice updatedInvoice = invoiceService.save(invoice);
 
             return new ResponseEntity<>(MessageResponse
