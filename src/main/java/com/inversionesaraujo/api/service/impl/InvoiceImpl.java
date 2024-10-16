@@ -16,6 +16,7 @@ import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
 import com.inversionesaraujo.api.model.dao.InvoiceDao;
 import com.inversionesaraujo.api.model.entity.Invoice;
+import com.inversionesaraujo.api.model.entity.InvoiceType;
 import com.inversionesaraujo.api.model.payload.FileResponse;
 import com.inversionesaraujo.api.service.I_Invoice;
 
@@ -79,5 +80,11 @@ public class InvoiceImpl implements I_Invoice {
             .fileUrl(pdfUrl)
             .fileName(fileName)
             .build();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Invoice> findByInvoiceType(InvoiceType type) {
+        return invoiceRepo.findByInvoiceType(type);
     }
 }
