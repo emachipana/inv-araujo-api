@@ -17,7 +17,7 @@ public class FirebaseConfig {
     @PostConstruct
     public void init() {
         try {
-            FileInputStream serviceAccount = new FileInputStream("src/main/resources/firebase-adminsdk.json");
+            FileInputStream serviceAccount = new FileInputStream(System.getenv("ADMINSDK_PATH"));
 
             FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
