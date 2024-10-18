@@ -2,7 +2,6 @@ package com.inversionesaraujo.api.service.impl;
 
 import java.util.List;
 import java.io.ByteArrayOutputStream;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -71,7 +70,8 @@ public class InvoiceImpl implements I_Invoice {
         byte[] pdfBytes = byteOutput.toByteArray();
 
         Bucket bucket = StorageClient.getInstance().bucket();
-        String fileName = UUID.randomUUID().toString();
+        String type = invoice.getInvoiceType().toString();
+        String fileName = type.toLowerCase() + "-" + invoice.getId() + "-" + invoice.getRSocial().toLowerCase().replaceAll("\\s+", "");
         bucket.create(fileName, pdfBytes, "application/pdf");
         String pdfUrl = String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media", bucket.getName(), fileName);
 

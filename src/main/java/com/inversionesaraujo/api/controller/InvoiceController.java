@@ -60,11 +60,18 @@ public class InvoiceController {
     public ResponseEntity<MessageResponse> generatePDF(@PathVariable Integer id) {
         try {
             Invoice invoice = invoiceService.findById(id);
+            if(invoice.getPdfUrl() != null) {
+                return new ResponseEntity<>(MessageResponse
+                    .builder()
+                    .message("El comprobante ya tienen un pdf generado")
+                    .build(), HttpStatus.NOT_ACCEPTABLE);
+            }
+
             if(invoice.getItems().size() == 0) {
                 return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("Necesitas tener items")
-                .build(), HttpStatus.NOT_ACCEPTABLE);
+                    .builder()
+                    .message("Necesitas tener items")
+                    .build(), HttpStatus.NOT_ACCEPTABLE);
             }
 
             FileResponse response = invoiceService.generateAndUploadPDF(invoice);
@@ -84,6 +91,39 @@ public class InvoiceController {
                 .builder()
                 .message(error.getMessage())
                 .build(), HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @DeleteMapping("deletePDF/{id}")
+    public ResponseEntity<MessageResponse> deletePDF(@PathVariable Integer id) {
+        try {
+            Invoice invoice = invoiceService.findById(id);
+            if(invoice.getPdfUrl() == null) {
+                return new ResponseEntity<>(MessageResponse
+                    .builder()
+                    .message("El comprobante not tiene un pdf generado")
+                    .build(), HttpStatus.NOT_ACCEPTABLE);
+            }
+
+            imageService.deleteImage(invoice.getPdfFirebaseId());
+
+            invoice.setPdfUrl(null);
+            invoice.setPdfFirebaseId(null);
+            invoice.setIsGenerated(false);
+            invoice.setSerie(null);
+
+            Invoice updatedInvoice = invoiceService.save(invoice);
+
+            return new ResponseEntity<>(MessageResponse
+                .builder()
+                .message("El PDF se elimino correctamente")
+                .data(updatedInvoice)
+                .build(), HttpStatus.OK);
+        }catch(Exception error) {
+            return new ResponseEntity<>(MessageResponse
+                .builder()
+                .message(error.getMessage())
+                .build(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
