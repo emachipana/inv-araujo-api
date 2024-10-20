@@ -1,47 +1,143 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org/">
 <head>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        h1, h3, h2, th { color: #333; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; border: 1px solid #ddd; font-size: 14px }
-        th { background-color: #f4f4f4; }
-        p { 
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-        }
-        span { font-weight: 500; }
-    </style>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .img {
+      width: 150px;
+      object-fit: cover;
+    }
+
+    .header-title {
+      font-size: 13px;
+      color: #919191;
+      line-height: 2px;
+    }
+
+    .data-name {
+      font-size: 15.5px;
+      font-weight: 600;
+      color: #00AA95;
+      line-height: 2px;
+    }
+
+    .name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #3E3E3E;
+      line-height: 2px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      padding: 8px;
+      border: 1px solid #ddd;
+    }
+    
+    th {
+      font-weight: 600;
+      color: #00AA95;
+      font-size: 14px;
+      background-color: #F9F9F9;
+    }
+
+    td {
+      color: #767676;
+      text-align: center;
+      font-weight: 600;
+      font-size: 13px
+    }
+
+    .container {
+      width: 100%;
+      display: block;
+      text-align: center;
+    }
+
+    .name-section {
+      display: inline-block;
+      width: 49%;
+    }
+  </style>
 </head>
 <body>
-    <h1>Inversiones Araujo JL</h1>
-    <h2>Tipo de comprobante: <span th:text="${invoiceType}"></span></h2>
-    <h3>Cliente</h3>
-    <p>Nombre: <span th:text="${clientName}"></span></p>
-    <p>
-        <span style="font-weight: 600;" th:text="${documentType}"></span>: <span th:text="${document}"></span>
-    </p>
-    <p>Dirección: <span th:text="${address}"></span></p>
-    <p>Monto Total: S/. <span th:text="${total}"></span></p>
+  <div class="container">
+    <img class="img" src="../static/img/logo.png" th:src="@{classpath:/static/img/logo.png}" />
+  </div>
+  <div style="display: block; width: 100%;">
+    <div class="name-section">
+      <p class="data-name">Empresa</p>
+      <h2 class="name">Inversiones Araujo JL E.I.R.L.</h2>
+      <p class="header-title">20600964471</p>
+      <p class="header-title">Jr San Bernardo Sapallanga Huancayo</p>
+    </div>
+    <div class="name-section">
+      <p class="data-name">Cliente</p>
+      <h2 class="name" th:text="${rsocial}"></h2>
+      <p class="header-title" th:text="${document}"></p>
+      <p class="header-title" th:text="${address}">-</p>
+    </div>
+  </div>
+  <div class="name-section">
+    <p class="data-name">Tipo</p>
+    <h2 class="name" th:text="${invoiceType}"></h2>
+    <p class="header-title" th:text="${serie}"></p>
+    <p class="header-title">Emisión:  <span th:text="${issueDate}"></span></p>
+  </div>
+  <div class="container">
     <table>
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
-                <th>Sub Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="item : ${items}">
-                <td th:text="${item.name}"></td>
-                <td>S/. <span style="font-weight: 400;" th:text="${item.price}"></span></td>
-                <td th:text="${item.quantity}"></td>
-                <td>S/. <span style="font-weight: 400;" th:text="${item.subTotal}"></span></td>
-            </tr>
-        </tbody>
+      <thead>
+        <tr>
+          <th>Nro.</th>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Cantidad</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="item, status : ${items}">
+          <td th:text="${status.index + 1}"></td>
+          <td th:text="${item.name}"></td>
+          <td>S/. <span th:text="${item.price}"></span></td>
+          <td th:text="${item.quantity}"></td>
+          <td>S/. <span th:text="${item.subTotal}"></span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Subtotal</td>
+          <td>S/. <span th:text="${base}"></span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>IGV</td>
+          <td>S/. <span th:text="${igv}"></span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Total</td>
+          <td>S/. <span th:text="${total}"></span></td>
+        </tr>
+      </tbody>
     </table>
+  </div>
+  <div style="margin: 1rem 0;">
+    <h2 class="data-name" style="font-size: 15px;">Nota:</h2>
+    <p class="header-title" th:text="${comment}">-</p>
+  </div>
 </body>
 </html>

@@ -1,5 +1,8 @@
 package com.inversionesaraujo.api.service.impl;
 
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.io.ByteArrayOutputStream;
 
@@ -7,12 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring6.SpringTemplateEngine;
+// import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
+import com.inversionesaraujo.api.helpers.Capitalize;
 import com.inversionesaraujo.api.model.dao.InvoiceDao;
 import com.inversionesaraujo.api.model.entity.Invoice;
 import com.inversionesaraujo.api.model.entity.InvoiceType;
@@ -24,7 +29,7 @@ public class InvoiceImpl implements I_Invoice {
     @Autowired
     private InvoiceDao invoiceRepo;
     @Autowired
-    private SpringTemplateEngine templateEngine;
+    private TemplateEngine templateEngine;
 
     @Transactional(readOnly = true)
     @Override
@@ -53,13 +58,25 @@ public class InvoiceImpl implements I_Invoice {
     @Override
     public FileResponse generateAndUploadPDF(Invoice invoice) {
         Context context = new Context();
-        context.setVariable("invoiceType", invoice.getInvoiceType());   
-        context.setVariable("clientName", invoice.getRSocial());   
-        context.setVariable("documentType", invoice.getDocumentType());
-        context.setVariable("document", invoice.getDocument());
-        context.setVariable("address", invoice.getAddress());
-        context.setVariable("total", invoice.getTotal());
+        LocalDate date = invoice.getIssueDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
+        context.setVariable("issueDate", date.format(formatter));
+        context.setVariable("invoiceType", invoice.getInvoiceType());  
+        context.setVariable("serie", (invoice.getInvoiceType() == InvoiceType.BOLETA ? "B-" : "F-") + invoice.getId());
+        context.setVariable("rsocial", Capitalize.capitalizeEachWord(invoice.getRSocial()));   
+        context.setVariable("document", invoice.getDocumentType() + ":" + " " + invoice.getDocument());
+        String address = invoice.getAddress().isEmpty() ? "-" : Capitalize.capitalizeEachWord(invoice.getAddress());
+        context.setVariable("address", address);
         context.setVariable("items", invoice.getItems());
+        String comment = invoice.getComment().isEmpty() ? "-" : Capitalize.capitalizeEachWord(invoice.getComment());
+        context.setVariable("comment", comment);
+        Double total = invoice.getTotal();
+        Double base = total / 1.18;
+        Double igv = base * 0.18;
+        DecimalFormat df = new DecimalFormat("#.00");
+        context.setVariable("base", df.format(base));
+        context.setVariable("igv", df.format(igv));
+        context.setVariable("total", invoice.getTotal());
 
         String htmlContent = templateEngine.process("invoice", context);
         ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();

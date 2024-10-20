@@ -78,7 +78,7 @@ public class InvoiceController {
             invoice.setPdfUrl(response.getFileUrl());
             invoice.setPdfFirebaseId(response.getFileName());
             invoice.setIsGenerated(true);
-            invoice.setSerie("E-" + invoice.getId());
+            invoice.setSerie((invoice.getInvoiceType() == InvoiceType.BOLETA ? "B-" : "F-") + invoice.getId());
             Invoice updatedInvoice = invoiceService.save(invoice);
 
             return new ResponseEntity<>(MessageResponse
