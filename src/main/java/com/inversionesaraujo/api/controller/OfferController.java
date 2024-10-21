@@ -70,8 +70,9 @@ public class OfferController {
         try {
             Offer offerToUpdate = offerService.findById(id);
             offerToUpdate.setTitle(offer.getTitle());
-            offerToUpdate.setSubTitle(offer.getSubTitle());
+            offerToUpdate.setDescription(offer.getDescription());
             offerToUpdate.setUsed(offer.isUsed());
+            offerToUpdate.setMarkedWord(offer.getMarkedWord());
             Offer offerUpdated = offerService.save(offerToUpdate);
 
             return new ResponseEntity<>(MessageResponse

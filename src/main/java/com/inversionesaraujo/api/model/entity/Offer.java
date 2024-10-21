@@ -31,9 +31,11 @@ public class Offer {
     @NotEmpty(message = "El titulo no puede ir vacio")
     @Size(min = 3, max = 100)
     private String title;
-    @NotEmpty(message = "El sub titulo no puede ir vacio")
+    @NotEmpty(message = "La descripcion no puede ir vacia")
     @Size(min = 3, max = 100)
-    private String subTitle;
+    private String description;
+    @NotEmpty(message = "La palabra a resaltar no puede ir vacia")
+    private String markedWord;
     @Column(nullable = false)
     @Builder.Default
     private boolean isUsed = false;
