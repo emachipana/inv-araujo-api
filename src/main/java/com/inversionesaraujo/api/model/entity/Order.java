@@ -49,7 +49,7 @@ public class Order {
     @Column(nullable = false)
     @Builder.Default
     private Double total = 0.0;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
     @NotEmpty(message = "El departamento del pedido no puede ir vacio")
