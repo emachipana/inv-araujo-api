@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inversionesaraujo.api.model.entity.Client;
 import com.inversionesaraujo.api.model.entity.Invoice;
 import com.inversionesaraujo.api.model.entity.Order;
+import com.inversionesaraujo.api.model.entity.Profit;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.model.request.OrderRequest;
 import com.inversionesaraujo.api.service.IClient;
 import com.inversionesaraujo.api.service.IOrder;
+import com.inversionesaraujo.api.service.IProfit;
 import com.inversionesaraujo.api.service.I_Invoice;
 
 @RestController
@@ -33,6 +36,8 @@ public class OrderController {
     private IClient clientService;
     @Autowired
     private I_Invoice invoiceService;
+    @Autowired
+    private IProfit profitService;
 
     @GetMapping
     public List<Order> getAll() {
@@ -124,6 +129,14 @@ public class OrderController {
     public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
         try {
             Order order = orderService.findById(id);
+            LocalDate date = order.getDate();
+            Month month = date.getMonth();
+            Profit profit = profitService.findByMonth(month.toString());
+            Double income = profit.getIncome() - order.getTotal();
+            profit.setIncome(income);
+            profit.setProfit(income - profit.getTotalExpenses());
+            profitService.save(profit);
+
             orderService.delete(order);
 
             return new ResponseEntity<>(MessageResponse

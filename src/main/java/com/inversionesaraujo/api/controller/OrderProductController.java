@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
+import java.time.Month;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +14,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.model.entity.Admin;
 import com.inversionesaraujo.api.model.entity.Order;
 import com.inversionesaraujo.api.model.entity.OrderProduct;
 import com.inversionesaraujo.api.model.entity.Product;
+import com.inversionesaraujo.api.model.entity.Profit;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.model.request.OrderProductRequest;
+import com.inversionesaraujo.api.service.IAdmin;
 import com.inversionesaraujo.api.service.IOrder;
 import com.inversionesaraujo.api.service.IOrderProduct;
 import com.inversionesaraujo.api.service.IProduct;
+import com.inversionesaraujo.api.service.IProfit;
 
 @RestController
 @RequestMapping("/api/v1/orderProducts")
@@ -30,6 +36,10 @@ public class OrderProductController {
     private IOrder orderService;
     @Autowired
     private IProduct productService;
+    @Autowired
+    private IProfit profitService;
+    @Autowired
+    private IAdmin adminService;
 
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
@@ -74,8 +84,29 @@ public class OrderProductController {
                 .price(price)
                 .build());
 
-            order.setTotal(order.getTotal() + subTotal);
+            Double total = order.getTotal() + subTotal;
+            order.setTotal(total);
             orderService.save(order);
+
+            Month month = order.getDate().getMonth();
+            Profit profit = profitService.findByMonth(month.toString());
+            if(profit == null) {
+                String email = System.getenv("ADMIN_EMAIL");
+                Admin admin = adminService.findByEmail(email);
+                profitService.save(Profit.builder()
+                    .admin(admin)
+                    .date(order.getDate())
+                    .profit(total)
+                    .income(total)
+                    .month(month.toString())
+                    .build()
+                );
+            }else {
+                Double income = profit.getIncome() + total;
+                profit.setIncome(income);
+                profit.setProfit(income - profit.getTotalExpenses());
+                profitService.save(profit);
+            }
 
             product.setStock(product.getStock() - request.getQuantity());
             productService.save(product);
@@ -118,8 +149,16 @@ public class OrderProductController {
             OrderProduct itemUpdated = itemService.save(item);
 
             Order order = item.getOrder();
-            order.setTotal((order.getTotal() - oldSubTotal) + subTotal);
+            Double total = (order.getTotal() - oldSubTotal) + subTotal;
+            order.setTotal(total);
             orderService.save(order);
+
+            Month month = order.getDate().getMonth();
+            Profit profit = profitService.findByMonth(month.toString());
+            Double income = (profit.getIncome() - oldSubTotal) + total;
+            profit.setIncome(income);
+            profit.setProfit(income - profit.getTotalExpenses());
+            profitService.save(profit);
 
             product.setStock(firstStock - request.getQuantity());
             productService.save(product);
@@ -146,8 +185,17 @@ public class OrderProductController {
             Product product = item.getProduct();
             Integer firstStock = product.getStock() + item.getQuantity();
             itemService.delete(item);
-            order.setTotal(order.getTotal() - subTotal);
+            Double oldSubTotal = order.getTotal() - subTotal;
+            order.setTotal(oldSubTotal);
             orderService.save(order);
+
+            Month month = order.getDate().getMonth();
+            Profit profit = profitService.findByMonth(month.toString());
+            Double income = (profit.getIncome() - oldSubTotal);
+            profit.setIncome(income);
+            profit.setProfit(income - profit.getTotalExpenses());
+            profitService.save(profit);
+
             product.setStock(firstStock);
             productService.save(product);
 

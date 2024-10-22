@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,6 +44,27 @@ public class ProfitController {
                 .builder()
                 .message("El registro del ingreso se encontro con exito")
                 .data(profit)
+                .build(), HttpStatus.OK);
+        }catch(Exception error) {
+            return new ResponseEntity<>(MessageResponse
+                .builder()
+                .message(error.getMessage())
+                .build(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<MessageResponse> update(@PathVariable Integer id, ProfitRequest request) {
+        try {
+            Profit profit = profitService.findById(id);
+            profit.setIncome(request.getIncome());
+            profit.setProfit(request.getIncome() - profit.getTotalExpenses());
+            Profit updatedProfit = profitService.save(profit);
+
+            return new ResponseEntity<>(MessageResponse
+                .builder()
+                .message("El registro del ingreso se actualizo con exito")
+                .data(updatedProfit)
                 .build(), HttpStatus.OK);
         }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse
