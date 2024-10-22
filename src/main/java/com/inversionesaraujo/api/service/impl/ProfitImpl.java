@@ -39,4 +39,10 @@ public class ProfitImpl implements IProfit {
     public void delete(Profit profit) {
         profitDao.delete(profit);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Profit findByMonth(String month) {
+        return profitDao.findByMonth(month);
+    }
 }

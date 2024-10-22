@@ -11,6 +11,7 @@ public interface IProfit {
 
     Profit findById(Integer id);
 
-    void delete(Profit profit);
+    Profit findByMonth(String month);
 
+    void delete(Profit profit);
 }

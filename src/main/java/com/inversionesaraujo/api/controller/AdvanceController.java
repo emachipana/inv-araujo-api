@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
+import java.time.Month;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +14,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.model.entity.Admin;
 import com.inversionesaraujo.api.model.entity.Advance;
+import com.inversionesaraujo.api.model.entity.Profit;
 import com.inversionesaraujo.api.model.entity.VitroOrder;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.model.request.AdvanceRequest;
+import com.inversionesaraujo.api.service.IAdmin;
 import com.inversionesaraujo.api.service.IAdvance;
+import com.inversionesaraujo.api.service.IProfit;
 import com.inversionesaraujo.api.service.IVitroOrder;
 
 @RestController
@@ -26,6 +32,10 @@ public class AdvanceController {
     private IAdvance advanceService;
     @Autowired
     private IVitroOrder orderService;
+    @Autowired
+    private IProfit profitService;
+    @Autowired
+    private IAdmin adminService;
 
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
@@ -62,6 +72,26 @@ public class AdvanceController {
             order.setPending(order.getTotal() - totalAdvance);
             orderService.save(order);
 
+            Month month = request.getDate().getMonth();
+            Profit profit = profitService.findByMonth(month.toString());
+            if(profit == null) {
+                String email = System.getenv("ADMIN_EMAIL");
+                Admin admin = adminService.findByEmail(email);
+                profitService.save(Profit.builder()
+                    .admin(admin)
+                    .date(request.getDate())
+                    .income(totalAdvance)
+                    .profit(totalAdvance)
+                    .month(month.toString())
+                    .build()
+                );
+            }else {
+                Double income = profit.getIncome() + totalAdvance;
+                profit.setIncome(income);
+                profit.setProfit(income - profit.getTotalExpenses());
+                profitService.save(profit);
+            }
+
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message("El adelanto se creo con exito")
@@ -91,6 +121,13 @@ public class AdvanceController {
             order.setPending(order.getTotal() - totalAdvance);
             orderService.save(order);
 
+            Month month = request.getDate().getMonth();
+            Profit profit = profitService.findByMonth(month.toString());
+            Double income = (profit.getIncome() - oldAmount) + totalAdvance;
+            profit.setIncome(income);
+            profit.setProfit(income - profit.getTotalExpenses());
+            profitService.save(profit);
+
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message("El adelanto se actualizo con exito")
@@ -116,6 +153,13 @@ public class AdvanceController {
             order.setTotalAdvance(totalAdvance);
             order.setPending(order.getTotal() - totalAdvance);
             orderService.save(order);
+
+            Month month = advance.getDate().getMonth();
+            Profit profit = profitService.findByMonth(month.toString());
+            Double income = (profit.getIncome() - oldAmount);
+            profit.setIncome(income);
+            profit.setProfit(income - profit.getTotalExpenses());
+            profitService.save(profit);
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
