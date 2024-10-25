@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.model.entity.Admin;
 import com.inversionesaraujo.api.model.entity.Advance;
+import com.inversionesaraujo.api.model.entity.Client;
 import com.inversionesaraujo.api.model.entity.Profit;
 import com.inversionesaraujo.api.model.entity.VitroOrder;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.model.request.AdvanceRequest;
 import com.inversionesaraujo.api.service.IAdmin;
 import com.inversionesaraujo.api.service.IAdvance;
+import com.inversionesaraujo.api.service.IClient;
 import com.inversionesaraujo.api.service.IProfit;
 import com.inversionesaraujo.api.service.IVitroOrder;
 
@@ -36,6 +38,8 @@ public class AdvanceController {
     private IProfit profitService;
     @Autowired
     private IAdmin adminService;
+    @Autowired
+    private IClient clientService;
 
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
@@ -68,9 +72,13 @@ public class AdvanceController {
                 .build());
 
             Double totalAdvance = order.getTotalAdvance() + amount;
+            Client client = order.getClient();
             order.setTotalAdvance(totalAdvance);
             order.setPending(order.getTotal() - totalAdvance);
             orderService.save(order);
+
+            client.setConsumption(client.getConsumption() + amount);
+            clientService.save(client);
 
             Month month = request.getDate().getMonth();
             Profit profit = profitService.findByMonth(month.toString());
@@ -80,13 +88,13 @@ public class AdvanceController {
                 profitService.save(Profit.builder()
                     .admin(admin)
                     .date(request.getDate())
-                    .income(totalAdvance)
-                    .profit(totalAdvance)
+                    .income(amount)
+                    .profit(amount)
                     .month(month.toString())
                     .build()
                 );
             }else {
-                Double income = profit.getIncome() + totalAdvance;
+                Double income = profit.getIncome() + amount;
                 profit.setIncome(income);
                 profit.setProfit(income - profit.getTotalExpenses());
                 profitService.save(profit);
@@ -117,13 +125,17 @@ public class AdvanceController {
             Advance advanceUpdated = advanceService.save(advance);
 
             Double totalAdvance = (order.getTotalAdvance() - oldAmount) + amount;
+            Client client = order.getClient();
             order.setTotalAdvance(totalAdvance);
             order.setPending(order.getTotal() - totalAdvance);
             orderService.save(order);
 
+            client.setConsumption((client.getConsumption() - oldAmount) + amount);
+            clientService.save(client);
+
             Month month = request.getDate().getMonth();
             Profit profit = profitService.findByMonth(month.toString());
-            Double income = (profit.getIncome() - oldAmount) + totalAdvance;
+            Double income = (profit.getIncome() - oldAmount) + amount;
             profit.setIncome(income);
             profit.setProfit(income - profit.getTotalExpenses());
             profitService.save(profit);
@@ -150,9 +162,12 @@ public class AdvanceController {
             advanceService.delete(advance);
 
             Double totalAdvance = order.getTotalAdvance() - oldAmount;
+            Client client = order.getClient();
             order.setTotalAdvance(totalAdvance);
             order.setPending(order.getTotal() - totalAdvance);
             orderService.save(order);
+
+            client.setConsumption(client.getConsumption() - oldAmount);
 
             Month month = advance.getDate().getMonth();
             Profit profit = profitService.findByMonth(month.toString());

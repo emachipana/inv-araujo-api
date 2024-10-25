@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.model.entity.User;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
+import com.inversionesaraujo.api.model.payload.UserResponse;
 import com.inversionesaraujo.api.service.IUser;
 
 @RestController
@@ -32,11 +33,20 @@ public class UserController {
         try {
             String username = auth.getName();
             User currentUser = userService.findByUsername(username);
+            UserResponse userResponse = UserResponse
+                .builder()
+                .id(currentUser.getId())
+                .image(currentUser.getImage())
+                .name(currentUser.getAdmin() != null ? currentUser.getAdmin().getFirstName() : currentUser.getClient().getRsocial())
+                .lastName(currentUser.getAdmin() != null ? currentUser.getAdmin().getFirstName() : "")
+                .role(currentUser.getRole())
+                .username(currentUser.getUsername())
+                .build();
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message("El usuario se encontro con exito")
-                .data(currentUser)
+                .data(userResponse)
                 .build(), HttpStatus.OK);
         }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse
@@ -50,11 +60,20 @@ public class UserController {
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
         try {
             User user = userService.findById(id);
+            UserResponse userResponse = UserResponse
+                .builder()
+                .id(user.getId())
+                .image(user.getImage())
+                .name(user.getAdmin() != null ? user.getAdmin().getFirstName() : user.getClient().getRsocial())
+                .lastName(user.getAdmin() != null ? user.getAdmin().getFirstName() : "")
+                .role(user.getRole())
+                .username(user.getUsername())
+                .build();
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message("El usuario se encontro con exito")
-                .data(user)
+                .data(userResponse)
                 .build(), HttpStatus.OK);
         }catch(Exception error) {
             return new ResponseEntity<>(MessageResponse

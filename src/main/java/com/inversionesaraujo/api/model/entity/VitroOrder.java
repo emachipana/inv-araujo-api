@@ -13,12 +13,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,16 +34,10 @@ public class VitroOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotNull(message = "El tipo de documento no puede ir vacio")
-    @Enumerated(EnumType.STRING)
-    private DocumentType documentType;
-    @NotEmpty(message = "El documento no puede ir vacio")
-    @Size(max = 20)
-    private String document;
-    @NotEmpty(message = "Los nombres no pueden ir vacios")
-    @Size(min = 3)
-    private String firstName;
-    private String lastName;
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    @NotNull(message = "El id del client no puede ir vacio")
+    private Client client;
     @NotEmpty(message = "El departamento no puede ir vacio")
     private String department;
     @NotEmpty(message = "El departamento no puede ir vacio")
@@ -60,9 +54,6 @@ public class VitroOrder {
     private LocalDate initDate;
     private LocalDate finishDate;
     private LocalDate pickDate;
-    @NotEmpty(message = "El telefono no puede ir vacio")
-    @Size(max = 12)
-    private String phone;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     @Builder.Default

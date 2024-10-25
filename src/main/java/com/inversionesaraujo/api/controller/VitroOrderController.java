@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.model.entity.Client;
 import com.inversionesaraujo.api.model.entity.Invoice;
 import com.inversionesaraujo.api.model.entity.VitroOrder;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.model.request.VitroOrderRequest;
+import com.inversionesaraujo.api.service.IClient;
 import com.inversionesaraujo.api.service.IVitroOrder;
 import com.inversionesaraujo.api.service.I_Invoice;
 
@@ -29,6 +31,8 @@ public class VitroOrderController {
     private IVitroOrder orderService;
     @Autowired
     private I_Invoice invoiceService;
+    @Autowired
+    private IClient clientService;
 
     @GetMapping
     public List<VitroOrder> getAll(
@@ -63,17 +67,15 @@ public class VitroOrderController {
     public ResponseEntity<MessageResponse> create(@RequestBody VitroOrderRequest request) {
         try {
             Invoice invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
+            Client client = clientService.findById(request.getClientId());
+
             VitroOrder order = orderService.save(VitroOrder
                 .builder()
-                .documentType(request.getDocType())
-                .document(request.getDocument())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+                .client(client)
                 .department(request.getDepartment())
                 .city(request.getCity())
                 .initDate(request.getInitDate())
                 .finishDate(request.getFinishDate())
-                .phone(request.getPhone())
                 .invoice(invoice)
                 .build());
 
@@ -95,15 +97,11 @@ public class VitroOrderController {
         try {
             VitroOrder order = orderService.findById(id);
             Invoice invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
-            order.setDocumentType(request.getDocType());
-            order.setDocument(request.getDocument());
-            order.setFirstName(request.getFirstName());
-            order.setLastName(request.getLastName());
+
             order.setDepartment(request.getDepartment());
             order.setCity(request.getCity());
             order.setInitDate(request.getInitDate());
             order.setFinishDate(request.getFinishDate());
-            order.setPhone(request.getPhone());
             order.setStatus(request.getStatus());
             order.setInvoice(invoice);
             order.setPending(order.getTotal() - order.getTotalAdvance());
@@ -127,7 +125,12 @@ public class VitroOrderController {
     public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
         try {
             VitroOrder order = orderService.findById(id);
+            Client client = order.getClient();
+            Double totalAdvance = order.getTotalAdvance();
             orderService.delete(order);
+
+            client.setConsumption(client.getConsumption() - totalAdvance);
+            clientService.save(client);
 
             return new ResponseEntity<>(MessageResponse
                 .builder()

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inversionesaraujo.api.model.entity.Client;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.service.IClient;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/v1/clients")
@@ -28,6 +30,12 @@ public class ClientController {
     public List<Client> getAll() {
         return clientService.listAll();
     }
+
+    @GetMapping("/search")
+    public List<Client> search(@RequestParam String param) {
+        return clientService.search(param, param);
+    }
+    
 
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
@@ -73,6 +81,9 @@ public class ClientController {
             clientBody.setId(id);
             clientBody.setEmail(client.getEmail());
             clientBody.setConsumption(client.getConsumption());
+            clientBody.setDocument(client.getDocument());
+            clientBody.setDocumentType(client.getDocumentType());
+            clientBody.setRsocial(client.getRsocial());
             Client clientToUpdate = clientService.save(clientBody);
 
             return new ResponseEntity<>(MessageResponse

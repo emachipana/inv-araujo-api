@@ -3,6 +3,7 @@ package com.inversionesaraujo.api.model.entity;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,7 +32,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name = "clients", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
+@Table(name = "clients", uniqueConstraints = {@UniqueConstraint(columnNames = {"email", "document"})})
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,9 +53,8 @@ public class Client {
     @Column(nullable = false)
     private Double consumption;
     @NotEmpty(message = "Los nombres no pueden ir vacios")
-    @Size(min = 3, max = 100)
-    private String firstName;
-    private String lastName;
+    @Size(min = 3)
+    private String rsocial;
     @NotEmpty(message = "El email no puede ir vacio")
     @Email(message = "El formato es incorrecto")
     private String email;
@@ -62,6 +62,9 @@ public class Client {
     @JsonIgnore
     private User user;
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
+    @JsonIgnoreProperties("client")
     private List<Order> orders;
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("client")
+    private List<VitroOrder> vitroOrders;
 }
