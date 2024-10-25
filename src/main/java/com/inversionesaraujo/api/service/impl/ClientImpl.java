@@ -39,4 +39,10 @@ public class ClientImpl implements IClient {
     public void delete(Client client) {
         clientDao.delete(client);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Client> search(String document, String rsocial) {
+        return clientDao.findByRsocialContainingIgnoreCaseOrDocumentContainingIgnoreCase(rsocial, document);
+    }
 }

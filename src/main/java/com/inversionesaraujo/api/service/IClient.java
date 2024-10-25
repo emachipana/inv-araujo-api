@@ -7,6 +7,8 @@ import com.inversionesaraujo.api.model.entity.Client;
 public interface IClient {
     List<Client> listAll();
 
+    List<Client> search(String document, String rsocial);
+
     Client save(Client client);
 
     Client findById(Integer id);

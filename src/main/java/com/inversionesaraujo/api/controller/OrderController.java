@@ -97,12 +97,10 @@ public class OrderController {
     public ResponseEntity<MessageResponse> update(@PathVariable Integer id, @RequestBody OrderRequest request) {
         try {
             Order order = orderService.findById(id);
-            Client client = clientService.findById(id);
             Invoice invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
             LocalDate date = request.getDate();
             LocalDate maxShipDate = date.plusDays(3);
             
-            order.setClient(client);
             order.setInvoice(invoice);
             order.setDepartment(request.getDepartment());
             order.setCity(request.getCity());
@@ -129,6 +127,7 @@ public class OrderController {
     public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
         try {
             Order order = orderService.findById(id);
+            Client client = order.getClient();
             LocalDate date = order.getDate();
             Month month = date.getMonth();
             Profit profit = profitService.findByMonth(month.toString());
@@ -136,6 +135,9 @@ public class OrderController {
             profit.setIncome(income);
             profit.setProfit(income - profit.getTotalExpenses());
             profitService.save(profit);
+
+            client.setConsumption(client.getConsumption() - order.getTotal());
+            clientService.save(client);
 
             orderService.delete(order);
 
