@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.model.payload;
 
-import org.springframework.security.core.userdetails.UserDetails;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthResponse {
-    private UserDetails user;
+    private UserResponse user;
     private String token;    
 }
     
