@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.model.entity.Client;
 import com.inversionesaraujo.api.model.entity.Invoice;
 import com.inversionesaraujo.api.model.entity.Order;
 import com.inversionesaraujo.api.model.entity.Profit;
+import com.inversionesaraujo.api.model.entity.Status;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.model.request.OrderRequest;
 import com.inversionesaraujo.api.service.IClient;
@@ -40,8 +42,15 @@ public class OrderController {
     private IProfit profitService;
 
     @GetMapping
-    public List<Order> getAll() {
+    public List<Order> getAll(@RequestParam(required = false) Status status) {
+        if(status != null) return orderService.findByStatus(status);
+
         return orderService.listAll();
+    }
+
+    @GetMapping("search")
+    public List<Order> search(@RequestParam String param) {
+        return orderService.search(param, param, param);
     }
 
     @GetMapping("{id}")

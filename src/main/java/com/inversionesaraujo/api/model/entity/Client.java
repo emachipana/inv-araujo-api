@@ -17,7 +17,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -32,7 +31,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name = "clients", uniqueConstraints = {@UniqueConstraint(columnNames = {"email", "document"})})
+@Table(name = "clients")
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +45,7 @@ public class Client {
     private String phone;
     @NotEmpty(message = "El documento no puede ir vacio")
     @Size(max = 20)
+    @Column(unique = true)
     private String document;
     @NotNull(message = "El tipo de documento no puede ir vacio")
     @Enumerated(EnumType.STRING)
@@ -57,6 +57,7 @@ public class Client {
     private String rsocial;
     @NotEmpty(message = "El email no puede ir vacio")
     @Email(message = "El formato es incorrecto")
+    @Column(unique = true)
     private String email;
     @OneToOne(mappedBy = "client")
     @JsonIgnore

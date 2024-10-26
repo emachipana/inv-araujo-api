@@ -40,8 +40,15 @@ public class VitroOrderImpl implements IVitroOrder {
         orderDao.delete(vitroOrder);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<VitroOrder> findByTuberId(Integer tuberId) {
         return orderDao.findByTuberId(tuberId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<VitroOrder> search(String department, String city, String rsocial) {
+        return orderDao.findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(department, city, rsocial);
     }
 }

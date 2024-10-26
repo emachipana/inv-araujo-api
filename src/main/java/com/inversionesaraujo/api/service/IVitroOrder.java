@@ -14,4 +14,6 @@ public interface IVitroOrder {
     VitroOrder findById(Integer id);
 
     void delete(VitroOrder vitroOrder);
+
+    List<VitroOrder> search(String department, String city, String rsocial);
 }

@@ -104,4 +104,10 @@ public class InvoiceImpl implements I_Invoice {
     public List<Invoice> findByInvoiceType(InvoiceType type) {
         return invoiceRepo.findByInvoiceType(type);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Invoice> search(String rsocial, String document) {
+        return invoiceRepo.findByrSocialContainingIgnoreCaseOrDocumentContainingIgnoreCase(rsocial, document);
+    }
 }
