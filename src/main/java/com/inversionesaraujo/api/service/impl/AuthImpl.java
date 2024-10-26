@@ -37,7 +37,7 @@ public class AuthImpl implements IAuth {
             .id(user.getId())
             .image(user.getImage())
             .name(user.getAdmin() != null ? user.getAdmin().getFirstName() : user.getClient().getRsocial())
-            .lastName(user.getAdmin() != null ? user.getAdmin().getFirstName() : "")
+            .lastName(user.getAdmin() != null ? user.getAdmin().getLastName() : "")
             .role(user.getRole())
             .username(user.getUsername())
             .build();
@@ -64,7 +64,7 @@ public class AuthImpl implements IAuth {
             .id(newUser.getId())
             .image(newUser.getImage())
             .name(newUser.getAdmin() != null ? newUser.getAdmin().getFirstName() : newUser.getClient().getRsocial())
-            .lastName(newUser.getAdmin() != null ? newUser.getAdmin().getFirstName() : "")
+            .lastName(newUser.getAdmin() != null ? newUser.getAdmin().getLastName() : "")
             .role(newUser.getRole())
             .username(newUser.getUsername())
             .build();
