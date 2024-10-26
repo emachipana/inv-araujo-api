@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.inversionesaraujo.api.model.dao.OrderDao;
 import com.inversionesaraujo.api.model.entity.Order;
+import com.inversionesaraujo.api.model.entity.Status;
 import com.inversionesaraujo.api.service.IOrder;
 
 @Service
@@ -38,5 +39,16 @@ public class OrderImpl implements IOrder {
     @Override
     public void delete(Order order) {
         orderDao.delete(order);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Order> search(String department, String city, String rsocial) {
+        return orderDao.findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(department, city, rsocial);
+    }
+
+    @Override
+    public List<Order> findByStatus(Status status) {
+        return orderDao.findByStatus(status);
     }
 }
