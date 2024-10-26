@@ -35,14 +35,15 @@ public class VitroOrderController {
     private IClient clientService;
 
     @GetMapping
-    public List<VitroOrder> getAll(
-        @RequestParam(required = false) Integer tuberId
-    ) {
-        if(tuberId != null) {
-            return orderService.findByTuberId(tuberId);
-        }else {
-            return orderService.listAll();
-        }
+    public List<VitroOrder> getAll(@RequestParam(required = false) Integer tuberId) {
+        if(tuberId != null) return orderService.findByTuberId(tuberId);
+        
+        return orderService.listAll();
+    }
+
+    @GetMapping("search")
+    public List<VitroOrder> search(@RequestParam String param) {
+        return orderService.search(param, param, param);
     }
 
     @GetMapping("{id}")
