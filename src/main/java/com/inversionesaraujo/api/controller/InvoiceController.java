@@ -38,6 +38,11 @@ public class InvoiceController {
         return invoiceService.listAll();
     }
 
+    @GetMapping("search")
+    public List<Invoice> search(@RequestParam String param) {
+        return invoiceService.search(param, param);
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
         try {

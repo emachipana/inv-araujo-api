@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface InvoiceDao extends JpaRepository<Invoice, Integer> {
     List<Invoice> findByInvoiceType(InvoiceType invoiceType);
+
+    List<Invoice> findByrSocialContainingIgnoreCaseOrDocumentContainingIgnoreCase(String rsocial, String document);
 }

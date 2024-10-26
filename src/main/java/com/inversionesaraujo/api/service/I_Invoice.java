@@ -18,4 +18,6 @@ public interface I_Invoice {
     FileResponse generateAndUploadPDF(Invoice invoice);
 
     List<Invoice> findByInvoiceType(InvoiceType type);
+
+    List<Invoice> search(String rsocial, String document);
 }
