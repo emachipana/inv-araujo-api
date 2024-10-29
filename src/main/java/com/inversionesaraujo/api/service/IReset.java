@@ -8,4 +8,8 @@ public interface IReset {
     Reset findById(Integer id);
 
     void delete(Reset reset);
+
+    String generateCode();
+
+    Boolean validCode(Reset reset, String code) throws Exception;
 }

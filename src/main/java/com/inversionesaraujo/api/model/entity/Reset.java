@@ -1,5 +1,9 @@
 package com.inversionesaraujo.api.model.entity;
 
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,7 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,8 +30,12 @@ public class Reset {
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NotEmpty(message = "El id del usuario no puede ir vacio")
+    @NotNull
+    @JsonIgnore
     private User user;
     @Column(nullable = false)
+    @JsonIgnore
     private String code;
+    @NotNull
+    private LocalDateTime expiresAt;
 }
