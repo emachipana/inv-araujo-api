@@ -77,6 +77,8 @@ public class JwtImpl implements IJwt {
 
     @Override
     public String getUsernameFromToken(String token) {
+        if(isTokenExpired(token)) return null;
+
         return getClaim(token, Claims::getSubject);
     }
 }
