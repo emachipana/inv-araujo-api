@@ -2,27 +2,14 @@ package com.inversionesaraujo.api.service;
 
 import java.util.List;
 
-import com.inversionesaraujo.api.model.entity.Category;
+import org.springframework.data.domain.Page;
+
 import com.inversionesaraujo.api.model.entity.Product;
 
 public interface IProduct {
-    List<Product> listAll();
+    Page<Product> filterProducts(Double minPrice, Double maxPrice, Integer categoryId, Integer page, Integer size);
 
     List<Product> search(String name, String description);
-
-    List<Product> findByCategory(Integer categoryId);
-
-    List<Product> findByPrice(Double priceMin, Double priceMax);
-
-    List<Product> findByCategoryAndPrice(Category category, Double priceMin, Double priceMax);
-
-    List<Product> findByPriceLessThan(Double price);
-
-    List<Product> findByPriceGreaterThan(Double price);
-
-    List<Product> findByCategoryAndPriceLessThan(Category category, Double price);
-
-    List<Product> findByCategoryAndPriceGreaterThan(Category category, Double price);
 
     Product save(Product product);
 

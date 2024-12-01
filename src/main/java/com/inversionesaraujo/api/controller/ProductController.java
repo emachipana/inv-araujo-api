@@ -2,7 +2,8 @@ package com.inversionesaraujo.api.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,31 +32,14 @@ public class ProductController {
     private ICategory categoryService;
 
     @GetMapping
-    public List<Product> getAll(
+    public Page<Product> getAll(
         @RequestParam(required = false) Integer categoryId,
-        @RequestParam(required = false) Double priceMin,
-        @RequestParam(required = false) Double priceMax
+        @RequestParam(required = false) Double minPrice,
+        @RequestParam(required = false) Double maxPrice,
+        @RequestParam(defaultValue = "0") Integer page,
+        @RequestParam(defaultValue = "20") Integer size
     ) {
-        if(categoryId != null && priceMax != null && priceMin != null) {
-            Category category = categoryService.findById(categoryId);
-            return productService.findByCategoryAndPrice(category, priceMin, priceMax);
-        }else if(priceMax != null && priceMin != null) {
-            return productService.findByPrice(priceMin, priceMax);
-        }else if(categoryId != null && priceMax != null) {
-            Category category = categoryService.findById(categoryId);
-            return productService.findByCategoryAndPriceLessThan(category, priceMax);
-        }else if(categoryId != null && priceMin != null) {
-            Category category = categoryService.findById(categoryId);
-            return productService.findByCategoryAndPriceGreaterThan(category, priceMin);
-        }else if(categoryId != null) {
-            return productService.findByCategory(categoryId);
-        }else if(priceMax != null) {
-            return productService.findByPriceLessThan(priceMax);
-        }else if(priceMin != null) {
-            return productService.findByPriceGreaterThan(priceMin);
-        }else {
-            return productService.listAll();
-        }
+        return productService.filterProducts(minPrice, maxPrice, categoryId, page, size);
     }
 
     @GetMapping("/search")
