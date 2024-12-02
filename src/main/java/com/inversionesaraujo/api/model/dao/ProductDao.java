@@ -8,5 +8,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import com.inversionesaraujo.api.model.entity.Product;
 
 public interface ProductDao extends JpaRepository<Product, Integer>, JpaSpecificationExecutor<Product> {
-    List<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description);
+    List<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrBrandContainingIgnoreCase
+        (String name, String description, String brand);
 }

@@ -41,8 +41,9 @@ public class ProductImpl implements IProduct {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Product> search(String name, String description) {
-        return productDao.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, description);
+    public List<Product> search(String name, String description, String brand) {
+        return productDao.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrBrandContainingIgnoreCase
+            (name, description, brand);
     }
 
     @Transactional(readOnly = true)
