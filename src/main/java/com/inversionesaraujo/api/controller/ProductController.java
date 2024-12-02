@@ -66,19 +66,20 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody ProductRequest product) {
+    public ResponseEntity<MessageResponse> create(@RequestBody ProductRequest productRequest) {
         try {
-            Category category = categoryService.findById(product.getCategoryId());
+            Category category = categoryService.findById(productRequest.getCategoryId());
             Product productToSave = productService.save(Product
                 .builder()
                 .category(category)
-                .description(product.getDescription())
-                .isActive(product.getIsActive())
-                .name(product.getName())
-                .brand(product.getBrand())
-                .price(product.getPrice())
-                .purchasePrice(product.getPurchasePrice())
-                .stock(product.getStock())
+                .description(productRequest.getDescription())
+                .isActive(productRequest.getIsActive())
+                .name(productRequest.getName())
+                .brand(productRequest.getBrand())
+                .price(productRequest.getPrice())
+                .purchasePrice(productRequest.getPurchasePrice())
+                .stock(productRequest.getStock())
+                .unit(productRequest.getUnit())
                 .build());
 
             return new ResponseEntity<>(MessageResponse
@@ -107,6 +108,7 @@ public class ProductController {
             product.setName(productRequest.getName());
             product.setBrand(productRequest.getBrand());
             product.setDescription(productRequest.getDescription());
+            product.setUnit(productRequest.getUnit());
 
             Product productUpdated = productService.save(product);
 

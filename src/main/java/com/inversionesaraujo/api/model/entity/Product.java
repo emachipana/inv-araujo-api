@@ -33,26 +33,28 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotEmpty(message = "El nombre no puede ir vacio")
+    @NotEmpty(message = "El nombre no puede ir vacío")
     @Size(min = 3, max = 100)
     private String name;
     @Column(columnDefinition = "TEXT")
-    @NotEmpty(message = "La descripcion no puede ir vacia")
+    @NotEmpty(message = "La descripcion no puede ir vacía")
     private String description;
-    @NotEmpty(message = "La marca no puede ir vacia")
+    @NotEmpty(message = "La marca no puede ir vacía")
     private String brand;
-    @NotNull(message = "El precio no puede ir vacio")
+    @NotEmpty(message = "La unidad de medida no puede ir vacía")
+    private String unit;
+    @NotNull(message = "El precio no puede ir vacío")
     @PositiveOrZero
     private Double price;
-    @NotNull(message = "El precio de compra no puede ir vacio")
+    @NotNull(message = "El precio de compra no puede ir vacío")
     @PositiveOrZero
     private Double purchasePrice;
-    @NotNull(message = "El stock no puede ir vacio")
+    @NotNull(message = "El stock no puede ir vacío")
     @PositiveOrZero
     private Integer stock;
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @NotNull(message = "El id de la categoria no puede ir vacia")
+    @NotNull(message = "El id de la categoria no puede ir vacía")
     private Category category;
     @Column(nullable = false)
     @Builder.Default
