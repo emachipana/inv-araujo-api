@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.model.entity.Category;
 import com.inversionesaraujo.api.model.entity.Product;
+import com.inversionesaraujo.api.model.entity.SortDirection;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.model.request.ProductRequest;
 import com.inversionesaraujo.api.service.ICategory;
@@ -37,9 +38,10 @@ public class ProductController {
         @RequestParam(required = false) Double minPrice,
         @RequestParam(required = false) Double maxPrice,
         @RequestParam(defaultValue = "0") Integer page,
-        @RequestParam(defaultValue = "20") Integer size
+        @RequestParam(defaultValue = "20") Integer size,
+        @RequestParam(required = false) SortDirection sort
     ) {
-        return productService.filterProducts(minPrice, maxPrice, categoryId, page, size);
+        return productService.filterProducts(minPrice, maxPrice, categoryId, page, size, sort);
     }
 
     @GetMapping("/search")
