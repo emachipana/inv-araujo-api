@@ -2,12 +2,16 @@ package com.inversionesaraujo.api.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
+import com.inversionesaraujo.api.model.entity.SortDirection;
 import com.inversionesaraujo.api.model.entity.VitroOrder;
 
 public interface IVitroOrder {
-    List<VitroOrder> listAll();
-
-    List<VitroOrder> findByTuberId(Integer tuberId);
+    Page<VitroOrder> listAll(
+        Integer tuberId, Integer page, Integer size,
+        SortDirection direction
+    );
 
     VitroOrder save(VitroOrder vitroOrder);
 

@@ -31,7 +31,7 @@ public class OrderImpl implements IOrder {
         Pageable pageable;
 
         if(direction != null) {
-            Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()));
+            Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "date");
             pageable = PageRequest.of(page, size, sort);
         }else {
             pageable = PageRequest.of(page, size);
