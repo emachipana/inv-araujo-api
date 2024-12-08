@@ -38,7 +38,7 @@ public class InvoiceController {
         @RequestParam(required = false) InvoiceType type,
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "20") Integer size,
-        @RequestParam(required = false) SortDirection sort
+        @RequestParam(defaultValue = "DESC") SortDirection sort
     ) {
         return invoiceService.listAll(type, page, size, sort);
     }

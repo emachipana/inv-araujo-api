@@ -49,7 +49,7 @@ public class OrderController {
         @RequestParam(required = false) Status status,
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "20") Integer size,
-        @RequestParam(required = false) SortDirection sort
+        @RequestParam(defaultValue = "DESC") SortDirection sort
     ) {
         return orderService.listAll(status, page, size, sort);
     }

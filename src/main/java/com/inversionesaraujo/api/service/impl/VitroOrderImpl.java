@@ -31,14 +31,8 @@ public class VitroOrderImpl implements IVitroOrder {
         Integer tuberId, Integer page, Integer size, SortDirection direction
     ) {
         Specification<VitroOrder> spec = Specification.where(VitroOrderSpecifications.findByTuberId(tuberId));
-
-        Pageable pageable;
-        if(direction != null) {
-            Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "initDate");
-            pageable = PageRequest.of(page, size, sort);
-        }else {
-            pageable = PageRequest.of(page, size);
-        }
+        Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "initDate");
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         return orderDao.findAll(spec, pageable);
     }

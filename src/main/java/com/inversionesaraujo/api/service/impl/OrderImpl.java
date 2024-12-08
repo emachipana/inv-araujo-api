@@ -30,14 +30,8 @@ public class OrderImpl implements IOrder {
     @Override
     public Page<Order> listAll(Status status, Integer page, Integer size, SortDirection direction) {
         Specification<Order> spec = Specification.where(OrderSpecifications.findByStatus(status));
-        Pageable pageable;
-
-        if(direction != null) {
-            Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "date");
-            pageable = PageRequest.of(page, size, sort);
-        }else {
-            pageable = PageRequest.of(page, size);
-        }
+        Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "date");
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         return orderDao.findAll(spec, pageable);
     }

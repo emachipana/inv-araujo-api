@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.model.entity.Admin;
 import com.inversionesaraujo.api.model.entity.Profit;
+import com.inversionesaraujo.api.model.entity.SortDirection;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.model.request.ProfitRequest;
 import com.inversionesaraujo.api.service.IAdmin;
@@ -31,8 +33,8 @@ public class ProfitController {
     private IAdmin adminService;
 
     @GetMapping
-    public List<Profit> getAll() {
-        return profitService.listAll();
+    public List<Profit> getAll(@RequestParam(defaultValue = "ASC") SortDirection sort) {
+        return profitService.listAll(sort);
     } 
 
     @GetMapping("{id}")

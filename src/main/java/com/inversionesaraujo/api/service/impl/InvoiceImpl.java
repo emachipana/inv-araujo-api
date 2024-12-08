@@ -40,16 +40,9 @@ public class InvoiceImpl implements I_Invoice {
     @Transactional(readOnly = true)
     @Override
     public Page<Invoice> listAll(InvoiceType type, Integer page, Integer size, SortDirection direction) {
-        Specification<Invoice> spec = Specification
-            .where(InvoiceSpecifications.findByInvoiceType(type));
-
-        Pageable pageable;
-        if(direction != null) {
-            Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "issueDate");
-            pageable = PageRequest.of(page, size, sort);
-        }else {
-            pageable = PageRequest.of(page, size);
-        }
+        Specification<Invoice> spec = Specification.where(InvoiceSpecifications.findByInvoiceType(type));
+        Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "issueDate");
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         return invoiceDao.findAll(spec, pageable);
     }

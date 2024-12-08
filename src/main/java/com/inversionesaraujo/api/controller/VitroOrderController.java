@@ -42,7 +42,7 @@ public class VitroOrderController {
         @RequestParam(required = false) Integer tuberId,
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "20") Integer size,
-        @RequestParam(required = false) SortDirection sort
+        @RequestParam(defaultValue = "DESC") SortDirection sort
     ) {
         return orderService.listAll(tuberId, page, size, sort);
     }
