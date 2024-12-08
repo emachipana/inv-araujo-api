@@ -7,11 +7,14 @@ import org.springframework.data.domain.Page;
 import com.inversionesaraujo.api.model.entity.Order;
 import com.inversionesaraujo.api.model.entity.SortDirection;
 import com.inversionesaraujo.api.model.entity.Status;
+import com.inversionesaraujo.api.model.payload.OrderDataResponse;
 
 public interface IOrder {
     Page<Order> listAll(
         Status status, Integer page, Integer size, SortDirection direction
     );
+
+    OrderDataResponse getData();
 
     Order save(Order order);
 

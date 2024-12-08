@@ -25,6 +25,7 @@ import com.inversionesaraujo.api.model.entity.Profit;
 import com.inversionesaraujo.api.model.entity.SortDirection;
 import com.inversionesaraujo.api.model.entity.Status;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
+import com.inversionesaraujo.api.model.payload.OrderDataResponse;
 import com.inversionesaraujo.api.model.request.OrderRequest;
 import com.inversionesaraujo.api.service.IClient;
 import com.inversionesaraujo.api.service.IOrder;
@@ -56,6 +57,24 @@ public class OrderController {
     @GetMapping("search")
     public List<Order> search(@RequestParam String param) {
         return orderService.search(param, param, param);
+    }
+
+    @GetMapping("/data")
+    public ResponseEntity<MessageResponse> getData() {
+        try {
+            OrderDataResponse response = orderService.getData();
+
+            return new ResponseEntity<>(MessageResponse
+                .builder()
+                .message("Los datos se obtuvieron con éxito")
+                .data(response)
+                .build(), HttpStatus.OK);
+        }catch(Exception error) {
+            return new ResponseEntity<>(MessageResponse
+                .builder()
+                .message(error.getMessage())
+                .build(), HttpStatus.INTERNAL_SERVER_ERROR);  
+        }
     }
 
     @GetMapping("{id}")

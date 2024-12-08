@@ -12,9 +12,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.helpers.OrderData;
 import com.inversionesaraujo.api.model.dao.VitroOrderDao;
 import com.inversionesaraujo.api.model.entity.SortDirection;
 import com.inversionesaraujo.api.model.entity.VitroOrder;
+import com.inversionesaraujo.api.model.payload.OrderDataResponse;
 import com.inversionesaraujo.api.model.spec.VitroOrderSpecifications;
 import com.inversionesaraujo.api.service.IVitroOrder;
 
@@ -63,5 +65,13 @@ public class VitroOrderImpl implements IVitroOrder {
     @Override
     public List<VitroOrder> search(String department, String city, String rsocial) {
         return orderDao.findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(department, city, rsocial);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public OrderDataResponse getData() {
+        List<VitroOrder> orders = orderDao.findAll();
+
+        return OrderData.filterData(null, orders);
     }
 }

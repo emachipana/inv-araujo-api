@@ -12,10 +12,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.helpers.OrderData;
 import com.inversionesaraujo.api.model.dao.OrderDao;
 import com.inversionesaraujo.api.model.entity.Order;
 import com.inversionesaraujo.api.model.entity.SortDirection;
 import com.inversionesaraujo.api.model.entity.Status;
+import com.inversionesaraujo.api.model.payload.OrderDataResponse;
 import com.inversionesaraujo.api.model.spec.OrderSpecifications;
 import com.inversionesaraujo.api.service.IOrder;
 
@@ -62,5 +64,13 @@ public class OrderImpl implements IOrder {
     @Override
     public List<Order> search(String department, String city, String rsocial) {
         return orderDao.findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(department, city, rsocial);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public OrderDataResponse getData() {
+        List<Order> orders = orderDao.findAll();
+        
+        return OrderData.filterData(orders, null);
     }
 }
