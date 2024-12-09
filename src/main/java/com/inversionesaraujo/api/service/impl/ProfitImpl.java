@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inversionesaraujo.api.model.dao.ProfitDao;
 import com.inversionesaraujo.api.model.entity.Profit;
+import com.inversionesaraujo.api.model.entity.SortDirection;
 import com.inversionesaraujo.api.service.IProfit;
 
 @Service
@@ -18,8 +20,10 @@ public class ProfitImpl implements IProfit {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Profit> listAll() {
-        return profitDao.findAll();
+    public List<Profit> listAll(SortDirection direction) {
+        Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "date");
+
+        return profitDao.findAll(sort);
     }
 
     @Transactional

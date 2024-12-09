@@ -1,12 +1,21 @@
 package com.inversionesaraujo.api.service;
 
+import java.time.Month;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.inversionesaraujo.api.model.entity.Order;
+import com.inversionesaraujo.api.model.entity.SortDirection;
 import com.inversionesaraujo.api.model.entity.Status;
+import com.inversionesaraujo.api.model.payload.OrderDataResponse;
 
 public interface IOrder {
-    List<Order> listAll();
+    Page<Order> listAll(
+        Status status, Integer page, Integer size, SortDirection direction
+    );
+
+    OrderDataResponse getData();
 
     Order save(Order order);
 
@@ -16,5 +25,5 @@ public interface IOrder {
 
     List<Order> search(String department, String city, String rsocial);
 
-    List<Order> findByStatus(Status status);
+    List<Order> pending(Month month);
 }

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.model.entity.Category;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.CategoryRequest;
 import com.inversionesaraujo.api.service.ICategory;
 
 @RestController
@@ -27,7 +26,7 @@ public class CategoryController {
 
     @GetMapping
     public List<Category> getAll() {
-        return categoryService.listParentCategories();
+        return categoryService.listAll();
     }
 
     @GetMapping("{id}")
@@ -49,20 +48,14 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody CategoryRequest categoryRequest) {
+    public ResponseEntity<MessageResponse> create(@RequestBody Category newCategory) {
         try {
-            Category categoryToSave = new Category();
-            if(categoryRequest.getCategoryId() != null) {
-                Category parentCategory = categoryService.findById(categoryRequest.getCategoryId());
-                categoryToSave.setCategory(parentCategory);
-            }
-            categoryToSave.setName(categoryRequest.getName());
-            categoryToSave = categoryService.save(categoryToSave);
+            Category savedCategory = categoryService.save(newCategory);
 
             return new ResponseEntity<>(MessageResponse
                 .builder()
                 .message("La categoria se creo con exito")
-                .data(categoryToSave)
+                .data(savedCategory)
                 .build(), HttpStatus.CREATED);   
         }catch (Exception error) {
             return new ResponseEntity<>(MessageResponse
@@ -73,13 +66,9 @@ public class CategoryController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<MessageResponse> update(@RequestBody CategoryRequest categoryRequest, @PathVariable Integer id) {
+    public ResponseEntity<MessageResponse> update(@RequestBody Category categoryRequest, @PathVariable Integer id) {
         try {
             Category categoryToUpdate = categoryService.findById(id);
-            if(categoryRequest.getCategoryId() != null) {
-                Category categoryParent = categoryService.findById(categoryRequest.getCategoryId());
-                categoryToUpdate.setCategory(categoryParent);
-            }
             categoryToUpdate.setName(categoryRequest.getName());
             Category updatedCategory = categoryService.save(categoryToUpdate);
 

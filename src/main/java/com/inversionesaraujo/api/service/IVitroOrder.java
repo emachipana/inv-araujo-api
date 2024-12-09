@@ -1,13 +1,23 @@
 package com.inversionesaraujo.api.service;
 
+import java.time.Month;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
+import com.inversionesaraujo.api.model.entity.SortDirection;
 import com.inversionesaraujo.api.model.entity.VitroOrder;
+import com.inversionesaraujo.api.model.payload.OrderDataResponse;
 
 public interface IVitroOrder {
-    List<VitroOrder> listAll();
+    Page<VitroOrder> listAll(
+        Integer tuberId, Integer page, Integer size,
+        SortDirection direction
+    );
 
-    List<VitroOrder> findByTuberId(Integer tuberId);
+    OrderDataResponse getData();
+
+    List<VitroOrder> pending(Month month);
 
     VitroOrder save(VitroOrder vitroOrder);
 

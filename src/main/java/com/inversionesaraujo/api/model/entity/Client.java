@@ -55,6 +55,9 @@ public class Client {
     @NotEmpty(message = "Los nombres no pueden ir vacios")
     @Size(min = 3)
     private String rsocial;
+    @Column(nullable = false)
+    @Builder.Default
+    private String createdBy = Role.CLIENTE.toString();
     @NotEmpty(message = "El email no puede ir vacio")
     @Email(message = "El formato es incorrecto")
     @Column(unique = true)

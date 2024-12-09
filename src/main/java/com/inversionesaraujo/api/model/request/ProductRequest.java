@@ -18,4 +18,5 @@ public class ProductRequest {
     private String name;
     private String description;
     private String brand;
+    private String unit;
 }

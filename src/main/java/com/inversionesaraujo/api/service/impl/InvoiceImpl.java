@@ -8,11 +8,15 @@ import java.io.ByteArrayOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-// import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.google.cloud.storage.Bucket;
@@ -21,38 +25,44 @@ import com.inversionesaraujo.api.helpers.Capitalize;
 import com.inversionesaraujo.api.model.dao.InvoiceDao;
 import com.inversionesaraujo.api.model.entity.Invoice;
 import com.inversionesaraujo.api.model.entity.InvoiceType;
+import com.inversionesaraujo.api.model.entity.SortDirection;
 import com.inversionesaraujo.api.model.payload.FileResponse;
+import com.inversionesaraujo.api.model.spec.InvoiceSpecifications;
 import com.inversionesaraujo.api.service.I_Invoice;
 
 @Service
 public class InvoiceImpl implements I_Invoice {
     @Autowired
-    private InvoiceDao invoiceRepo;
+    private InvoiceDao invoiceDao;
     @Autowired
     private TemplateEngine templateEngine;
 
     @Transactional(readOnly = true)
     @Override
-    public List<Invoice> listAll() {
-        return invoiceRepo.findAll();
+    public Page<Invoice> listAll(InvoiceType type, Integer page, Integer size, SortDirection direction) {
+        Specification<Invoice> spec = Specification.where(InvoiceSpecifications.findByInvoiceType(type));
+        Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "issueDate");
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return invoiceDao.findAll(spec, pageable);
     }
 
     @Transactional
     @Override
     public Invoice save(Invoice invoice) {
-        return invoiceRepo.save(invoice);
+        return invoiceDao.save(invoice);
     }
 
     @Transactional(readOnly = true)
     @Override
     public Invoice findById(Integer id) {
-        return invoiceRepo.findById(id).orElseThrow(() -> new DataAccessException("El comprobante no existe") {});
+        return invoiceDao.findById(id).orElseThrow(() -> new DataAccessException("El comprobante no existe") {});
     }
 
     @Transactional
     @Override
     public void delete(Invoice invoice) {
-        invoiceRepo.delete(invoice);
+        invoiceDao.delete(invoice);
     }
 
     @Override
@@ -101,13 +111,7 @@ public class InvoiceImpl implements I_Invoice {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Invoice> findByInvoiceType(InvoiceType type) {
-        return invoiceRepo.findByInvoiceType(type);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public List<Invoice> search(String rsocial, String document) {
-        return invoiceRepo.findByrSocialContainingIgnoreCaseOrDocumentContainingIgnoreCase(rsocial, document);
+        return invoiceDao.findByrSocialContainingIgnoreCaseOrDocumentContainingIgnoreCase(rsocial, document);
     }
 }

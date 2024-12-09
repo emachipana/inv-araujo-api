@@ -1,14 +1,26 @@
 package com.inversionesaraujo.api.service.impl;
 
+import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.helpers.OrderData;
 import com.inversionesaraujo.api.model.dao.VitroOrderDao;
+import com.inversionesaraujo.api.model.entity.SortDirection;
+import com.inversionesaraujo.api.model.entity.Status;
 import com.inversionesaraujo.api.model.entity.VitroOrder;
+import com.inversionesaraujo.api.model.payload.OrderDataResponse;
+import com.inversionesaraujo.api.model.spec.VitroOrderSpecifications;
 import com.inversionesaraujo.api.service.IVitroOrder;
 
 @Service
@@ -18,8 +30,14 @@ public class VitroOrderImpl implements IVitroOrder {
 
     @Transactional(readOnly = true)
     @Override
-    public List<VitroOrder> listAll() {
-        return orderDao.findAll();
+    public Page<VitroOrder> listAll(
+        Integer tuberId, Integer page, Integer size, SortDirection direction
+    ) {
+        Specification<VitroOrder> spec = Specification.where(VitroOrderSpecifications.findByTuberId(tuberId));
+        Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "initDate");
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return orderDao.findAll(spec, pageable);
     }
 
     @Transactional
@@ -42,13 +60,32 @@ public class VitroOrderImpl implements IVitroOrder {
 
     @Transactional(readOnly = true)
     @Override
-    public List<VitroOrder> findByTuberId(Integer tuberId) {
-        return orderDao.findByTuberId(tuberId);
+    public List<VitroOrder> search(String department, String city, String rsocial) {
+        return orderDao.findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(department, city, rsocial);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<VitroOrder> search(String department, String city, String rsocial) {
-        return orderDao.findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(department, city, rsocial);
+    public OrderDataResponse getData() {
+        List<VitroOrder> orders = orderDao.findAll();
+
+        return OrderData.filterData(null, orders);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<VitroOrder> pending(Month month) {
+        List<VitroOrder> orders = orderDao.findAll();
+        List<VitroOrder> result = new ArrayList<>();
+        
+        for(int i = 0; i < orders.size(); i++) {
+            VitroOrder order = orders.get(i);
+            Status orderStatus = order.getStatus();
+            Month orderMonth = order.getFinishDate() != null ? order.getFinishDate().getMonth() : null;
+
+            if(orderStatus == Status.PENDIENTE && orderMonth == month) result.add(order);
+        }
+
+        return result;
     }
 }

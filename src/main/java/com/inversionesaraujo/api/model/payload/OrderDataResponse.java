@@ -1,4 +1,4 @@
-package com.inversionesaraujo.api.model.request;
+package com.inversionesaraujo.api.model.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryRequest {
-    private String name;
-    private Integer categoryId;
+public class OrderDataResponse {
+    public Integer ship;
+    public Integer pen;
 }

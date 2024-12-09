@@ -36,7 +36,7 @@ public class CategoryImpl implements ICategory {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Category> listParentCategories() {
-        return categoryDao.findByCategoryIsNull();
+    public List<Category> listAll() {
+        return categoryDao.findAll();
     }
 }

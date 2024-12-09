@@ -5,6 +5,7 @@ import java.time.Month;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,8 +22,10 @@ import com.inversionesaraujo.api.model.entity.Client;
 import com.inversionesaraujo.api.model.entity.Invoice;
 import com.inversionesaraujo.api.model.entity.Order;
 import com.inversionesaraujo.api.model.entity.Profit;
+import com.inversionesaraujo.api.model.entity.SortDirection;
 import com.inversionesaraujo.api.model.entity.Status;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
+import com.inversionesaraujo.api.model.payload.OrderDataResponse;
 import com.inversionesaraujo.api.model.request.OrderRequest;
 import com.inversionesaraujo.api.service.IClient;
 import com.inversionesaraujo.api.service.IOrder;
@@ -42,15 +45,41 @@ public class OrderController {
     private IProfit profitService;
 
     @GetMapping
-    public List<Order> getAll(@RequestParam(required = false) Status status) {
-        if(status != null) return orderService.findByStatus(status);
-
-        return orderService.listAll();
+    public Page<Order> getAll(
+        @RequestParam(required = false) Status status,
+        @RequestParam(defaultValue = "0") Integer page,
+        @RequestParam(defaultValue = "20") Integer size,
+        @RequestParam(defaultValue = "DESC") SortDirection sort
+    ) {
+        return orderService.listAll(status, page, size, sort);
     }
 
     @GetMapping("search")
     public List<Order> search(@RequestParam String param) {
         return orderService.search(param, param, param);
+    }
+
+    @GetMapping("pending")
+    public List<Order> pending(@RequestParam Month month) {
+        return orderService.pending(month);
+    }
+
+    @GetMapping("data")
+    public ResponseEntity<MessageResponse> getData() {
+        try {
+            OrderDataResponse response = orderService.getData();
+
+            return new ResponseEntity<>(MessageResponse
+                .builder()
+                .message("Los datos se obtuvieron con éxito")
+                .data(response)
+                .build(), HttpStatus.OK);
+        }catch(Exception error) {
+            return new ResponseEntity<>(MessageResponse
+                .builder()
+                .message(error.getMessage())
+                .build(), HttpStatus.INTERNAL_SERVER_ERROR);  
+        }
     }
 
     @GetMapping("{id}")
