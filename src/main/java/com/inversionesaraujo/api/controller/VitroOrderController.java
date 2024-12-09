@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.controller;
 
+import java.time.Month;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +48,18 @@ public class VitroOrderController {
         return orderService.listAll(tuberId, page, size, sort);
     }
 
+    
     @GetMapping("search")
     public List<VitroOrder> search(@RequestParam String param) {
         return orderService.search(param, param, param);
     }
 
-    @GetMapping("/data")
+    @GetMapping("pending")
+    public List<VitroOrder> pending(@RequestParam Month month) {
+        return orderService.pending(month);
+    }
+
+    @GetMapping("data")
     public ResponseEntity<MessageResponse> getData() {
         try {
             OrderDataResponse response = orderService.getData();

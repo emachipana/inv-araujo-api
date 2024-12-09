@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.service.impl;
 
+import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,5 +68,22 @@ public class OrderImpl implements IOrder {
         List<Order> orders = orderDao.findAll();
         
         return OrderData.filterData(orders, null);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Order> pending(Month month) {
+        List<Order> orders = orderDao.findAll();
+        List<Order> result = new ArrayList<>();
+
+        for(int i = 0; i < orders.size(); i++) {
+            Order order = orders.get(i);
+            Status orderStatus = order.getStatus();
+            Month orderMonth = order.getMaxShipDate().getMonth();
+
+            if(orderStatus == Status.PENDIENTE && orderMonth == month) result.add(order);
+        }
+
+        return result;
     }
 }

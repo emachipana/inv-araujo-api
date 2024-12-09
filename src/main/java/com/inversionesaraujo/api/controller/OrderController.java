@@ -59,7 +59,12 @@ public class OrderController {
         return orderService.search(param, param, param);
     }
 
-    @GetMapping("/data")
+    @GetMapping("pending")
+    public List<Order> pending(@RequestParam Month month) {
+        return orderService.pending(month);
+    }
+
+    @GetMapping("data")
     public ResponseEntity<MessageResponse> getData() {
         try {
             OrderDataResponse response = orderService.getData();

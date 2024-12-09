@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.service;
 
+import java.time.Month;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -15,6 +16,8 @@ public interface IVitroOrder {
     );
 
     OrderDataResponse getData();
+
+    List<VitroOrder> pending(Month month);
 
     VitroOrder save(VitroOrder vitroOrder);
 
