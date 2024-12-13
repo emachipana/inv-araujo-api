@@ -12,7 +12,8 @@ import com.inversionesaraujo.api.model.payload.OrderDataResponse;
 
 public interface IOrder {
     Page<Order> listAll(
-        Status status, Integer page, Integer size, SortDirection direction
+        Status status, Integer page, Integer size, SortDirection direction,
+        Month month
     );
 
     OrderDataResponse getData();
@@ -24,6 +25,4 @@ public interface IOrder {
     void delete(Order order);
 
     List<Order> search(String department, String city, String rsocial);
-
-    List<Order> pending(Month month);
 }

@@ -49,19 +49,15 @@ public class OrderController {
         @RequestParam(required = false) Status status,
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "20") Integer size,
-        @RequestParam(defaultValue = "DESC") SortDirection sort
+        @RequestParam(defaultValue = "DESC") SortDirection sort,
+        @RequestParam(required = false) Month month
     ) {
-        return orderService.listAll(status, page, size, sort);
+        return orderService.listAll(status, page, size, sort, month);
     }
 
     @GetMapping("search")
     public List<Order> search(@RequestParam String param) {
         return orderService.search(param, param, param);
-    }
-
-    @GetMapping("pending")
-    public List<Order> pending(@RequestParam Month month) {
-        return orderService.pending(month);
     }
 
     @GetMapping("data")

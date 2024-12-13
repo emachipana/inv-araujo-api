@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inversionesaraujo.api.model.entity.Client;
 import com.inversionesaraujo.api.model.entity.Invoice;
 import com.inversionesaraujo.api.model.entity.SortDirection;
+import com.inversionesaraujo.api.model.entity.Status;
 import com.inversionesaraujo.api.model.entity.VitroOrder;
 import com.inversionesaraujo.api.model.payload.MessageResponse;
 import com.inversionesaraujo.api.model.payload.OrderDataResponse;
@@ -43,20 +44,17 @@ public class VitroOrderController {
         @RequestParam(required = false) Integer tuberId,
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "20") Integer size,
-        @RequestParam(defaultValue = "DESC") SortDirection sort
+        @RequestParam(defaultValue = "DESC") SortDirection sort,
+        @RequestParam(required = false) Month month,
+        @RequestParam(required = false) Status status
     ) {
-        return orderService.listAll(tuberId, page, size, sort);
+        return orderService.listAll(tuberId, page, size, sort, month, status);
     }
 
     
     @GetMapping("search")
     public List<VitroOrder> search(@RequestParam String param) {
         return orderService.search(param, param, param);
-    }
-
-    @GetMapping("pending")
-    public List<VitroOrder> pending(@RequestParam Month month) {
-        return orderService.pending(month);
     }
 
     @GetMapping("data")

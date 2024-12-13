@@ -1,7 +1,6 @@
 package com.inversionesaraujo.api.service.impl;
 
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +30,14 @@ public class VitroOrderImpl implements IVitroOrder {
     @Transactional(readOnly = true)
     @Override
     public Page<VitroOrder> listAll(
-        Integer tuberId, Integer page, Integer size, SortDirection direction
+        Integer tuberId, Integer page, Integer size, 
+        SortDirection direction, Month month, Status status
     ) {
-        Specification<VitroOrder> spec = Specification.where(VitroOrderSpecifications.findByTuberId(tuberId));
+        Specification<VitroOrder> spec = Specification.where(
+            VitroOrderSpecifications.findByTuberId(tuberId)
+            .and(VitroOrderSpecifications.findByMonth(month))
+            .and(VitroOrderSpecifications.findByStatus(status))
+        );
         Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "initDate");
         Pageable pageable = PageRequest.of(page, size, sort);
 
@@ -70,22 +74,5 @@ public class VitroOrderImpl implements IVitroOrder {
         List<VitroOrder> orders = orderDao.findAll();
 
         return OrderData.filterData(null, orders);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<VitroOrder> pending(Month month) {
-        List<VitroOrder> orders = orderDao.findAll();
-        List<VitroOrder> result = new ArrayList<>();
-        
-        for(int i = 0; i < orders.size(); i++) {
-            VitroOrder order = orders.get(i);
-            Status orderStatus = order.getStatus();
-            Month orderMonth = order.getFinishDate() != null ? order.getFinishDate().getMonth() : null;
-
-            if(orderStatus == Status.PENDIENTE && orderMonth == month) result.add(order);
-        }
-
-        return result;
     }
 }
