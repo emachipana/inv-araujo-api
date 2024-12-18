@@ -43,9 +43,11 @@ public class ProductImpl implements IProduct {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Product> search(String name, String description, String brand) {
+    public Page<Product> search(String name, String description, String brand, Integer page) {
+        Pageable pageable = PageRequest.of(page, 10);
+
         return productDao.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrBrandContainingIgnoreCase
-            (name, description, brand);
+            (name, description, brand, pageable);
     }
 
     @Transactional(readOnly = true)

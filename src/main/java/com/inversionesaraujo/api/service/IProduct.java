@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.service;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 
 import com.inversionesaraujo.api.model.entity.Product;
@@ -13,7 +11,7 @@ public interface IProduct {
         Integer page, Integer size, SortDirection direction
     );
 
-    List<Product> search(String name, String description, String brand);
+    Page<Product> search(String name, String description, String brand, Integer page);
 
     Product save(Product product);
 

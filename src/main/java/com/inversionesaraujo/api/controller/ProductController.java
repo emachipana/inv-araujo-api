@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -45,8 +43,8 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public List<Product> searchProducts(@RequestParam String param) {
-        return productService.search(param, param, param);
+    public Page<Product> searchProducts(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
+        return productService.search(param, param, param, page);
     }
 
     @GetMapping("{id}")
