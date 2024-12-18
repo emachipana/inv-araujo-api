@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.OrderVariety;
-import com.inversionesaraujo.api.model.entity.Variety;
-import com.inversionesaraujo.api.model.entity.VitroOrder;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.OrderVarietyRequest;
-import com.inversionesaraujo.api.service.IOrderVariety;
-import com.inversionesaraujo.api.service.IVariety;
-import com.inversionesaraujo.api.service.IVitroOrder;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.request.OrderVarietyRequest;
+import com.inversionesaraujo.api.business.service.IOrderVariety;
+import com.inversionesaraujo.api.business.service.IVariety;
+import com.inversionesaraujo.api.business.service.IVitroOrder;
+import com.inversionesaraujo.api.model.OrderVariety;
+import com.inversionesaraujo.api.model.Variety;
+import com.inversionesaraujo.api.model.VitroOrder;
 
 @RestController
 @RequestMapping("/api/v1/orderVarieties")

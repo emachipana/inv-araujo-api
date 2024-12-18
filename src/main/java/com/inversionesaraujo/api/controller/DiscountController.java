@@ -6,12 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Discount;
-import com.inversionesaraujo.api.model.entity.Product;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.DiscountRequest;
-import com.inversionesaraujo.api.service.IDiscount;
-import com.inversionesaraujo.api.service.IProduct;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.request.DiscountRequest;
+import com.inversionesaraujo.api.business.service.IDiscount;
+import com.inversionesaraujo.api.business.service.IProduct;
+import com.inversionesaraujo.api.model.Discount;
+import com.inversionesaraujo.api.model.Product;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

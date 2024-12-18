@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Invoice;
-import com.inversionesaraujo.api.model.entity.InvoiceItem;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.InvoiceItemRequest;
-import com.inversionesaraujo.api.service.I_Invoice;
-import com.inversionesaraujo.api.service.I_InvoiceItem;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.request.InvoiceItemRequest;
+import com.inversionesaraujo.api.business.service.I_Invoice;
+import com.inversionesaraujo.api.business.service.I_InvoiceItem;
+import com.inversionesaraujo.api.model.Invoice;
+import com.inversionesaraujo.api.model.InvoiceItem;
 
 @RestController
 @RequestMapping("/api/v1/invoiceItems")

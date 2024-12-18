@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.inversionesaraujo.api.model.entity.Image;
-import com.inversionesaraujo.api.model.payload.FileResponse;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.service.I_Image;
+import com.inversionesaraujo.api.business.dto.payload.FileResponse;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.service.I_Image;
+import com.inversionesaraujo.api.model.Image;
 
 @RestController
 @RequestMapping("/api/v1/images")

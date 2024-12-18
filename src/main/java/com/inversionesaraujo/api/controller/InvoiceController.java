@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Invoice;
-import com.inversionesaraujo.api.model.entity.InvoiceType;
-import com.inversionesaraujo.api.model.entity.SortDirection;
-import com.inversionesaraujo.api.model.payload.FileResponse;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.InvoiceRequest;
-import com.inversionesaraujo.api.service.I_Image;
-import com.inversionesaraujo.api.service.I_Invoice;
+import com.inversionesaraujo.api.business.dto.payload.FileResponse;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.request.InvoiceRequest;
+import com.inversionesaraujo.api.business.service.I_Image;
+import com.inversionesaraujo.api.business.service.I_Invoice;
+import com.inversionesaraujo.api.model.Invoice;
+import com.inversionesaraujo.api.model.InvoiceType;
+import com.inversionesaraujo.api.model.SortDirection;
 
 @RestController
 @RequestMapping("/api/v1/invoices")
