@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Tuber;
-import com.inversionesaraujo.api.model.entity.Variety;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.VarietyRequest;
-import com.inversionesaraujo.api.service.ITuber;
-import com.inversionesaraujo.api.service.IVariety;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.request.VarietyRequest;
+import com.inversionesaraujo.api.business.service.ITuber;
+import com.inversionesaraujo.api.business.service.IVariety;
+import com.inversionesaraujo.api.model.Tuber;
+import com.inversionesaraujo.api.model.Variety;
 
 @RestController
 @RequestMapping("/api/v1/varieties")

@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Image;
-import com.inversionesaraujo.api.model.entity.User;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.payload.UserResponse;
-import com.inversionesaraujo.api.model.request.UserRequest;
-import com.inversionesaraujo.api.service.IUser;
-import com.inversionesaraujo.api.service.I_Image;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.payload.UserResponse;
+import com.inversionesaraujo.api.business.dto.request.UserRequest;
+import com.inversionesaraujo.api.business.service.IUser;
+import com.inversionesaraujo.api.business.service.I_Image;
+import com.inversionesaraujo.api.model.Image;
+import com.inversionesaraujo.api.model.User;
 
 @RestController
 @RequestMapping("/api/v1/users")

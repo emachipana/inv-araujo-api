@@ -14,20 +14,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Admin;
-import com.inversionesaraujo.api.model.entity.Client;
-import com.inversionesaraujo.api.model.entity.Order;
-import com.inversionesaraujo.api.model.entity.OrderProduct;
-import com.inversionesaraujo.api.model.entity.Product;
-import com.inversionesaraujo.api.model.entity.Profit;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.OrderProductRequest;
-import com.inversionesaraujo.api.service.IAdmin;
-import com.inversionesaraujo.api.service.IClient;
-import com.inversionesaraujo.api.service.IOrder;
-import com.inversionesaraujo.api.service.IOrderProduct;
-import com.inversionesaraujo.api.service.IProduct;
-import com.inversionesaraujo.api.service.IProfit;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.request.OrderProductRequest;
+import com.inversionesaraujo.api.business.service.IAdmin;
+import com.inversionesaraujo.api.business.service.IClient;
+import com.inversionesaraujo.api.business.service.IOrder;
+import com.inversionesaraujo.api.business.service.IOrderProduct;
+import com.inversionesaraujo.api.business.service.IProduct;
+import com.inversionesaraujo.api.business.service.IProfit;
+import com.inversionesaraujo.api.model.Admin;
+import com.inversionesaraujo.api.model.Client;
+import com.inversionesaraujo.api.model.Order;
+import com.inversionesaraujo.api.model.OrderProduct;
+import com.inversionesaraujo.api.model.Product;
+import com.inversionesaraujo.api.model.Profit;
 
 @RestController
 @RequestMapping("/api/v1/orderProducts")

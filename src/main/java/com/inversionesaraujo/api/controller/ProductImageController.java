@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Image;
-import com.inversionesaraujo.api.model.entity.Product;
-import com.inversionesaraujo.api.model.entity.ProductImage;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.ProductImageRequest;
-import com.inversionesaraujo.api.service.IProduct;
-import com.inversionesaraujo.api.service.IProductImage;
-import com.inversionesaraujo.api.service.I_Image;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.request.ProductImageRequest;
+import com.inversionesaraujo.api.business.service.IProduct;
+import com.inversionesaraujo.api.business.service.IProductImage;
+import com.inversionesaraujo.api.business.service.I_Image;
+import com.inversionesaraujo.api.model.Image;
+import com.inversionesaraujo.api.model.Product;
+import com.inversionesaraujo.api.model.ProductImage;
 
 @RestController
 @RequestMapping("/api/v1/productImages")

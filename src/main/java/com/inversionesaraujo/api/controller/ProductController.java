@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -16,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Category;
-import com.inversionesaraujo.api.model.entity.Product;
-import com.inversionesaraujo.api.model.entity.SortDirection;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.ProductRequest;
-import com.inversionesaraujo.api.service.ICategory;
-import com.inversionesaraujo.api.service.IProduct;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.request.ProductRequest;
+import com.inversionesaraujo.api.business.service.ICategory;
+import com.inversionesaraujo.api.business.service.IProduct;
+import com.inversionesaraujo.api.model.Category;
+import com.inversionesaraujo.api.model.Product;
+import com.inversionesaraujo.api.model.SortDirection;
 
 @RestController
 @RequestMapping("api/v1/products")
@@ -45,8 +43,8 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public List<Product> searchProducts(@RequestParam String param) {
-        return productService.search(param, param, param);
+    public Page<Product> searchProducts(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
+        return productService.search(param, param, param, page);
     }
 
     @GetMapping("{id}")

@@ -18,19 +18,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Client;
-import com.inversionesaraujo.api.model.entity.Invoice;
-import com.inversionesaraujo.api.model.entity.Order;
-import com.inversionesaraujo.api.model.entity.Profit;
-import com.inversionesaraujo.api.model.entity.SortDirection;
-import com.inversionesaraujo.api.model.entity.Status;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.payload.OrderDataResponse;
-import com.inversionesaraujo.api.model.request.OrderRequest;
-import com.inversionesaraujo.api.service.IClient;
-import com.inversionesaraujo.api.service.IOrder;
-import com.inversionesaraujo.api.service.IProfit;
-import com.inversionesaraujo.api.service.I_Invoice;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.payload.OrderDataResponse;
+import com.inversionesaraujo.api.business.dto.request.OrderRequest;
+import com.inversionesaraujo.api.business.service.IClient;
+import com.inversionesaraujo.api.business.service.IOrder;
+import com.inversionesaraujo.api.business.service.IProfit;
+import com.inversionesaraujo.api.business.service.I_Invoice;
+import com.inversionesaraujo.api.model.Client;
+import com.inversionesaraujo.api.model.Invoice;
+import com.inversionesaraujo.api.model.Order;
+import com.inversionesaraujo.api.model.Profit;
+import com.inversionesaraujo.api.model.SortDirection;
+import com.inversionesaraujo.api.model.Status;
 
 @RestController
 @RequestMapping("/api/v1/orders")

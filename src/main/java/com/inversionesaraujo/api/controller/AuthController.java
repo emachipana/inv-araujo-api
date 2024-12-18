@@ -14,21 +14,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Reset;
-import com.inversionesaraujo.api.model.entity.User;
-import com.inversionesaraujo.api.model.payload.AuthResponse;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.payload.ValidCodeResponse;
-import com.inversionesaraujo.api.model.request.ChangePasswordRequest;
-import com.inversionesaraujo.api.model.request.EmailRequest;
-import com.inversionesaraujo.api.model.request.LoginRequest;
-import com.inversionesaraujo.api.model.request.RegisterRequest;
-import com.inversionesaraujo.api.model.request.SendCodeRequest;
-import com.inversionesaraujo.api.model.request.ValidCodeRequest;
-import com.inversionesaraujo.api.service.IAuth;
-import com.inversionesaraujo.api.service.IEmail;
-import com.inversionesaraujo.api.service.IReset;
-import com.inversionesaraujo.api.service.IUser;
+import com.inversionesaraujo.api.business.dto.payload.AuthResponse;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.payload.ValidCodeResponse;
+import com.inversionesaraujo.api.business.dto.request.ChangePasswordRequest;
+import com.inversionesaraujo.api.business.dto.request.EmailRequest;
+import com.inversionesaraujo.api.business.dto.request.LoginRequest;
+import com.inversionesaraujo.api.business.dto.request.RegisterRequest;
+import com.inversionesaraujo.api.business.dto.request.SendCodeRequest;
+import com.inversionesaraujo.api.business.dto.request.ValidCodeRequest;
+import com.inversionesaraujo.api.business.service.IAuth;
+import com.inversionesaraujo.api.business.service.IEmail;
+import com.inversionesaraujo.api.business.service.IReset;
+import com.inversionesaraujo.api.business.service.IUser;
+import com.inversionesaraujo.api.model.Reset;
+import com.inversionesaraujo.api.model.User;
 
 @RestController
 @RequestMapping("/api/v1/auth")

@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Message;
-import com.inversionesaraujo.api.model.entity.SortDirection;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.service.IMessage;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.service.IMessage;
+import com.inversionesaraujo.api.model.Message;
+import com.inversionesaraujo.api.model.SortDirection;
 
 @RestController
 @RequestMapping("/api/v1/messages")

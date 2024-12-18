@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Expense;
-import com.inversionesaraujo.api.model.entity.Profit;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.ExpenseRequest;
-import com.inversionesaraujo.api.service.IExpense;
-import com.inversionesaraujo.api.service.IProfit;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.request.ExpenseRequest;
+import com.inversionesaraujo.api.business.service.IExpense;
+import com.inversionesaraujo.api.business.service.IProfit;
+import com.inversionesaraujo.api.model.Expense;
+import com.inversionesaraujo.api.model.Profit;
 
 @RestController
 @RequestMapping("/api/v1/expenses")

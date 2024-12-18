@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Admin;
-import com.inversionesaraujo.api.model.entity.Advance;
-import com.inversionesaraujo.api.model.entity.Client;
-import com.inversionesaraujo.api.model.entity.Profit;
-import com.inversionesaraujo.api.model.entity.VitroOrder;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.request.AdvanceRequest;
-import com.inversionesaraujo.api.service.IAdmin;
-import com.inversionesaraujo.api.service.IAdvance;
-import com.inversionesaraujo.api.service.IClient;
-import com.inversionesaraujo.api.service.IProfit;
-import com.inversionesaraujo.api.service.IVitroOrder;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.request.AdvanceRequest;
+import com.inversionesaraujo.api.business.service.IAdmin;
+import com.inversionesaraujo.api.business.service.IAdvance;
+import com.inversionesaraujo.api.business.service.IClient;
+import com.inversionesaraujo.api.business.service.IProfit;
+import com.inversionesaraujo.api.business.service.IVitroOrder;
+import com.inversionesaraujo.api.model.Admin;
+import com.inversionesaraujo.api.model.Advance;
+import com.inversionesaraujo.api.model.Client;
+import com.inversionesaraujo.api.model.Profit;
+import com.inversionesaraujo.api.model.VitroOrder;
 
 @RestController
 @RequestMapping("/api/v1/advances")

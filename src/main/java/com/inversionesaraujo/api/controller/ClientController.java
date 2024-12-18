@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Client;
-import com.inversionesaraujo.api.model.entity.SortDirection;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.service.IClient;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.service.IClient;
+import com.inversionesaraujo.api.model.Client;
+import com.inversionesaraujo.api.model.SortDirection;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
 

@@ -17,17 +17,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.model.entity.Client;
-import com.inversionesaraujo.api.model.entity.Invoice;
-import com.inversionesaraujo.api.model.entity.SortDirection;
-import com.inversionesaraujo.api.model.entity.Status;
-import com.inversionesaraujo.api.model.entity.VitroOrder;
-import com.inversionesaraujo.api.model.payload.MessageResponse;
-import com.inversionesaraujo.api.model.payload.OrderDataResponse;
-import com.inversionesaraujo.api.model.request.VitroOrderRequest;
-import com.inversionesaraujo.api.service.IClient;
-import com.inversionesaraujo.api.service.IVitroOrder;
-import com.inversionesaraujo.api.service.I_Invoice;
+import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.payload.OrderDataResponse;
+import com.inversionesaraujo.api.business.dto.request.VitroOrderRequest;
+import com.inversionesaraujo.api.business.service.IClient;
+import com.inversionesaraujo.api.business.service.IVitroOrder;
+import com.inversionesaraujo.api.business.service.I_Invoice;
+import com.inversionesaraujo.api.model.Client;
+import com.inversionesaraujo.api.model.Invoice;
+import com.inversionesaraujo.api.model.SortDirection;
+import com.inversionesaraujo.api.model.Status;
+import com.inversionesaraujo.api.model.VitroOrder;
 
 @RestController
 @RequestMapping("/api/v1/vitroOrders")
