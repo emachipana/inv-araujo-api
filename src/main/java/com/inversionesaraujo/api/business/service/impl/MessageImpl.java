@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.business.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -37,10 +35,12 @@ public class MessageImpl implements IMessage {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Message> search(String subject, String content, String email) {
+    public Page<Message> search(String subject, String content, String email, Integer page) {
+        Pageable pageable = PageRequest.of(page, 10);
+
         return messageRepo
             .findBySubjectContainingIgnoreCaseOrContentContainingIgnoreCaseOrEmailContainingIgnoreCase(
-                subject, content, email
+                subject, content, email, pageable
             );
     }
 
