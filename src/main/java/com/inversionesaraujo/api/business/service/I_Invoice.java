@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.business.service;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 
 import com.inversionesaraujo.api.business.dto.payload.FileResponse;
@@ -23,5 +21,5 @@ public interface I_Invoice {
 
     FileResponse generateAndUploadPDF(Invoice invoice);
 
-    List<Invoice> search(String rsocial, String document);
+    Page<Invoice> search(String rsocial, String document, Integer page);
 }
