@@ -1,7 +1,6 @@
 package com.inversionesaraujo.api.business.service;
 
 import java.time.Month;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 
@@ -24,5 +23,5 @@ public interface IVitroOrder {
 
     void delete(VitroOrder vitroOrder);
 
-    List<VitroOrder> search(String department, String city, String rsocial);
+    Page<VitroOrder> search(String department, String city, String rsocial, Integer page);
 }
