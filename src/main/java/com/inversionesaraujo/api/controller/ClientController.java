@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -39,8 +37,8 @@ public class ClientController {
     }
 
     @GetMapping("/search")
-    public List<Client> search(@RequestParam String param) {
-        return clientService.search(param, param, param, param);
+    public Page<Client> search(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
+        return clientService.search(param, param, param, param, page);
     }
 
     @GetMapping("{id}")

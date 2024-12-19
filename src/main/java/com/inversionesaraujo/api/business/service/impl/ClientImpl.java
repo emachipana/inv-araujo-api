@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.business.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -55,10 +53,12 @@ public class ClientImpl implements IClient {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Client> search(String document, String rsocial, String city, String department) {
+    public Page<Client> search(String document, String rsocial, String city, String department, Integer page) {
+        Pageable pageable = PageRequest.of(page, 10);
+
         return 
         clientRepo.findByRsocialContainingIgnoreCaseOrDocumentContainingIgnoreCaseOrCityContainingIgnoreCaseOrDepartmentContainingIgnoreCase(
-            rsocial, document, city, department
+            rsocial, document, city, department, pageable
         );
     }
 }
