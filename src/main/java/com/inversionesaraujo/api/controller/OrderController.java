@@ -2,7 +2,6 @@ package com.inversionesaraujo.api.controller;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -56,8 +55,8 @@ public class OrderController {
     }
 
     @GetMapping("search")
-    public List<Order> search(@RequestParam String param) {
-        return orderService.search(param, param, param);
+    public Page<Order> search(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
+        return orderService.search(param, param, param, page);
     }
 
     @GetMapping("data")
