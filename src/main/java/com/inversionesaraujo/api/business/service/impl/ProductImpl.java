@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.inversionesaraujo.api.business.service.IProduct;
 import com.inversionesaraujo.api.business.spec.ProductSpecifications;
 import com.inversionesaraujo.api.model.Product;
+import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.repository.ProductRepository;
 
@@ -50,7 +51,10 @@ public class ProductImpl implements IProduct {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Product> filterProducts(Double minPrice, Double maxPrice, Integer categoryId, Integer page, Integer size, SortDirection direction) {
+    public Page<Product> filterProducts(
+        Double minPrice, Double maxPrice, Integer categoryId, Integer page, 
+        Integer size, SortBy sort, SortDirection direction
+    ) {
         Specification<Product> spec = Specification.where(
             ProductSpecifications.priceGreaterThanOrEqual(minPrice)
             .and(ProductSpecifications.priceLessThanOrEqual(maxPrice))
@@ -58,9 +62,9 @@ public class ProductImpl implements IProduct {
         );
 
         Pageable pageable;
-        if(direction != null) {
-            Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "price");
-            pageable = PageRequest.of(page, size, sort);
+        if(sort != null) {
+            Sort sorted = Sort.by(Sort.Direction.fromString(direction.toString()), sort.toString());
+            pageable = PageRequest.of(page, size, sorted);
         }else {
             pageable = PageRequest.of(page, size);
         }
