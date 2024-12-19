@@ -64,8 +64,10 @@ public class VitroOrderImpl implements IVitroOrder {
 
     @Transactional(readOnly = true)
     @Override
-    public List<VitroOrder> search(String department, String city, String rsocial) {
-        return orderRepo.findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(department, city, rsocial);
+    public Page<VitroOrder> search(String department, String city, String rsocial, Integer page) {
+        Pageable pageable = PageRequest.of(page, 10);
+
+        return orderRepo.findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(department, city, rsocial, pageable);
     }
 
     @Transactional(readOnly = true)

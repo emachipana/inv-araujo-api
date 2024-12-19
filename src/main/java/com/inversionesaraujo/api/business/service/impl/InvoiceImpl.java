@@ -3,7 +3,6 @@ package com.inversionesaraujo.api.business.service.impl;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.io.ByteArrayOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +110,9 @@ public class InvoiceImpl implements I_Invoice {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Invoice> search(String rsocial, String document) {
-        return invoiceRepo.findByrSocialContainingIgnoreCaseOrDocumentContainingIgnoreCase(rsocial, document);
+    public Page<Invoice> search(String rsocial, String document, Integer page) {
+        Pageable pageable = PageRequest.of(page, 10);
+
+        return invoiceRepo.findByrSocialContainingIgnoreCaseOrDocumentContainingIgnoreCase(rsocial, document, pageable);
     }
 }

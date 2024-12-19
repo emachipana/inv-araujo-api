@@ -20,6 +20,7 @@ import com.inversionesaraujo.api.business.service.ICategory;
 import com.inversionesaraujo.api.business.service.IProduct;
 import com.inversionesaraujo.api.model.Category;
 import com.inversionesaraujo.api.model.Product;
+import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
 
 @RestController
@@ -36,10 +37,11 @@ public class ProductController {
         @RequestParam(required = false) Double minPrice,
         @RequestParam(required = false) Double maxPrice,
         @RequestParam(defaultValue = "0") Integer page,
-        @RequestParam(defaultValue = "20") Integer size,
-        @RequestParam(required = false) SortDirection sort
+        @RequestParam(defaultValue = "16") Integer size,
+        @RequestParam(required = false) SortBy sortby,
+        @RequestParam(required = false) SortDirection direction
     ) {
-        return productService.filterProducts(minPrice, maxPrice, categoryId, page, size, sort);
+        return productService.filterProducts(minPrice, maxPrice, categoryId, page, size, sortby, direction);
     }
 
     @GetMapping("/search")
