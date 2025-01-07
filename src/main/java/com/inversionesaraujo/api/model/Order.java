@@ -43,6 +43,9 @@ public class Order {
     @Builder.Default
     private Status status = Status.PENDIENTE;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private OrderLocation location = OrderLocation.LOCAL;
     @Builder.Default
     private Double total = 0.0;
     @OneToOne(cascade = CascadeType.ALL)

@@ -105,6 +105,7 @@ public class VitroOrderController {
                 .city(request.getCity())
                 .initDate(request.getInitDate())
                 .finishDate(request.getFinishDate())
+                .location(request.getLocation())
                 .invoice(invoice)
                 .build());
 
@@ -134,6 +135,7 @@ public class VitroOrderController {
             order.setStatus(request.getStatus());
             order.setInvoice(invoice);
             order.setPending(order.getTotal() - order.getTotalAdvance());
+            order.setLocation(request.getLocation());
             
             VitroOrder orderUpdated = orderService.save(order);
 

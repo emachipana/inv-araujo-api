@@ -110,6 +110,7 @@ public class OrderController {
                 .department(request.getDepartment())
                 .city(request.getCity())
                 .date(date)
+                .location(request.getLocation())
                 .maxShipDate(maxShipDate)
                 .build());
 
@@ -140,6 +141,7 @@ public class OrderController {
             order.setStatus(request.getStatus());
             order.setDate(date);
             order.setMaxShipDate(maxShipDate);
+            order.setLocation(request.getLocation());
 
             Order orderUptaded = orderService.save(order);
 

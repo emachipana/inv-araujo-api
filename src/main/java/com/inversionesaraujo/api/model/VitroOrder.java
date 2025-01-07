@@ -58,6 +58,9 @@ public class VitroOrder {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Status status = Status.PENDIENTE;
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private OrderLocation location = OrderLocation.LOCAL;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;

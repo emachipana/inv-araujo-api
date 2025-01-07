@@ -3,6 +3,7 @@ package com.inversionesaraujo.api.business.dto.request;
 import java.time.LocalDate;
 
 import com.google.auto.value.AutoValue.Builder;
+import com.inversionesaraujo.api.model.OrderLocation;
 import com.inversionesaraujo.api.model.Status;
 
 import lombok.AllArgsConstructor;
@@ -20,4 +21,5 @@ public class OrderRequest {
     private String city;
     private Status status;
     private LocalDate date;
+    private OrderLocation location;
 }
