@@ -26,7 +26,7 @@ public class FirebaseConfig {
 
             FirebaseApp.initializeApp(options);
         }catch (IOException error) {
-            error.printStackTrace();
+            System.out.println(error.getMessage());
         }
     }
 }

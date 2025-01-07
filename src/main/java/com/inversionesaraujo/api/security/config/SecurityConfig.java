@@ -36,6 +36,8 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/api/v1/messages/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/messages/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.POST, "/api/v1/messages/**").permitAll()
+                    // notifications
+                    .requestMatchers(HttpMethod.POST, "/api/v1/notifications/**").permitAll()
                     // tubers
                     .requestMatchers(HttpMethod.GET, "/api/v1/tubers/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.POST, "/api/v1/tubers/**").hasAnyAuthority("ADMINISTRADOR")
@@ -117,11 +119,13 @@ public class SecurityConfig {
                 sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authProvider)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(exception ->
+                exception.authenticationEntryPoint(new AuthEntryPoint()))
             .build();
     }
 
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
+    WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
