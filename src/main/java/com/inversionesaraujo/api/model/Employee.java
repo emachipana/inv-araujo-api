@@ -3,6 +3,7 @@ package com.inversionesaraujo.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.NotEmpty;

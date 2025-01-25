@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,4 +44,6 @@ public class Notification {
 	private LocalDateTime createdAt = LocalDateTime.now();
 	@Builder.Default
 	private Boolean isRead = false;
+	@NotEmpty(message = "El enlace no puede ir vacío")
+	private String redirectTo;
 }

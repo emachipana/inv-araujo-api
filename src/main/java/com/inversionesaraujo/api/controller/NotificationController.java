@@ -68,6 +68,7 @@ public class NotificationController {
                 .type(request.getType())
                 .user(user)
                 .message(message)
+                .redirectTo(request.getRedirectTo())
                 .build());
 
             return new ResponseEntity<>(MessageResponse

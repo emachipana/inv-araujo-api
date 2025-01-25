@@ -15,4 +15,5 @@ public class NotificationRequest {
     private Integer userId;
     private NotificationType type;
     private Boolean isRead;
+    private String redirectTo;
 }
