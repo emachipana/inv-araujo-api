@@ -4,12 +4,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inversionesaraujo.api.business.service.IEmployee;
 import com.inversionesaraujo.api.model.Employee;
 import com.inversionesaraujo.api.repository.EmployeeRepository;
 
+@Service
 public class EmployeeImpl implements IEmployee {
     @Autowired
     private EmployeeRepository employeeRepo;

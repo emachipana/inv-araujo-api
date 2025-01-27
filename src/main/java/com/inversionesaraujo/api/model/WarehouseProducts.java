@@ -8,37 +8,32 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Builder
-@Table(name = "categories")
-public class Category {
+@Table(name = "warehouse_products")
+public class WarehouseProducts {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotEmpty(message = "El nombre no puede ir vacio")
-    @Size(min = 3)
-    @Column(unique = true)
-    private String name;
-    @NotEmpty(message = "La descripción no puede ir vacía")
-    @Size(min = 10)
-    private String description;
+    @Column(nullable = false)
+    @PositiveOrZero
+    private Integer quantity;
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category parenCategory;
+    @NotNull(message = "El id del producto no puede ir vacío")
+    @JoinColumn(name = "product_id")
+    private Product product;
     @ManyToOne
-    @JoinColumn(name = "image_id")
-    private Image image;
-    @ManyToOne
-    @JoinColumn(name = "icon_id")
-    private Image icon;
+    @NotNull(message = "El id del almacén no puede ir vacío")
+    @JoinColumn(name = "warehouse_id")
+    private Warehouse warehouse;
 }

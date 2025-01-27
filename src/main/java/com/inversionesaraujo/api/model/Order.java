@@ -59,6 +59,12 @@ public class Order {
     private LocalDate date;
     @Column(nullable = false)
     private LocalDate maxShipDate;
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "El tipo de envío no puede ir vacío")
+    private ShippingType shippingType;
+    @ManyToOne
+    @JoinColumn(name = "delivered_by")
+    private Employee employee;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderProduct> items;
 }

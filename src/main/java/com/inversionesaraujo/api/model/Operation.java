@@ -1,6 +1,6 @@
 package com.inversionesaraujo.api.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,37 +14,33 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Builder
-@Table(name = "expenses")
-public class Expense {
+@Table(name = "operations")
+public class Operation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotEmpty(message = "El nombre no puede ir vacio")
-    @Size(min = 3, max = 200)
-    private String name;
-    @NotNull(message = "El precio no puede ir vacio")
-    private Double price;
-    @NotNull(message = "La cantidad no puede ir vacia")
-    private Integer quantity;
-    @Column(nullable = false)
-    private Double subTotal;
     @ManyToOne
-    @JoinColumn(name = "profit_id")
-    @NotNull(message = "El id del registro de ingresos no puede ir vacio")
-    @JsonIgnore
-    private Profit profit;
+    @NotNull(message = "El id del empleado no puede ir vacío")
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "El tipo de gasto no puede ir vacío")
-    private ExpenseType type;
+    @NotNull(message = "El tipo de operación no puede ir vacío")
+    private OperationType type;
+    @Column(nullable = false)
+    private String message;
+    @NotEmpty(message = "El link de redirección no puede ir vacío")
+    private String redirectTo;
+    @Column(nullable = false)
+    @Builder.Default
+    private LocalDateTime dateTime = LocalDateTime.now();
 }

@@ -61,6 +61,12 @@ public class VitroOrder {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private OrderLocation location = OrderLocation.LOCAL;
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "El tipo de envío no puede ir vacío")
+    private ShippingType shippingType;
+    @ManyToOne
+    @JoinColumn(name = "delivered_by")
+    private Employee employee;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;

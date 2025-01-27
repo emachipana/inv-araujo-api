@@ -34,6 +34,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotEmpty(message = "El nombre no puede ir vacío")
+    @Column(unique = true)
     @Size(min = 3, max = 100)
     private String name;
     @Column(columnDefinition = "TEXT")
