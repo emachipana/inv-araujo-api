@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
 import com.inversionesaraujo.api.business.dto.request.ProfitRequest;
-import com.inversionesaraujo.api.business.service.IAdmin;
 import com.inversionesaraujo.api.business.service.IProfit;
-import com.inversionesaraujo.api.model.Admin;
 import com.inversionesaraujo.api.model.Profit;
 import com.inversionesaraujo.api.model.SortDirection;
 
@@ -29,8 +27,6 @@ import com.inversionesaraujo.api.model.SortDirection;
 public class ProfitController {
     @Autowired
     private IProfit profitService;
-    @Autowired
-    private IAdmin adminService;
 
     @GetMapping
     public List<Profit> getAll(@RequestParam(defaultValue = "ASC") SortDirection sort) {
@@ -79,10 +75,8 @@ public class ProfitController {
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody ProfitRequest request) {
         try {
-            Admin admin = adminService.findById(request.getAdminId());
             Month month = request.getDate().getMonth();
             Profit profit = profitService.save(Profit.builder()
-                .admin(admin)
                 .date(request.getDate())
                 .month(month.toString())
                 .build());

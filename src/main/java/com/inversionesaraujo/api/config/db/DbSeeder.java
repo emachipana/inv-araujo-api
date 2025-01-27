@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.inversionesaraujo.api.business.service.IAdmin;
+import com.inversionesaraujo.api.business.service.IEmployee;
 import com.inversionesaraujo.api.business.service.IProfit;
 import com.inversionesaraujo.api.business.service.IUser;
-import com.inversionesaraujo.api.model.Admin;
+import com.inversionesaraujo.api.model.Employee;
 import com.inversionesaraujo.api.model.Profit;
 import com.inversionesaraujo.api.model.Role;
 import com.inversionesaraujo.api.model.User;
@@ -19,32 +19,35 @@ import com.inversionesaraujo.api.model.User;
 @Configuration
 public class DbSeeder {
     @Autowired
-    private IAdmin adminService;
-    @Autowired
     private IUser userService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private IProfit profitService;
+	@Autowired
+	private IEmployee employeeService;
 
     @Bean
     CommandLineRunner seedDatabase() {
         return args -> {
 			String email = System.getenv("ADMIN_EMAIL");
-            Admin admin = adminService.findByEmail(email);
+			String document = System.getenv("ADMIN_DOCUMENT");
+			String phone = System.getenv("ADMIN_PHONE");
+            Employee admin = employeeService.findByEmail(email);
 
           	if(admin == null) {
-              	Admin newAdmin = Admin
+              	Employee newAdmin = Employee
                 	.builder()
 					.email(email)
-					.firstName("Yurfa")
-					.lastName("Araujo Estrada")
+					.document(document)
+					.rsocial("YURFA ARAUJO ESTRADA")
+					.phone(phone)
 					.build();
 
-				Admin savedAdmin = adminService.save(newAdmin);
+				Employee savedAdmin = employeeService.save(newAdmin);
 				User newUser = User
 					.builder()
-					.admin(savedAdmin)
+					.employee(savedAdmin)
 					.username(email)
 					.password(passwordEncoder.encode(System.getenv("ADMIN_PASSWORD")))
 					.role(Role.ADMINISTRADOR)
@@ -66,9 +69,7 @@ public class DbSeeder {
 			Month month = now.getMonth();
 			Profit profit = profitService.findByMonth(month.toString());
 			if(profit == null) {
-				Admin adminFound = adminService.findByEmail(email);
 				Profit newProfit = profitService.save(Profit.builder()
-					.admin(adminFound)
 					.date(now)
 					.month(month.toString())
 					.build());

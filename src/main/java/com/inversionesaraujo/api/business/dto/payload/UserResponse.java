@@ -15,8 +15,7 @@ import lombok.NoArgsConstructor;
 public class UserResponse {
   public Integer id;
   public Role role;
-  public String name;
-  public String lastName;
   public String username;
+  public String fullName;
   public Image image;
 }

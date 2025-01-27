@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProfitRequest {
-    private Integer adminId;
     private LocalDate date;
     private Double income;
 }

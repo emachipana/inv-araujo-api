@@ -16,12 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
 import com.inversionesaraujo.api.business.dto.request.AdvanceRequest;
-import com.inversionesaraujo.api.business.service.IAdmin;
 import com.inversionesaraujo.api.business.service.IAdvance;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.business.service.IProfit;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
-import com.inversionesaraujo.api.model.Admin;
 import com.inversionesaraujo.api.model.Advance;
 import com.inversionesaraujo.api.model.Client;
 import com.inversionesaraujo.api.model.Profit;
@@ -36,8 +34,6 @@ public class AdvanceController {
     private IVitroOrder orderService;
     @Autowired
     private IProfit profitService;
-    @Autowired
-    private IAdmin adminService;
     @Autowired
     private IClient clientService;
 
@@ -83,10 +79,7 @@ public class AdvanceController {
             Month month = request.getDate().getMonth();
             Profit profit = profitService.findByMonth(month.toString());
             if(profit == null) {
-                String email = System.getenv("ADMIN_EMAIL");
-                Admin admin = adminService.findByEmail(email);
                 profitService.save(Profit.builder()
-                    .admin(admin)
                     .date(request.getDate())
                     .income(amount)
                     .profit(amount)

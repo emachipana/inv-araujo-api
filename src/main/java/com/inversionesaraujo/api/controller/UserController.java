@@ -47,8 +47,7 @@ public class UserController {
                 .builder()
                 .id(currentUser.getId())
                 .image(currentUser.getImage())
-                .name(currentUser.getAdmin() != null ? currentUser.getAdmin().getFirstName() : currentUser.getClient().getRsocial())
-                .lastName(currentUser.getAdmin() != null ? currentUser.getAdmin().getLastName() : "")
+                .fullName(currentUser.getEmployee() != null ? currentUser.getEmployee().getRsocial() : currentUser.getClient().getRsocial())
                 .role(currentUser.getRole())
                 .username(currentUser.getUsername())
                 .build();
@@ -74,8 +73,7 @@ public class UserController {
                 .builder()
                 .id(user.getId())
                 .image(user.getImage())
-                .name(user.getAdmin() != null ? user.getAdmin().getFirstName() : user.getClient().getRsocial())
-                .lastName(user.getAdmin() != null ? user.getAdmin().getLastName() : "")
+                .fullName(user.getEmployee() != null ? user.getEmployee().getRsocial() : user.getClient().getRsocial())
                 .role(user.getRole())
                 .username(user.getUsername())
                 .build();
@@ -124,8 +122,7 @@ public class UserController {
                 .builder()
                 .id(updatedUser.getId())
                 .role(updatedUser.getRole())
-                .name(user.getAdmin() != null ? user.getAdmin().getFirstName() : user.getClient().getRsocial())
-                .lastName(user.getAdmin() != null ? user.getAdmin().getLastName() : "")
+                .fullName(user.getEmployee() != null ? user.getEmployee().getRsocial() : user.getClient().getRsocial())
                 .username(user.getUsername())
                 .image(user.getImage())
                 .build();

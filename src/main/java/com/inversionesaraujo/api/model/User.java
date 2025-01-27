@@ -49,8 +49,8 @@ public class User implements UserDetails {
     @JoinColumn(name = "client_id")
     private Client client;
     @OneToOne
-    @JoinColumn(name = "admin_id")
-    private Admin admin;
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
     private Image image;
