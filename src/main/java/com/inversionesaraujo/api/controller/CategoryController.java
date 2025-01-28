@@ -46,7 +46,7 @@ public class CategoryController {
                 .build(), HttpStatus.NOT_FOUND);
         }
     }
-
+    
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody Category newCategory) {
         try {
