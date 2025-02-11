@@ -7,7 +7,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.payload.MessageResponse;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

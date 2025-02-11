@@ -2,8 +2,6 @@ package com.inversionesaraujo.api.model;
 
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,8 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,20 +26,25 @@ import lombok.NoArgsConstructor;
 public class Notification {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
+
 	@ManyToOne
-	@JoinColumn(name = "user_id")
-	@JsonIgnore
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
+
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	@NotNull(message = "El tipo de notificación no puede ir vacío")
 	private NotificationType type;
+
 	@Column(nullable = false)
 	private String message;
+
 	@Builder.Default
 	private LocalDateTime createdAt = LocalDateTime.now();
+
 	@Builder.Default
 	private Boolean isRead = false;
-	@NotEmpty(message = "El enlace no puede ir vacío")
+
+	@Column(nullable = false)
 	private String redirectTo;
 }

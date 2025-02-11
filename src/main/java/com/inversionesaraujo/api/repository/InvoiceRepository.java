@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.inversionesaraujo.api.model.Invoice;
 
-public interface InvoiceRepository extends JpaRepository<Invoice, Integer>, JpaSpecificationExecutor<Invoice> {
-    Page<Invoice> findByrSocialContainingIgnoreCaseOrDocumentContainingIgnoreCase(String rsocial, String document, Pageable pageable);
+public interface InvoiceRepository extends JpaRepository<Invoice, Long>, JpaSpecificationExecutor<Invoice> {
+    Page<Invoice> findByrsocialContainingIgnoreCaseOrDocumentContainingIgnoreCase(String rsocial, String document, Pageable pageable);
 }

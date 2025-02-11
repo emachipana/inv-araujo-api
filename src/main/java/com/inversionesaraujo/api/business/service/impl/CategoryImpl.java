@@ -7,6 +7,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.CategoryDTO;
 import com.inversionesaraujo.api.business.service.ICategory;
 import com.inversionesaraujo.api.model.Category;
 import com.inversionesaraujo.api.repository.CategoryRepository;
@@ -18,25 +19,31 @@ public class CategoryImpl implements ICategory {
 
     @Transactional
 	@Override
-	public Category save(Category category) {
-        return categoryRepo.save(category);
+	public CategoryDTO save(CategoryDTO category) {
+        Category categortSaved = categoryRepo.save(CategoryDTO.toEntity(category));
+
+        return CategoryDTO.toDTO(categortSaved);
     }
 
     @Transactional(readOnly = true)
 	@Override
-	public Category findById(Integer id) {
-	    return categoryRepo.findById(id).orElseThrow(() -> new DataAccessException("La categoria no existe") {});
+	public CategoryDTO findById(Long id) {
+        Category category = categoryRepo.findById(id).orElseThrow(() -> new DataAccessException("La categoria no existe") {});
+
+	    return CategoryDTO.toDTO(category);
     }
 
     @Transactional
 	@Override
-	public void delete(Category category) {
-        categoryRepo.delete(category);
+	public void delete(Long id) {
+        categoryRepo.deleteById(id);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<Category> listAll() {
-        return categoryRepo.findAll();
+    public List<CategoryDTO> listAll() {
+        List<Category> categories = categoryRepo.findByCategoryIsNull();
+
+        return CategoryDTO.toDTOList(categories);
     }
 }

@@ -1,26 +1,16 @@
 package com.inversionesaraujo.api.model;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import jakarta.persistence.Column;
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.Table;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.CascadeType;
 
 @Data
 @AllArgsConstructor
@@ -31,27 +21,20 @@ import jakarta.persistence.CascadeType;
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @NotEmpty(message = "La razón social no puede ir vacía")
+    private Long id;
+
+    @Column(nullable = false)
     private String rsocial;
-    @NotEmpty(message = "El documento no puede ir vacío")
-    @Size(min = 8, max = 8)
-    @Column(unique = true)
+
+    @Column(unique = true, nullable = false)
     private String document;
-    @NotEmpty(message = "El correo no puede ir vacío")
-    @Email(message = "El formato es incorrecto")
-    @Column(unique = true)
+    
+    @Column(unique = true, nullable = false)
     private String email;
-    @NotEmpty(message = "El telefono no puede ir vacio")
-    @Size(min = 9)
+
+    @Column(nullable = false)
     private String phone;
-    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
+
+    @OneToOne(mappedBy = "employee")
     private User user;
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Operation> operations;
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<VitroOrder> shipVitroOrders;
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Order> shipOrders;
 }

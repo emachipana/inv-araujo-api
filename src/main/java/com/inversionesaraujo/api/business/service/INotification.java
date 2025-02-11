@@ -2,14 +2,14 @@ package com.inversionesaraujo.api.business.service;
 
 import java.util.List;
 
-import com.inversionesaraujo.api.model.Notification;
+import com.inversionesaraujo.api.business.dto.NotificationDTO;
 
 public interface INotification {
-    Notification save(Notification notification);
+    NotificationDTO save(NotificationDTO notification);
     
-    Notification findById(Integer id);
+    NotificationDTO findById(Long id);
 
-    List<Notification> findByUsername(String username);
+    List<NotificationDTO> findByUsername(String username);
 
-    void delete(Notification notification);
+    void delete(Long id);
 }

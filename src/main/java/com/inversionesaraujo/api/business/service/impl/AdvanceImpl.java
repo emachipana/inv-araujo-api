@@ -5,29 +5,35 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.AdvanceDTO;
 import com.inversionesaraujo.api.business.service.IAdvance;
 import com.inversionesaraujo.api.model.Advance;
 import com.inversionesaraujo.api.repository.AdvanceRepository;
 
 @Service
 public class AdvanceImpl implements IAdvance {
-  @Autowired
-  private AdvanceRepository advanceRepo;
+	@Autowired
+	private AdvanceRepository advanceRepo;
 
-  @Transactional
-  @Override
-  public Advance save(Advance advance) {
-    return advanceRepo.save(advance);
-  }
+	@Transactional
+	@Override
+	public AdvanceDTO save(AdvanceDTO advance) {
+		Advance advanceSaved = advanceRepo.save(AdvanceDTO.toEntity(advance));
 
-  @Transactional(readOnly = true)
-  @Override
-  public Advance findById(Integer id) {
-    return advanceRepo.findById(id).orElseThrow(() -> new DataAccessException("El adelanto no existe") {});
-  }
+		return AdvanceDTO.toDTO(advanceSaved);
+	}
 
-  @Override
-  public void delete(Advance advance) {
-    advanceRepo.delete(advance);
-  }
+	@Transactional
+	@Override
+	public void delete(Long id) {
+		advanceRepo.deleteById(id);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public AdvanceDTO findById(Long id) {
+		Advance advance = advanceRepo.findById(id).orElseThrow(() -> new DataAccessException("El adelanto no existe") {});
+
+		return AdvanceDTO.toDTO(advance);
+	}
 }

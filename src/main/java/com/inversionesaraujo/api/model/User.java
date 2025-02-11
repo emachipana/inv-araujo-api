@@ -20,11 +20,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,32 +32,35 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
+@Table(name = "users")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     @Builder.Default
     private Role role = Role.CLIENTE;
-    @OneToOne(cascade = CascadeType.ALL)
+
+    @OneToOne
     @JoinColumn(name = "client_id")
     private Client client;
+
     @OneToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
     private Image image;
-    // email
-    @Column(nullable = false)
+
+    @Column(nullable = false, unique = true)
     private String username;
-    @NotEmpty(message = "La contraseña no puede ir vacia")
+
+    @Column(nullable = false)
     private String password;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Reset> resets;
+    
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Cart cart;
 

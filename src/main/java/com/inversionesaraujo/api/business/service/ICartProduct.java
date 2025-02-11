@@ -1,11 +1,11 @@
 package com.inversionesaraujo.api.business.service;
 
-import com.inversionesaraujo.api.model.CartProduct;
+import com.inversionesaraujo.api.business.dto.CartProductDTO;
 
 public interface ICartProduct {
-    CartProduct save(CartProduct item); 
+    CartProductDTO save(CartProductDTO item); 
 
-    CartProduct findById(Integer id);
+    CartProductDTO findById(Long id);
 
-    void delete(CartProduct item);
+    void delete(Long id);
 }

@@ -7,6 +7,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.EmployeeDTO;
 import com.inversionesaraujo.api.business.service.IEmployee;
 import com.inversionesaraujo.api.model.Employee;
 import com.inversionesaraujo.api.repository.EmployeeRepository;
@@ -18,30 +19,39 @@ public class EmployeeImpl implements IEmployee {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Employee> listAll() {
-        return employeeRepo.findAll();
+    public List<EmployeeDTO> listAll() {
+        List<Employee> employees = employeeRepo.findAll();
+
+        return EmployeeDTO.toListDTO(employees);
     }
 
     @Transactional
     @Override
-    public Employee save(Employee employee) {
-        return employeeRepo.save(employee);
+    public EmployeeDTO save(EmployeeDTO employee) {
+        Employee employeeSaved = employeeRepo.save(EmployeeDTO.toEntity(employee));
+
+        return EmployeeDTO.toDTO(employeeSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Employee findById(Integer id) {
-        return employeeRepo.findById(id).orElseThrow(() -> new DataAccessException("El empleado no existe") {});
+    public EmployeeDTO findById(Long id) {
+        Employee employee = employeeRepo.findById(id).orElseThrow(() -> new DataAccessException("El empleado no existe") {});
+
+        return EmployeeDTO.toDTO(employee);
     }
 
     @Transactional
     @Override
-    public void delete(Employee employee) {
-        employeeRepo.delete(employee);
+    public void delete(Long id) {
+        employeeRepo.deleteById(id);
     }
 
     @Override
-    public Employee findByEmail(String email) {
-        return employeeRepo.findByEmail(email);
+    public EmployeeDTO findByEmail(String email) {
+        Employee employee = employeeRepo.findByEmail(email);
+        if(employee == null) return null;
+
+        return EmployeeDTO.toDTO(employee);
     }
 }

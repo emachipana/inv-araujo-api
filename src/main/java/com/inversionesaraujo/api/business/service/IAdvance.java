@@ -1,11 +1,11 @@
 package com.inversionesaraujo.api.business.service;
 
-import com.inversionesaraujo.api.model.Advance;
+import com.inversionesaraujo.api.business.dto.AdvanceDTO;
 
 public interface IAdvance {
-  Advance save(Advance advance);
+  AdvanceDTO save(AdvanceDTO advance);
 
-  Advance findById(Integer id);
+  AdvanceDTO findById(Long id);
 
-  void delete(Advance advance);
+  void delete(Long id);
 }

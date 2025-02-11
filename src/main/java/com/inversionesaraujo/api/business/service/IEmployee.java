@@ -2,16 +2,16 @@ package com.inversionesaraujo.api.business.service;
 
 import java.util.List;
 
-import com.inversionesaraujo.api.model.Employee;
+import com.inversionesaraujo.api.business.dto.EmployeeDTO;
 
 public interface IEmployee {
-    List<Employee> listAll();
+    List<EmployeeDTO> listAll();
 
-    Employee save(Employee employee);
+    EmployeeDTO save(EmployeeDTO employee);
 
-    Employee findById(Integer id);
+    EmployeeDTO findById(Long id);
 
-    Employee findByEmail(String email);
+    EmployeeDTO findByEmail(String email);
 
-    void delete(Employee employee);
+    void delete(Long id);
 }

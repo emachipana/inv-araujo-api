@@ -5,6 +5,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.InvoiceItemDTO;
 import com.inversionesaraujo.api.business.service.I_InvoiceItem;
 import com.inversionesaraujo.api.model.InvoiceItem;
 import com.inversionesaraujo.api.repository.InvoiceItemRepository;
@@ -16,19 +17,23 @@ public class InvoiceItemImpl implements I_InvoiceItem {
 
     @Transactional
     @Override
-    public InvoiceItem save(InvoiceItem item) {
-        return itemRepo.save(item);
+    public InvoiceItemDTO save(InvoiceItemDTO item) {
+        InvoiceItem itemSaved = itemRepo.save(InvoiceItemDTO.toEntity(item));
+
+        return InvoiceItemDTO.toDTO(itemSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public InvoiceItem findById(Integer id) {
-        return itemRepo.findById(id).orElseThrow(() -> new DataAccessException("El item de la factura no existe") {});
+    public InvoiceItemDTO findById(Long id) {
+        InvoiceItem item = itemRepo.findById(id).orElseThrow(() -> new DataAccessException("El item de la factura no existe") {});
+
+        return InvoiceItemDTO.toDTO(item);
     }
 
     @Transactional
     @Override
-    public void delete(InvoiceItem item) {
-        itemRepo.delete(item);
+    public void delete(Long id) {
+        itemRepo.deleteById(id);
     }
 }

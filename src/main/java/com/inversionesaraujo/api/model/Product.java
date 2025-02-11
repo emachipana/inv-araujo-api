@@ -14,10 +14,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,36 +28,40 @@ import lombok.NoArgsConstructor;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @NotEmpty(message = "El nombre no puede ir vacío")
-    @Column(unique = true)
-    @Size(min = 3, max = 100)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
     private String name;
-    @Column(columnDefinition = "TEXT")
-    @NotEmpty(message = "La descripcion no puede ir vacía")
+
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
-    @NotEmpty(message = "La marca no puede ir vacía")
+
+    @Column(nullable = false)
     private String brand;
-    @NotEmpty(message = "La unidad de medida no puede ir vacía")
+
+    @Column(nullable = false)
     private String unit;
-    @NotNull(message = "El precio no puede ir vacío")
-    @PositiveOrZero
+
+    @Column(nullable = false)
     private Double price;
-    @NotNull(message = "El precio de compra no puede ir vacío")
-    @PositiveOrZero
+
+    @Column(nullable = false)
     private Double purchasePrice;
-    @NotNull(message = "El stock no puede ir vacío")
-    @PositiveOrZero
-    private Integer stock;
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    @NotNull(message = "El id de la categoria no puede ir vacía")
-    private Category category;
+
     @Column(nullable = false)
     @Builder.Default
-    private boolean isActive = true;
+    private Integer stock = 0;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    @Builder.Default
+    private Boolean isActive = true;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductImage> images;
+
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Discount discount;
+    private Discount discount;    
 }

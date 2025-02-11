@@ -13,7 +13,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.inversionesaraujo.api.business.dto.payload.OrderDataResponse;
+import com.inversionesaraujo.api.business.dto.VitroOrderDTO;
+import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
 import com.inversionesaraujo.api.business.spec.VitroOrderSpecifications;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -29,7 +30,7 @@ public class VitroOrderImpl implements IVitroOrder {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<VitroOrder> listAll(
+    public Page<VitroOrderDTO> listAll(
         Integer tuberId, Integer page, Integer size, 
         SortDirection direction, Month month, Status status
     ) {
@@ -41,33 +42,43 @@ public class VitroOrderImpl implements IVitroOrder {
         Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "initDate");
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return orderRepo.findAll(spec, pageable);
+        Page<VitroOrder> orders = orderRepo.findAll(spec, pageable);
+
+        return VitroOrderDTO.toPageableDTO(orders);
     }
 
     @Transactional
     @Override
-    public VitroOrder save(VitroOrder vitroOrder) {
-        return orderRepo.save(vitroOrder);
+    public VitroOrderDTO save(VitroOrderDTO vitroOrder) {
+        VitroOrder vitroOrderSaved = orderRepo.save(VitroOrderDTO.toEntity(vitroOrder)); 
+
+        return VitroOrderDTO.toDTO(vitroOrderSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public VitroOrder findById(Integer id) {
-        return orderRepo.findById(id).orElseThrow(() -> new DataAccessException("El pedido invitro no existe") {});
+    public VitroOrderDTO findById(Long id) {
+        VitroOrder order = orderRepo.findById(id).orElseThrow(() -> new DataAccessException("El pedido invitro no existe") {});
+
+        return VitroOrderDTO.toDTO(order);
     }
 
     @Transactional
     @Override
-    public void delete(VitroOrder vitroOrder) {
-        orderRepo.delete(vitroOrder);
+    public void delete(Long id) {
+        orderRepo.deleteById(id);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Page<VitroOrder> search(String department, String city, String rsocial, Integer page) {
+    public Page<VitroOrderDTO> search(String department, String city, String rsocial, Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
 
-        return orderRepo.findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(department, city, rsocial, pageable);
+        Page<VitroOrder> orders = orderRepo.findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(
+            department, city, rsocial, pageable
+        );
+
+        return VitroOrderDTO.toPageableDTO(orders);
     }
 
     @Transactional(readOnly = true)
@@ -75,6 +86,6 @@ public class VitroOrderImpl implements IVitroOrder {
     public OrderDataResponse getData() {
         List<VitroOrder> orders = orderRepo.findAll();
 
-        return OrderData.filterData(null, orders);
+        return OrderData.filterData(null, VitroOrderDTO.toListDTO(orders));
     }
 }

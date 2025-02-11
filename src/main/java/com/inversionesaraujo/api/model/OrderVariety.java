@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,7 +8,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,20 +22,22 @@ import lombok.NoArgsConstructor;
 public class OrderVariety {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
+
     @ManyToOne
-    @JoinColumn(name = "vitro_order_id")
-    @NotNull(message = "El id del pedido invitro no puede ir vacio")
-    @JsonIgnore
+    @JoinColumn(name = "vitro_order_id", nullable = false)
     private VitroOrder vitroOrder;
+
     @ManyToOne
-    @JoinColumn(name = "variety_id")
-    @NotNull(message = "El id de la variedad no puede ir vacia")
-    private Variety variety;    
-    @NotNull(message = "El precio no puede ir vacio")
+    @JoinColumn(name = "variety_id", nullable = false)
+    private Variety variety;
+    
+    @Column(nullable = false)
     private Double price;
-    @NotNull(message = "La cantidad no puede ir vacia")
+
+    @Column(nullable = false)
     private Integer quantity;
+
     @Column(nullable = false)
     private Double subTotal;
 }

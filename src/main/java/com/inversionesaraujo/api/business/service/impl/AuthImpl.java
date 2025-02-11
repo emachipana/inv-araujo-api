@@ -6,10 +6,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.inversionesaraujo.api.business.dto.payload.AuthResponse;
-import com.inversionesaraujo.api.business.dto.payload.UserResponse;
-import com.inversionesaraujo.api.business.dto.request.LoginRequest;
-import com.inversionesaraujo.api.business.dto.request.RegisterRequest;
+import com.inversionesaraujo.api.business.dto.ImageDTO;
+import com.inversionesaraujo.api.business.payload.AuthResponse;
+import com.inversionesaraujo.api.business.payload.UserResponse;
+import com.inversionesaraujo.api.business.request.LoginRequest;
+import com.inversionesaraujo.api.business.request.RegisterRequest;
 import com.inversionesaraujo.api.business.service.IAuth;
 import com.inversionesaraujo.api.model.Client;
 import com.inversionesaraujo.api.model.User;
@@ -35,7 +36,7 @@ public class AuthImpl implements IAuth {
         UserResponse userResponse = UserResponse
             .builder()
             .id(user.getId())
-            .image(user.getImage())
+            .image(ImageDTO.toDTO(user.getImage()))
             .fullName(user.getEmployee() != null ? user.getEmployee().getRsocial() : user.getClient().getRsocial())
             .role(user.getRole())
             .username(user.getUsername())
@@ -61,7 +62,7 @@ public class AuthImpl implements IAuth {
         UserResponse userResponse = UserResponse
             .builder()
             .id(newUser.getId())
-            .image(newUser.getImage())
+            .image(ImageDTO.toDTO(newUser.getImage()))
             .fullName(newUser.getEmployee() != null ? newUser.getEmployee().getRsocial() : newUser.getClient().getRsocial())
             .role(newUser.getRole())
             .username(newUser.getUsername())

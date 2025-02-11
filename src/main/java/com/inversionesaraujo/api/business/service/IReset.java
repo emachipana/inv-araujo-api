@@ -1,15 +1,15 @@
 package com.inversionesaraujo.api.business.service;
 
-import com.inversionesaraujo.api.model.Reset;
+import com.inversionesaraujo.api.business.dto.ResetDTO;
 
 public interface IReset {
-    Reset save(Reset reset);
+    ResetDTO save(ResetDTO reset);
 
-    Reset findById(Integer id);
+    ResetDTO findById(Long id);
 
-    void delete(Reset reset);
+    void delete(Long id);
 
     String generateCode();
 
-    Boolean validCode(Reset reset, String code) throws Exception;
+    Boolean validCode(ResetDTO reset, String code);
 }

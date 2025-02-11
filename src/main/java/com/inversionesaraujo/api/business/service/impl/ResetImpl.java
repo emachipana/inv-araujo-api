@@ -9,6 +9,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.ResetDTO;
 import com.inversionesaraujo.api.business.service.IReset;
 import com.inversionesaraujo.api.model.Reset;
 import com.inversionesaraujo.api.repository.ResetRepository;
@@ -20,20 +21,24 @@ public class ResetImpl implements IReset {
 
     @Transactional
     @Override
-    public Reset save(Reset reset) {
-        return resetRepo.save(reset);
+    public ResetDTO save(ResetDTO reset) {
+        Reset resetSaved = resetRepo.save(ResetDTO.toEntity(reset)); 
+
+        return ResetDTO.toDTO(resetSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Reset findById(Integer id) {
-        return resetRepo.findById(id).orElseThrow(() -> new DataAccessException("El codigo de reset no existe") {});
+    public ResetDTO findById(Long id) {
+        Reset reset = resetRepo.findById(id).orElseThrow(() -> new DataAccessException("El codigo de reset no existe") {});
+
+        return ResetDTO.toDTO(reset);
     }
 
     @Transactional
     @Override
-    public void delete(Reset reset) {
-        resetRepo.delete(reset);
+    public void delete(Long id) {
+        resetRepo.deleteById(id);
     }
 
     @Override
@@ -52,12 +57,12 @@ public class ResetImpl implements IReset {
     }
 
     @Override
-    public Boolean validCode(Reset reset, String code) throws Exception {
+    public Boolean validCode(ResetDTO reset, String code) {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Lima"));
 
         if(!code.equals(reset.getCode())) return false;
 
-        if(now.isAfter(reset.getExpiresAt())) throw new Exception("El codigo expiro");
+        if(now.isAfter(reset.getExpiresAt())) return false;
 
         return true;
     }

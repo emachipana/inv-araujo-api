@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.inversionesaraujo.api.model.Client;
 
-public interface ClientRepository extends JpaRepository<Client, Integer> {
+public interface ClientRepository extends JpaRepository<Client, Long> {
     Page<Client> 
     findByRsocialContainingIgnoreCaseOrDocumentContainingIgnoreCaseOrCityContainingIgnoreCaseOrDepartmentContainingIgnoreCase(
         String rsocial, String document, String city, String department, Pageable pageable

@@ -2,16 +2,16 @@ package com.inversionesaraujo.api.business.service;
 
 import java.util.List;
 
-import com.inversionesaraujo.api.model.User;
+import com.inversionesaraujo.api.business.dto.UserDTO;
 
 public interface IUser {
-    List<User> listAll();
+    List<UserDTO> listAll();
 
-    User save(User user);
+    UserDTO save(UserDTO user);
 
-    User findById(Integer id);
+    UserDTO findById(Long id);
 
-    User findByUsername(String username);
+    UserDTO findByUsername(String username);
 
-    void delete(User user);
+    void delete(Long id);
 }

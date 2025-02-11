@@ -1,11 +1,11 @@
 package com.inversionesaraujo.api.business.service;
 
-import com.inversionesaraujo.api.model.Variety;
+import com.inversionesaraujo.api.business.dto.VarietyDTO;
 
 public interface IVariety {
-    Variety save(Variety variety);
+    VarietyDTO save(VarietyDTO variety);
 
-    Variety findById(Integer id);
+    VarietyDTO findById(Long id);
 
-    void delete(Variety variety);
+    void delete(Long id);
 }

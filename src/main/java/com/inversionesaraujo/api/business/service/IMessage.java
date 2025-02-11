@@ -2,17 +2,17 @@ package com.inversionesaraujo.api.business.service;
 
 import org.springframework.data.domain.Page;
 
-import com.inversionesaraujo.api.model.Message;
+import com.inversionesaraujo.api.business.dto.MessageDTO;
 import com.inversionesaraujo.api.model.SortDirection;
 
 public interface IMessage {
-    Page<Message> listAll(Integer page, Integer size, SortDirection direction);
+    Page<MessageDTO> listAll(Integer page, Integer size, SortDirection direction);
 
-    Page<Message> search(String subject, String content, String email, Integer page);
+    Page<MessageDTO> search(String subject, String content, String email, Integer page);
 
-    Message save(Message message);
+    MessageDTO save(MessageDTO message);
 
-    Message findById(Integer id);
+    MessageDTO findById(Long id);
 
-    void delete(Message message);
+    void delete(Long id);
 }

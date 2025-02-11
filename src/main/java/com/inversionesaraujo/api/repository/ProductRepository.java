@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.inversionesaraujo.api.model.Product;
 
-public interface ProductRepository extends JpaRepository<Product, Integer>, JpaSpecificationExecutor<Product> {
+public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
     Page<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrBrandContainingIgnoreCase
         (String name, String description, String brand, Pageable pageable);
 }

@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.service.impl.JwtImpl;
 
 import io.jsonwebtoken.ExpiredJwtException;

@@ -2,24 +2,24 @@ package com.inversionesaraujo.api.business.service;
 
 import org.springframework.data.domain.Page;
 
-import com.inversionesaraujo.api.business.dto.payload.FileResponse;
-import com.inversionesaraujo.api.model.Invoice;
+import com.inversionesaraujo.api.business.dto.InvoiceDTO;
+import com.inversionesaraujo.api.business.payload.FileResponse;
 import com.inversionesaraujo.api.model.InvoiceType;
 import com.inversionesaraujo.api.model.SortDirection;
 
 public interface I_Invoice {
-    Page<Invoice> listAll(
+    Page<InvoiceDTO> listAll(
         InvoiceType type, Integer pag, Integer size, 
         SortDirection direction
     );
 
-    Invoice save(Invoice invoice);
+    InvoiceDTO save(InvoiceDTO invoice);
 
-    Invoice findById(Integer id);
+    InvoiceDTO findById(Long id);
 
-    void delete(Invoice invoice);
+    void delete(Long id);
 
-    FileResponse generateAndUploadPDF(Invoice invoice);
+    FileResponse generateAndUploadPDF(InvoiceDTO invoice);
 
-    Page<Invoice> search(String rsocial, String document, Integer page);
+    Page<InvoiceDTO> search(String rsocial, String document, Integer page);
 }

@@ -1,17 +1,18 @@
 package com.inversionesaraujo.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
-import com.inversionesaraujo.api.business.dto.request.DiscountRequest;
+import com.inversionesaraujo.api.business.dto.DiscountDTO;
+import com.inversionesaraujo.api.business.dto.ProductDTO;
+import com.inversionesaraujo.api.business.payload.MessageResponse;
+import com.inversionesaraujo.api.business.request.DiscountRequest;
 import com.inversionesaraujo.api.business.service.IDiscount;
 import com.inversionesaraujo.api.business.service.IProduct;
-import com.inversionesaraujo.api.model.Discount;
-import com.inversionesaraujo.api.model.Product;
+
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,90 +30,62 @@ public class DiscountController {
     private IProduct productService;
 
     @GetMapping("{id}")
-    public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
-        try {
-            Discount discount = discountService.findById(id);
+    public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
+        DiscountDTO discount = discountService.findById(id);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El descuento se encontro con exito")
-                .data(discount)
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El descuento se encontro con exito")
+            .data(discount)
+            .build());
     }
  
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody DiscountRequest discountRequest) {
-        try {
-            Product product = productService.findById(discountRequest.getProductId());
-            Integer percentage = discountService.getPercentage(product.getPrice(), discountRequest.getPrice());
+    public ResponseEntity<MessageResponse> create(@RequestBody @Valid DiscountRequest request) {
+        ProductDTO product = productService.findById(request.getProductId());
+        Integer percentage = discountService.getPercentage(product.getPrice(), request.getPrice());
 
-            Discount newDiscount = discountService.save(Discount
-                .builder()
-                .product(product)
-                .price(discountRequest.getPrice())
-                .percentage(percentage)
-                .build());
+        DiscountDTO newDiscount = discountService.save(DiscountDTO
+            .builder()
+            .productId(product.getId())
+            .price(request.getPrice())
+            .percentage(percentage)
+            .build());
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El descuento se creo con exito")
-                .data(newDiscount)
-                .build(), HttpStatus.CREATED);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        return ResponseEntity.status(201).body(MessageResponse
+            .builder()
+            .message("El descuento se creo con exito")
+            .data(newDiscount)
+            .build());
     }
     
     @PutMapping("{id}")
-    public ResponseEntity<MessageResponse> update(@RequestBody DiscountRequest discountRequest, @PathVariable Integer id) {
-        try {
-            Discount discountToUpdate = discountService.findById(id);
-            Product product = productService.findById(discountRequest.getProductId());
-            Integer percentage = discountService.getPercentage(product.getPrice(), discountRequest.getPrice());
-            discountToUpdate.setProduct(product);
-            discountToUpdate.setPercentage(percentage);
-            discountToUpdate.setPrice(discountRequest.getPrice());
-            Discount discountUpdated = discountService.save(discountToUpdate);
+    public ResponseEntity<MessageResponse> update(@RequestBody @Valid DiscountRequest request, @PathVariable Long id) {
+        DiscountDTO discount = discountService.findById(id);
+        ProductDTO product = productService.findById(request.getProductId());
+        Integer percentage = discountService.getPercentage(product.getPrice(), request.getPrice());
+        discount.setProductId(product.getId());
+        discount.setPercentage(percentage);
+        discount.setPrice(request.getPrice());
+        DiscountDTO discountUpdated = discountService.save(discount);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El descuento se actualizo con exito")
-                .data(discountUpdated)
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);   
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El descuento se actualizo con exito")
+            .data(discountUpdated)
+            .build());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
-        try {
-            Discount discount = discountService.findById(id);
-            Product product = discount.getProduct();
-            product.setDiscount(null);
-            discountService.delete(discount);
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
+        DiscountDTO discount = discountService.findById(id);
+        ProductDTO product = productService.findById(discount.getProductId());
+        product.setDiscount(null);
+        discountService.delete(discount.getId());
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El descuento se elimino con exito")
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El descuento se elimino con exito")
+            .build());
     }
 }

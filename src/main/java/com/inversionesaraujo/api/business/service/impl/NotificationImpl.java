@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.NotificationDTO;
 import com.inversionesaraujo.api.business.service.INotification;
 import com.inversionesaraujo.api.business.spec.NotificationSpecifications;
 import com.inversionesaraujo.api.model.Notification;
@@ -20,27 +21,33 @@ public class NotificationImpl implements INotification {
 
     @Transactional
     @Override
-    public Notification save(Notification notification) {
-        return notificationRepo.save(notification);
+    public NotificationDTO save(NotificationDTO notification) {
+        Notification notificationSaved = notificationRepo.save(NotificationDTO.toEntity(notification));
+
+        return NotificationDTO.toDTO(notificationSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Notification findById(Integer id) {
-        return notificationRepo.findById(id).orElseThrow(() -> new DataAccessException("La notificación no existe") {});
+    public NotificationDTO findById(Long id) {
+        Notification notification = notificationRepo.findById(id).orElseThrow(() -> new DataAccessException("La notificación no existe") {});
+
+        return NotificationDTO.toDTO(notification);
     }
 
     @Transactional
     @Override
-    public void delete(Notification notification) {
-        notificationRepo.delete(notification);
+    public void delete(Long id) {
+        notificationRepo.deleteById(id);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<Notification> findByUsername(String username) {
+    public List<NotificationDTO> findByUsername(String username) {
         Specification<Notification> spec = Specification.where(NotificationSpecifications.belongsToUser((username)));
 
-        return notificationRepo.findAll(spec);
+        List<Notification> notifications = notificationRepo.findAll(spec);
+
+        return NotificationDTO.toListDTO(notifications);
     }
 }

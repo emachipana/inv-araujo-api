@@ -2,17 +2,17 @@ package com.inversionesaraujo.api.business.service;
 
 import org.springframework.data.domain.Page;
 
-import com.inversionesaraujo.api.model.Client;
+import com.inversionesaraujo.api.business.dto.ClientDTO;
 import com.inversionesaraujo.api.model.SortDirection;
 
 public interface IClient {
-    Page<Client> filterClients(Integer page, Integer size, SortDirection direction);
+    Page<ClientDTO> filterClients(Integer page, Integer size, SortDirection direction);
 
-    Page<Client> search(String document, String rsocial, String city, String department, Integer page);
+    Page<ClientDTO> search(String document, String rsocial, String city, String department, Integer page);
 
-    Client save(Client client);
+    ClientDTO save(ClientDTO client);
 
-    Client findById(Integer id);
+    ClientDTO findById(Long id);
 
-    void delete(Client client);
+    void delete(Long id);
 }

@@ -13,7 +13,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.inversionesaraujo.api.business.dto.payload.OrderDataResponse;
+import com.inversionesaraujo.api.business.dto.OrderDTO;
+import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.service.IOrder;
 import com.inversionesaraujo.api.business.spec.OrderSpecifications;
 import com.inversionesaraujo.api.model.Order;
@@ -29,7 +30,7 @@ public class OrderImpl implements IOrder {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Order> listAll(Status status, Integer page, Integer size, SortDirection direction, Month month) {
+    public Page<OrderDTO> listAll(Status status, Integer page, Integer size, SortDirection direction, Month month) {
         Specification<Order> spec = Specification.where(
             OrderSpecifications.findByStatus(status)
             .and(OrderSpecifications.findByMonth(month))
@@ -37,33 +38,44 @@ public class OrderImpl implements IOrder {
         Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "date");
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return orderRepo.findAll(spec, pageable);
+        Page<Order> orders = orderRepo.findAll(spec, pageable);
+
+        return OrderDTO.toPageableDTO(orders);
     }
 
     @Transactional
     @Override
-    public Order save(Order order) {
-        return orderRepo.save(order);
+    public OrderDTO save(OrderDTO order) {
+        Order orderSaved = orderRepo.save(OrderDTO.toEntity(order));
+
+        return OrderDTO.toDTO(orderSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Order findById(Integer id) {
-        return orderRepo.findById(id).orElseThrow(() -> new DataAccessException("El pedido no existe") {});
+    public OrderDTO findById(Long id) {
+        Order order = orderRepo.findById(id).orElseThrow(() -> new DataAccessException("El pedido no existe") {});
+
+        return OrderDTO.toDTO(order);
     }
 
     @Transactional
     @Override
-    public void delete(Order order) {
-        orderRepo.delete(order);
+    public void delete(Long id) {
+        orderRepo.deleteById(id);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Order> search(String department, String city, String rsocial, Integer page) {
+    public Page<OrderDTO> search(String department, String city, String rsocial, Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
 
-        return orderRepo.findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(department, city, rsocial, pageable);
+        Page<Order> orders = orderRepo
+            .findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(
+                department, city, rsocial, pageable
+            );
+
+        return OrderDTO.toPageableDTO(orders);
     }
 
     @Transactional(readOnly = true)
@@ -71,6 +83,6 @@ public class OrderImpl implements IOrder {
     public OrderDataResponse getData() {
         List<Order> orders = orderRepo.findAll();
         
-        return OrderData.filterData(orders, null);
+        return OrderData.filterData(OrderDTO.toListDTO(orders), null);
     }
 }

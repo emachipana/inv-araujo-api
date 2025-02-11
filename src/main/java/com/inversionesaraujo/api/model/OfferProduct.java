@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,7 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,14 +21,13 @@ import lombok.NoArgsConstructor;
 public class OfferProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
+
     @ManyToOne
-    @JoinColumn(name = "offer_id")
-    @NotNull(message = "El id del grupo de ofertas no puede ir vacio")
-    @JsonIgnore
+    @JoinColumn(name = "offer_id", nullable = false)
     private Offer offer;
+
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    @NotNull(message = "El id del producto no puede ir  vacio")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 }

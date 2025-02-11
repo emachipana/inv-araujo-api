@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.MessageDTO;
 import com.inversionesaraujo.api.business.service.IMessage;
 import com.inversionesaraujo.api.model.Message;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -21,7 +22,7 @@ public class MessageImpl implements IMessage {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Message> listAll(Integer page, Integer size, SortDirection direction) {
+    public Page<MessageDTO> listAll(Integer page, Integer size, SortDirection direction) {
         Pageable pageable;
         if(direction != null) {
             Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "id");
@@ -30,35 +31,43 @@ public class MessageImpl implements IMessage {
             pageable = PageRequest.of(page, size);
         }
         
-        return messageRepo.findAll(pageable);
+        Page<Message> messages = messageRepo.findAll(pageable);
+
+        return MessageDTO.toPageableDTO(messages);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Message> search(String subject, String content, String email, Integer page) {
+    public Page<MessageDTO> search(String subject, String content, String email, Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
 
-        return messageRepo
+        Page<Message> messages = messageRepo
             .findBySubjectContainingIgnoreCaseOrContentContainingIgnoreCaseOrEmailContainingIgnoreCase(
                 subject, content, email, pageable
             );
+
+        return MessageDTO.toPageableDTO(messages);
     }
 
     @Transactional
     @Override
-    public Message save(Message message) {
-        return messageRepo.save(message);
+    public MessageDTO save(MessageDTO message) {
+        Message messageSaved = messageRepo.save(MessageDTO.toEntity(message));
+
+        return MessageDTO.toDTO(messageSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Message findById(Integer id) {
-        return messageRepo.findById(id).orElseThrow(() -> new DataAccessException("El mensaje no existe") {});
+    public MessageDTO findById(Long id) {
+        Message message = messageRepo.findById(id).orElseThrow(() -> new DataAccessException("El mensaje no existe") {});
+
+        return MessageDTO.toDTO(message);
     }
 
     @Transactional
     @Override
-    public void delete(Message message) {
-        messageRepo.delete(message);
+    public void delete(Long id) {
+        messageRepo.deleteById(id);
     }
 }

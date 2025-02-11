@@ -8,13 +8,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.inversionesaraujo.api.business.dto.EmployeeDTO;
+import com.inversionesaraujo.api.business.dto.ProfitDTO;
+import com.inversionesaraujo.api.business.dto.UserDTO;
 import com.inversionesaraujo.api.business.service.IEmployee;
 import com.inversionesaraujo.api.business.service.IProfit;
 import com.inversionesaraujo.api.business.service.IUser;
-import com.inversionesaraujo.api.model.Employee;
-import com.inversionesaraujo.api.model.Profit;
 import com.inversionesaraujo.api.model.Role;
-import com.inversionesaraujo.api.model.User;
 
 @Configuration
 public class DbSeeder {
@@ -33,10 +33,10 @@ public class DbSeeder {
 			String email = System.getenv("ADMIN_EMAIL");
 			String document = System.getenv("ADMIN_DOCUMENT");
 			String phone = System.getenv("ADMIN_PHONE");
-            Employee admin = employeeService.findByEmail(email);
+            EmployeeDTO admin = employeeService.findByEmail(email);
 
           	if(admin == null) {
-              	Employee newAdmin = Employee
+              	EmployeeDTO newAdmin = EmployeeDTO
                 	.builder()
 					.email(email)
 					.document(document)
@@ -44,16 +44,17 @@ public class DbSeeder {
 					.phone(phone)
 					.build();
 
-				Employee savedAdmin = employeeService.save(newAdmin);
-				User newUser = User
+				EmployeeDTO savedAdmin = employeeService.save(newAdmin);
+				String password = passwordEncoder.encode(System.getenv("ADMIN_PASSWORD"));
+				UserDTO newUser = UserDTO
 					.builder()
-					.employee(savedAdmin)
+					.employeeId(savedAdmin.getId())
 					.username(email)
-					.password(passwordEncoder.encode(System.getenv("ADMIN_PASSWORD")))
 					.role(Role.ADMINISTRADOR)
+					.password(password)
 					.build();
 				
-				User savedUser = userService.save(newUser);
+				UserDTO savedUser = userService.save(newUser);
 
 				if(savedUser != null) {
 					System.out.println("Administrador creado");
@@ -67,9 +68,9 @@ public class DbSeeder {
 
 			LocalDate now = LocalDate.now();
 			Month month = now.getMonth();
-			Profit profit = profitService.findByMonth(month.toString());
+			ProfitDTO profit = profitService.findByMonth(month.toString());
 			if(profit == null) {
-				Profit newProfit = profitService.save(Profit.builder()
+				ProfitDTO newProfit = profitService.save(ProfitDTO.builder()
 					.date(now)
 					.month(month.toString())
 					.build());
@@ -80,7 +81,7 @@ public class DbSeeder {
 					System.out.println("Ocurrio un problema creando el registro");
 				}
 			}else {
-				System.out.println("El registro de ingresos del mesa ya existe");
+				System.out.println("El registro de ingresos del mes ya existe");
 			}
       	};
     }

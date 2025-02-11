@@ -1,20 +1,13 @@
 package com.inversionesaraujo.api.model;
 
-import java.util.List;
-
 import java.time.LocalDate;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,24 +18,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name = "profits", uniqueConstraints = {@UniqueConstraint(columnNames = {"month"})})
+@Table(name = "profits")
 public class Profit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @NotNull(message = "La fecha no puede ir vacia")
+    private Long id;
+
+    @Column(nullable = false)
     private LocalDate date;
-    @Column(nullable = false)
+
+    @Column(nullable = false, unique = true)
     private String month;
-    @Column(nullable = false)
+
     @Builder.Default
     private Double totalExpenses = 0.0;
-    @Column(nullable = false)
+
     @Builder.Default
     private Double income = 0.0;
-    @Column(nullable = false)
+
     @Builder.Default
     private Double profit = 0.0;
-    @OneToMany(mappedBy = "profit", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Expense> expenses;
 }

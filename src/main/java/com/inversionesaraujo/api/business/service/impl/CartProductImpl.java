@@ -5,6 +5,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.CartProductDTO;
 import com.inversionesaraujo.api.business.service.ICartProduct;
 import com.inversionesaraujo.api.model.CartProduct;
 import com.inversionesaraujo.api.repository.CartProductRepository;
@@ -16,19 +17,23 @@ public class CartProductImpl implements ICartProduct {
 
     @Transactional
     @Override
-    public CartProduct save(CartProduct item) {
-        return cartProductRepo.save(item);
+    public CartProductDTO save(CartProductDTO item) {
+        CartProduct itemSaved = cartProductRepo.save(CartProductDTO.toEntity(item));
+
+        return CartProductDTO.toDTO(itemSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public CartProduct findById(Integer id) {
-        return cartProductRepo.findById(id).orElseThrow(() -> new DataAccessException("El producto del carrito no se encuentra") {});
+    public CartProductDTO findById(Long id) {
+        CartProduct cartProduct = cartProductRepo.findById(id).orElseThrow(() -> new DataAccessException("El producto del carrito no se encuentra") {});
+
+        return CartProductDTO.toDTO(cartProduct);
     }
 
     @Transactional
     @Override
-    public void delete(CartProduct item) {
-        cartProductRepo.delete(item);
+    public void delete(Long id) {
+        cartProductRepo.deleteById(id);
     }    
 }

@@ -5,4 +5,4 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.inversionesaraujo.api.model.Notification;
 
-public interface NotificationRepository extends JpaRepository<Notification, Integer>, JpaSpecificationExecutor<Notification> {}
+public interface NotificationRepository extends JpaRepository<Notification, Long>, JpaSpecificationExecutor<Notification> {}

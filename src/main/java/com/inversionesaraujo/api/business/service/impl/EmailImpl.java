@@ -9,7 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.inversionesaraujo.api.business.dto.request.EmailRequest;
+import com.inversionesaraujo.api.business.request.EmailRequest;
 import com.inversionesaraujo.api.business.service.IEmail;
 
 import jakarta.mail.MessagingException;

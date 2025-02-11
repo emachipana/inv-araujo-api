@@ -1,7 +1,6 @@
 package com.inversionesaraujo.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
-import com.inversionesaraujo.api.business.dto.request.OfferProductRequest;
-import com.inversionesaraujo.api.business.service.IOffer;
+import com.inversionesaraujo.api.business.dto.OfferProductDTO;
+import com.inversionesaraujo.api.business.dto.ProductDTO;
+import com.inversionesaraujo.api.business.payload.MessageResponse;
+import com.inversionesaraujo.api.business.request.OfferProductRequest;
 import com.inversionesaraujo.api.business.service.IOfferProduct;
 import com.inversionesaraujo.api.business.service.IProduct;
-import com.inversionesaraujo.api.model.Offer;
-import com.inversionesaraujo.api.model.OfferProduct;
-import com.inversionesaraujo.api.model.Product;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/offerProducts")
@@ -26,67 +25,43 @@ public class OfferProductController {
     @Autowired
     private IOfferProduct itemService;
     @Autowired
-    private IOffer offerService;
-    @Autowired
     private IProduct productService;
 
     @GetMapping("{id}")
-    public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
-        try {
-            OfferProduct item = itemService.findById(id);
+    public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
+        OfferProductDTO item = itemService.findById(id);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El item de la oferta se encontro con exito")
-                .data(item)
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El item de la oferta se encontro con exito")
+            .data(item)
+            .build());
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody OfferProductRequest request) {
-        try {
-            Offer offer = offerService.findById(request.getOfferId());
-            Product product = productService.findById(request.getProductId());
-            OfferProduct newItem = itemService.save(OfferProduct
-                .builder()
-                .product(product)
-                .offer(offer)
-                .build());
+    public ResponseEntity<MessageResponse> create(@RequestBody @Valid OfferProductRequest request) {
+        ProductDTO product = productService.findById(request.getProductId());
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El item de la oferta se encontro con exito")
-                .data(newItem)
-                .build(), HttpStatus.CREATED);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        OfferProductDTO newItem = itemService.save(OfferProductDTO
+            .builder()
+            .product(product)
+            .offerId(request.getOfferId())
+            .build());
+
+        return ResponseEntity.status(201).body(MessageResponse
+            .builder()
+            .message("El item de la oferta se encontro con exito")
+            .data(newItem)
+            .build());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
-        try {
-            OfferProduct item = itemService.findById(id);
-            itemService.delete(item);
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
+        itemService.delete(id);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El item de la oferta se elimino con exito")
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El item de la oferta se elimino con exito")
+            .build());
     }
 }

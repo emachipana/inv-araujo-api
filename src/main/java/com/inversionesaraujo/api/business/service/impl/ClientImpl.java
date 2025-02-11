@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.ClientDTO;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.model.Client;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -21,7 +22,7 @@ public class ClientImpl implements IClient {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Client> filterClients(Integer page, Integer size, SortDirection direction) {
+    public Page<ClientDTO> filterClients(Integer page, Integer size, SortDirection direction) {
         Pageable pageable;
         if(direction != null) {
             Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "consumption");
@@ -30,35 +31,41 @@ public class ClientImpl implements IClient {
             pageable = PageRequest.of(page, size);
         }
 
-        return clientRepo.findAll(pageable);
+        Page<Client> clients = clientRepo.findAll(pageable);
+        return ClientDTO.toPageableDTO(clients);
     }
 
     @Transactional
     @Override
-    public Client save(Client client) {
-        return clientRepo.save(client);
+    public ClientDTO save(ClientDTO client) {
+        Client clientSaved = clientRepo.save(ClientDTO.toEntity(client)); 
+
+        return ClientDTO.toDTO(clientSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Client findById(Integer id) {
-        return clientRepo.findById(id).orElseThrow(() -> new DataAccessException("El client no existe") {});
+    public ClientDTO findById(Long id) {
+        Client client = clientRepo.findById(id).orElseThrow(() -> new DataAccessException("El client no existe") {});
+
+        return ClientDTO.toDTO(client);
     }
 
     @Transactional
     @Override
-    public void delete(Client client) {
-        clientRepo.delete(client);
+    public void delete(Long id) {
+        clientRepo.deleteById(id);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Client> search(String document, String rsocial, String city, String department, Integer page) {
+    public Page<ClientDTO> search(String document, String rsocial, String city, String department, Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
 
-        return 
-        clientRepo.findByRsocialContainingIgnoreCaseOrDocumentContainingIgnoreCaseOrCityContainingIgnoreCaseOrDepartmentContainingIgnoreCase(
+        Page<Client> clients = clientRepo.findByRsocialContainingIgnoreCaseOrDocumentContainingIgnoreCaseOrCityContainingIgnoreCaseOrDepartmentContainingIgnoreCase(
             rsocial, document, city, department, pageable
         );
+
+        return ClientDTO.toPageableDTO(clients);
     }
 }
