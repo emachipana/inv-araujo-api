@@ -1,7 +1,6 @@
 package com.inversionesaraujo.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,12 +11,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
-import com.inversionesaraujo.api.business.dto.request.ExpenseRequest;
+import com.inversionesaraujo.api.business.dto.ExpenseDTO;
+import com.inversionesaraujo.api.business.dto.ProfitDTO;
+import com.inversionesaraujo.api.business.payload.MessageResponse;
+import com.inversionesaraujo.api.business.request.ExpenseRequest;
 import com.inversionesaraujo.api.business.service.IExpense;
 import com.inversionesaraujo.api.business.service.IProfit;
-import com.inversionesaraujo.api.model.Expense;
-import com.inversionesaraujo.api.model.Profit;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/expenses")
@@ -28,107 +29,83 @@ public class ExpenseController {
     private IProfit profitService;
 
     @GetMapping("{id}")
-    public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
-        try {
-            Expense expense = expenseService.findById(id);
+    public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
+        ExpenseDTO expense = expenseService.findById(id);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El registro del gasto se encontro con exito")
-                .data(expense)
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El registro del gasto se encontro con exito")
+            .data(expense)
+            .build());
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody ExpenseRequest request) {
-        try {
-            Profit profit = profitService.findById(request.getProfitId());
-            Double subTotal = request.getPrice() * request.getQuantity();
-            Expense expense = expenseService.save(Expense
-                .builder()
-                .name(request.getName())
-                .price(request.getPrice())
-                .quantity(request.getQuantity())
-                .subTotal(subTotal)
-                .profit(profit)
-                .build());
+    public ResponseEntity<MessageResponse> create(@RequestBody @Valid ExpenseRequest request) {
+        ProfitDTO profit = profitService.findById(request.getProfitId());
+        Double subTotal = request.getPrice() * request.getQuantity();
 
-            updateProfit(profit, subTotal);
+        ExpenseDTO expense = expenseService.save(ExpenseDTO
+            .builder()
+            .name(request.getName())
+            .price(request.getPrice())
+            .quantity(request.getQuantity())
+            .subTotal(subTotal)
+            .profitId(profit.getId())
+            .type(request.getType())
+            .build());
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El registro del gasto se creo con exito")
-                .data(expense)
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }   
+        updateProfit(profit, subTotal);
+
+        return ResponseEntity.status(201).body(MessageResponse
+            .builder()
+            .message("El registro del gasto se creo con exito")
+            .data(expense)
+            .build());
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<MessageResponse> update(@RequestBody ExpenseRequest request, @PathVariable Integer id) {
-        try {
-            Profit profit = profitService.findById(request.getProfitId());
-            Double subTotal = request.getPrice() * request.getQuantity();
-            Expense expense = expenseService.findById(id);
-            Double oldSubTotal = expense.getSubTotal();
-            expense.setProfit(profit);
-            expense.setSubTotal(subTotal);
-            expense.setName(request.getName());
-            expense.setPrice(request.getPrice());
-            expense.setQuantity(request.getQuantity());
-            Expense updatedExpense = expenseService.save(expense);
+    public ResponseEntity<MessageResponse> update(@RequestBody @Valid ExpenseRequest request, @PathVariable Long id) {
+        Double subTotal = request.getPrice() * request.getQuantity();
+        ExpenseDTO expense = expenseService.findById(id);
+        Double oldSubTotal = expense.getSubTotal();
+        ProfitDTO profit = profitService.findById(expense.getProfitId());
 
-            profit.setTotalExpenses(profit.getTotalExpenses() - oldSubTotal);
-            updateProfit(profit, subTotal);
+        expense.setSubTotal(subTotal);
+        expense.setName(request.getName());
+        expense.setPrice(request.getPrice());
+        expense.setQuantity(request.getQuantity());
+        expense.setType(request.getType());
+        ExpenseDTO updatedExpense = expenseService.save(expense);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El registro del gasto se creo con exito")
-                .data(updatedExpense)
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        profit.setTotalExpenses(profit.getTotalExpenses() - oldSubTotal);
+        updateProfit(profit, subTotal);
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El registro del gasto se creo con exito")
+            .data(updatedExpense)
+            .build());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
-        try {
-            Expense expense = expenseService.findById(id);
-            Profit profit = expense.getProfit();
-            Double oldSubTotal = expense.getSubTotal();
-            expenseService.delete(expense);
-            Double updatedTotalExpenses = profit.getTotalExpenses() - oldSubTotal;
-            profit.setTotalExpenses(updatedTotalExpenses);
-            profit.setProfit(profit.getIncome() - updatedTotalExpenses);
-            profitService.save(profit);
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
+        ExpenseDTO expense = expenseService.findById(id);
+        ProfitDTO profit = profitService.findById(expense.getProfitId());
+        Double oldSubTotal = expense.getSubTotal();
+        expenseService.delete(expense.getId());
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El registro del gasto se elimino con exito")
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        Double updatedTotalExpenses = profit.getTotalExpenses() - oldSubTotal;
+        profit.setTotalExpenses(updatedTotalExpenses);
+        profit.setProfit(profit.getIncome() - updatedTotalExpenses);
+        profitService.save(profit);
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El registro del gasto se elimino con exito")
+            .build());
     }
 
-    private void updateProfit(Profit profit, Double subTotal) {
+    private void updateProfit(ProfitDTO profit, Double subTotal) {
         Double updatedTotalExpenses = profit.getTotalExpenses() + subTotal;
         Double updatedProfit = profit.getIncome() - updatedTotalExpenses; 
         profit.setTotalExpenses(updatedTotalExpenses);

@@ -1,13 +1,13 @@
 package com.inversionesaraujo.api.business.service;
 
-import com.inversionesaraujo.api.model.Discount;
+import com.inversionesaraujo.api.business.dto.DiscountDTO;
 
 public interface IDiscount {
-    Discount save(Discount discount);
+    DiscountDTO save(DiscountDTO discount);
 
-    Discount findById(Integer id);
+    DiscountDTO findById(Long id);
 
-    void delete(Discount discount);
+    void delete(Long id);
 
     Integer getPercentage(Double originalPrice, Double discountPrice);
 }

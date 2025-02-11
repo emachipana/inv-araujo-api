@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.inversionesaraujo.api.model.VitroOrder;
 
-public interface VitroOrderRepository extends JpaRepository<VitroOrder, Integer>, JpaSpecificationExecutor<VitroOrder> {
+public interface VitroOrderRepository extends JpaRepository<VitroOrder, Long>, JpaSpecificationExecutor<VitroOrder> {
     Page<VitroOrder> 
         findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(
 			String department,

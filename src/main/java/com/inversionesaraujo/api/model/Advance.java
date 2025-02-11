@@ -2,8 +2,7 @@ package com.inversionesaraujo.api.model;
 
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,14 +24,15 @@ import lombok.NoArgsConstructor;
 public class Advance {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  private Long id;
+
   @ManyToOne
-  @JoinColumn
-  @NotNull(message = "El id del pedido invitro no puede ir vacio")
-  @JsonIgnore
+  @JoinColumn(name = "vitro_order_id", nullable = false)
   private VitroOrder vitroOrder;
-  @NotNull(message = "El monto no puede ir vacio")
+
+  @Column(nullable = false)
   private Double amount;
-  @NotNull(message = "La fecha del adelanto no puede ir vacio")
-  private LocalDate date;
+
+  @Builder.Default
+  private LocalDate date = LocalDate.now();
 }

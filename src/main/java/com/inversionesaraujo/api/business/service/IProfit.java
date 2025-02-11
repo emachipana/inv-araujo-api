@@ -2,17 +2,17 @@ package com.inversionesaraujo.api.business.service;
 
 import java.util.List;
 
-import com.inversionesaraujo.api.model.Profit;
+import com.inversionesaraujo.api.business.dto.ProfitDTO;
 import com.inversionesaraujo.api.model.SortDirection;
 
 public interface IProfit {
-    List<Profit> listAll(SortDirection sort);
+    List<ProfitDTO> listAll(SortDirection sort);
 
-    Profit save(Profit profit);
+    ProfitDTO save(ProfitDTO profit);
 
-    Profit findById(Integer id);
+    ProfitDTO findById(Long id);
 
-    Profit findByMonth(String month);
+    ProfitDTO findByMonth(String month);
 
-    void delete(Profit profit);
+    void delete(Long id);
 }

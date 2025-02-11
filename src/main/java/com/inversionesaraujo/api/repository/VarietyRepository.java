@@ -4,4 +4,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.inversionesaraujo.api.model.Variety;
 
-public interface VarietyRepository extends JpaRepository<Variety, Integer> {}
+public interface VarietyRepository extends JpaRepository<Variety, Long> {}

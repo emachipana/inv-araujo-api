@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.ClientDTO;
+import com.inversionesaraujo.api.business.payload.MessageResponse;
+import com.inversionesaraujo.api.business.request.ClientRequest;
 import com.inversionesaraujo.api.business.service.IClient;
-import com.inversionesaraujo.api.model.Client;
 import com.inversionesaraujo.api.model.SortDirection;
+
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -28,7 +31,7 @@ public class ClientController {
     private IClient clientService;
 
     @GetMapping
-    public Page<Client> getAll(
+    public Page<ClientDTO> getAll(
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "20") Integer size,
         @RequestParam(required = false) SortDirection sort
@@ -37,87 +40,65 @@ public class ClientController {
     }
 
     @GetMapping("/search")
-    public Page<Client> search(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
+    public Page<ClientDTO> search(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
         return clientService.search(param, param, param, param, page);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
-        try {
-            Client client = clientService.findById(id);
+    public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
+        ClientDTO client = clientService.findById(id);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El client se encontro con exito")
-                .data(client)
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El client se encontro con exito")
+            .data(client)
+            .build());
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody Client client) {
-        try {
-            client.setConsumption(0.0);
-            Client clientToSave = clientService.save(client);
+    public ResponseEntity<MessageResponse> create(@RequestBody @Valid ClientRequest request) {
+        ClientDTO clientToSave = clientService.save(ClientDTO
+            .builder()
+            .city(request.getCity())
+            .department(request.getDepartment())
+            .phone(request.getPhone())
+            .document(request.getDocument())
+            .documentType(request.getDocumentType())
+            .rsocial(request.getRsocial())
+            .createdBy(request.getCreatedBy())
+            .email(request.getEmail())
+            .userId(request.getUserId())
+            .build());
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El client se creo con exito")
-                .data(clientToSave)
-                .build(), HttpStatus.CREATED);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        return ResponseEntity.status(201).body(MessageResponse
+            .builder()
+            .message("El client se creo con exito")
+            .data(clientToSave)
+            .build());
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<MessageResponse> update(@RequestBody Client clientBody, @PathVariable Integer id) {
-        try {
-            Client client = clientService.findById(id);
-            clientBody.setId(id);
-            clientBody.setEmail(client.getEmail());
-            clientBody.setConsumption(client.getConsumption());
-            clientBody.setDocument(client.getDocument());
-            clientBody.setDocumentType(client.getDocumentType());
-            clientBody.setRsocial(client.getRsocial());
-            Client clientToUpdate = clientService.save(clientBody);
+    public ResponseEntity<MessageResponse> update(@RequestBody @Valid ClientRequest request, @PathVariable Long id) {
+        ClientDTO client = clientService.findById(id);
+        client.setCity(request.getCity());
+        client.setDepartment(request.getDepartment());
+        client.setPhone(request.getPhone());
+        ClientDTO clientUpdated = clientService.save(client);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El cliente se actualizo con exito")
-                .data(clientToUpdate)
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El cliente se actualizo con exito")
+            .data(clientUpdated)
+            .build());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
-        try {
-            Client client = clientService.findById(id);
-            clientService.delete(client);
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
+        clientService.delete(id);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El cliente se elimino con exito")
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El cliente se elimino con exito")
+            .build());
     }
 }

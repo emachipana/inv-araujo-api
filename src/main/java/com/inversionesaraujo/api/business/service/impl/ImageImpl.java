@@ -12,7 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
-import com.inversionesaraujo.api.business.dto.payload.FileResponse;
+import com.inversionesaraujo.api.business.dto.ImageDTO;
+import com.inversionesaraujo.api.business.payload.FileResponse;
 import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.model.Image;
 import com.inversionesaraujo.api.repository.ImageRepository;
@@ -24,20 +25,24 @@ public class ImageImpl implements I_Image {
 
     @Transactional
     @Override
-    public Image save(Image image) {
-        return imageRepo.save(image);
+    public ImageDTO save(ImageDTO image) {
+        Image imageSaved = imageRepo.save(ImageDTO.toEntity(image));
+
+        return ImageDTO.toDTO(imageSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Image findById(Integer id) {
-        return imageRepo.findById(id).orElseThrow(() -> new DataAccessException("La imagen no existe") {});
+    public ImageDTO findById(Long id) {
+        Image image = imageRepo.findById(id).orElseThrow(() -> new DataAccessException("La imagen no existe") {});
+
+        return ImageDTO.toDTO(image);
     }
 
     @Transactional
     @Override
-    public void delete(Image image) {
-        imageRepo.delete(image);
+    public void delete(Long id) {
+        imageRepo.deleteById(id);
     }
 
     @Override
@@ -55,8 +60,8 @@ public class ImageImpl implements I_Image {
     }
 
     @Override
-    public void deleteImage(String fileName) throws IOException {
-        Blob blob = StorageClient.getInstance().bucket().get(fileName);
+    public void deleteImage(String filename) {
+        Blob blob = StorageClient.getInstance().bucket().get(filename);
         blob.delete();
     }
 }

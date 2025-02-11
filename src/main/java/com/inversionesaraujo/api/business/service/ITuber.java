@@ -2,14 +2,14 @@ package com.inversionesaraujo.api.business.service;
 
 import java.util.List;
 
-import com.inversionesaraujo.api.model.Tuber;
+import com.inversionesaraujo.api.business.dto.TuberDTO;
 
 public interface ITuber {
-    List<Tuber> listAll();
+    List<TuberDTO> listAll();
 
-    Tuber save(Tuber tuber);
+    TuberDTO save(TuberDTO tuber);
 
-    Tuber findById(Integer id);
+    TuberDTO findById(Long id);
 
-    void delete(Tuber tuber);
+    void delete(Long id);
 }

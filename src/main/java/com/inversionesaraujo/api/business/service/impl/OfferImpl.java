@@ -7,6 +7,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.OfferDTO;
 import com.inversionesaraujo.api.business.service.IOffer;
 import com.inversionesaraujo.api.model.Offer;
 import com.inversionesaraujo.api.repository.OfferRepository;
@@ -18,25 +19,31 @@ public class OfferImpl implements IOffer {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Offer> listAll() {
-        return offerRepo.findAll();
+    public List<OfferDTO> listAll() {
+        List<Offer> offers = offerRepo.findAll();
+
+        return OfferDTO.toListDTO(offers);
     }
 
     @Transactional
     @Override
-    public Offer save(Offer offer) {
-        return offerRepo.save(offer);
+    public OfferDTO save(OfferDTO offer) {
+        Offer offerSaved = offerRepo.save(OfferDTO.toEntity(offer));
+
+        return OfferDTO.toDTO(offerSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Offer findById(Integer id) {
-        return offerRepo.findById(id).orElseThrow(() -> new DataAccessException("La oferta no existe") {});
+    public OfferDTO findById(Long id) {
+        Offer offer = offerRepo.findById(id).orElseThrow(() -> new DataAccessException("La oferta no existe") {});
+
+        return OfferDTO.toDTO(offer);
     }
 
     @Transactional
     @Override
-    public void delete(Offer offer) {
-        offerRepo.delete(offer);
+    public void delete(Long id) {
+        offerRepo.deleteById(id);
     }
 }

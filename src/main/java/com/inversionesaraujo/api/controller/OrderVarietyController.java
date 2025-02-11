@@ -1,7 +1,6 @@
 package com.inversionesaraujo.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,14 +11,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
-import com.inversionesaraujo.api.business.dto.request.OrderVarietyRequest;
+import com.inversionesaraujo.api.business.dto.OrderVarietyDTO;
+import com.inversionesaraujo.api.business.dto.VarietyDTO;
+import com.inversionesaraujo.api.business.dto.VitroOrderDTO;
+import com.inversionesaraujo.api.business.payload.MessageResponse;
+import com.inversionesaraujo.api.business.request.OrderVarietyRequest;
 import com.inversionesaraujo.api.business.service.IOrderVariety;
 import com.inversionesaraujo.api.business.service.IVariety;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
-import com.inversionesaraujo.api.model.OrderVariety;
-import com.inversionesaraujo.api.model.Variety;
-import com.inversionesaraujo.api.model.VitroOrder;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/orderVarieties")
@@ -32,108 +33,80 @@ public class OrderVarietyController {
     private IVariety varietyService;
 
     @GetMapping("{id}")
-    public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
-        try {
-            OrderVariety item = itemService.findById(id);
+    public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
+        OrderVarietyDTO item = itemService.findById(id);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El item del pedido invitro se encontro con exito")
-                .data(item)
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El item del pedido invitro se encontro con exito")
+            .data(item)
+            .build());
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody OrderVarietyRequest request) {
-        try {
-            VitroOrder order = orderService.findById(request.getVitroOrderId());
-            Variety variety = varietyService.findById(request.getVarietyId());
-            Double subTotal = request.getPrice() * request.getQuantity();
-            OrderVariety item = itemService.save(OrderVariety
-                .builder()
-                .vitroOrder(order)
-                .variety(variety)
-                .price(request.getPrice())
-                .quantity(request.getQuantity())
-                .subTotal(subTotal)
-                .build());
+    public ResponseEntity<MessageResponse> create(@RequestBody @Valid OrderVarietyRequest request) {
+        VitroOrderDTO order = orderService.findById(request.getVitroOrderId());
+        VarietyDTO variety = varietyService.findById(request.getVarietyId());
+        Double subTotal = request.getPrice() * request.getQuantity();
+        OrderVarietyDTO item = itemService.save(OrderVarietyDTO
+            .builder()
+            .vitroOrderId(request.getVitroOrderId())
+            .variety(variety)
+            .price(request.getPrice())
+            .quantity(request.getQuantity())
+            .subTotal(subTotal)
+            .build());
 
-            Double total = order.getTotal() + subTotal;
-            order.setTotal(total);
-            order.setPending(total - order.getTotalAdvance());
-            orderService.save(order);
-            
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El item del pedido invitro se creo con exito")
-                .data(item)
-                .build(), HttpStatus.CREATED);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        Double total = order.getTotal() + subTotal;
+        order.setTotal(total);
+        order.setPending(total - order.getTotalAdvance());
+        orderService.save(order);
+        
+        return ResponseEntity.status(201).body(MessageResponse
+            .builder()
+            .message("El item del pedido invitro se creo con exito")
+            .data(item)
+            .build());
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<MessageResponse> update(@PathVariable Integer id, @RequestBody OrderVarietyRequest request) {
-        try {
-            OrderVariety item = itemService.findById(id);
-            Double subTotal = request.getPrice() * request.getQuantity();
-            Double oldSubTotal =item.getSubTotal();
-            VitroOrder order = item.getVitroOrder();
-            item.setPrice(request.getPrice());
-            item.setQuantity(request.getQuantity());
-            item.setSubTotal(subTotal);
-            OrderVariety itemUpdated = itemService.save(item);
+    public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid OrderVarietyRequest request) {
+        OrderVarietyDTO item = itemService.findById(id);
+        Double subTotal = request.getPrice() * request.getQuantity();
+        Double oldSubTotal =item.getSubTotal();
+        VitroOrderDTO order = orderService.findById(item.getVitroOrderId());
+        item.setPrice(request.getPrice());
+        item.setQuantity(request.getQuantity());
+        item.setSubTotal(subTotal);
+        OrderVarietyDTO itemUpdated = itemService.save(item);
 
-            Double total = (order.getTotal() - oldSubTotal) + subTotal;
-            order.setTotal(total);
-            order.setPending(total - order.getTotalAdvance());
-            orderService.save(order);
+        Double total = (order.getTotal() - oldSubTotal) + subTotal;
+        order.setTotal(total);
+        order.setPending(total - order.getTotalAdvance());
+        orderService.save(order);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El item del pedido invitro se actualizo con exito")
-                .data(itemUpdated)
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El item del pedido invitro se actualizo con exito")
+            .data(itemUpdated)
+            .build());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
-        try {
-            OrderVariety item = itemService.findById(id);
-            Double oldSubTotal = item.getSubTotal();
-            VitroOrder order = item.getVitroOrder();
-            itemService.delete(item);
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
+        OrderVarietyDTO item = itemService.findById(id);
+        Double oldSubTotal = item.getSubTotal();
+        VitroOrderDTO order = orderService.findById(item.getVitroOrderId());
+        itemService.delete(id);
 
-            Double total = order.getTotal() - oldSubTotal;
-            order.setTotal(total);
-            order.setPending(total - order.getTotalAdvance());
-            orderService.save(order);
+        Double total = order.getTotal() - oldSubTotal;
+        order.setTotal(total);
+        order.setPending(total - order.getTotalAdvance());
+        orderService.save(order);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El item del pedido invitro se elimino con exito")
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El item del pedido invitro se elimino con exito")
+            .build());
     }
 }

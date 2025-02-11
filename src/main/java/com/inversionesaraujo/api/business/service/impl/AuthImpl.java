@@ -6,10 +6,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.inversionesaraujo.api.business.dto.payload.AuthResponse;
-import com.inversionesaraujo.api.business.dto.payload.UserResponse;
-import com.inversionesaraujo.api.business.dto.request.LoginRequest;
-import com.inversionesaraujo.api.business.dto.request.RegisterRequest;
+import com.inversionesaraujo.api.business.dto.ImageDTO;
+import com.inversionesaraujo.api.business.payload.AuthResponse;
+import com.inversionesaraujo.api.business.payload.UserResponse;
+import com.inversionesaraujo.api.business.request.LoginRequest;
+import com.inversionesaraujo.api.business.request.RegisterRequest;
 import com.inversionesaraujo.api.business.service.IAuth;
 import com.inversionesaraujo.api.model.Client;
 import com.inversionesaraujo.api.model.User;
@@ -35,9 +36,8 @@ public class AuthImpl implements IAuth {
         UserResponse userResponse = UserResponse
             .builder()
             .id(user.getId())
-            .image(user.getImage())
-            .name(user.getAdmin() != null ? user.getAdmin().getFirstName() : user.getClient().getRsocial())
-            .lastName(user.getAdmin() != null ? user.getAdmin().getLastName() : "")
+            .image(ImageDTO.toDTO(user.getImage()))
+            .fullName(user.getEmployee() != null ? user.getEmployee().getRsocial() : user.getClient().getRsocial())
             .role(user.getRole())
             .username(user.getUsername())
             .build();
@@ -62,9 +62,8 @@ public class AuthImpl implements IAuth {
         UserResponse userResponse = UserResponse
             .builder()
             .id(newUser.getId())
-            .image(newUser.getImage())
-            .name(newUser.getAdmin() != null ? newUser.getAdmin().getFirstName() : newUser.getClient().getRsocial())
-            .lastName(newUser.getAdmin() != null ? newUser.getAdmin().getLastName() : "")
+            .image(ImageDTO.toDTO(newUser.getImage()))
+            .fullName(newUser.getEmployee() != null ? newUser.getEmployee().getRsocial() : newUser.getClient().getRsocial())
             .role(newUser.getRole())
             .username(newUser.getUsername())
             .build();

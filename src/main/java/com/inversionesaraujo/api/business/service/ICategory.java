@@ -2,14 +2,14 @@ package com.inversionesaraujo.api.business.service;
 
 import java.util.List;
 
-import com.inversionesaraujo.api.model.Category;
+import com.inversionesaraujo.api.business.dto.CategoryDTO;
 
 public interface ICategory {
-    List<Category> listAll();
+    List<CategoryDTO> listAll();
 
-    Category save(Category category);
+    CategoryDTO save(CategoryDTO category);
 
-    Category findById(Integer id);
+    CategoryDTO findById(Long id);
 
-    void delete(Category category);
+    void delete(Long id);
 }

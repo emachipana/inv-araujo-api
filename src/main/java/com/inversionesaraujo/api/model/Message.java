@@ -8,10 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,24 +22,24 @@ import lombok.NoArgsConstructor;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @NotEmpty(message = "El nombre no puede ir vacio")
-    @Size(min = 5, max = 150)
+    private Long id;
+
+    @Column(nullable = false)
     private String fullName;
-    @NotEmpty(message = "El telefono no puede ir vacio")
-    @Size(max = 12)
+
+    @Column(nullable = false)
     private String phone;
-    @NotEmpty(message = "El asunto no puede ir vacio")
-    @Size(min = 3, max = 50)
+
+    @Column(nullable = false)
     private String subject;
-    @NotEmpty(message = "El contenido del mensaje no puede ir vacio")
-    @Size(min = 5)
-    @Column(columnDefinition = "TEXT")
+
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
-    @NotNull(message = "El origen no pueder ir vacio")
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Origin origin;
-    @NotEmpty(message = "El email no puede ir vacio")
-    @Email(message = "El formato es incorrecto")
+
+    @Column(nullable = false)
     private String email;
 }

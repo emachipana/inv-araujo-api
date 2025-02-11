@@ -2,14 +2,14 @@ package com.inversionesaraujo.api.business.service;
 
 import java.util.List;
 
-import com.inversionesaraujo.api.model.Offer;
+import com.inversionesaraujo.api.business.dto.OfferDTO;
 
 public interface IOffer {
-    List <Offer> listAll();
+    List <OfferDTO> listAll();
 
-    Offer save(Offer offer);
+    OfferDTO save(OfferDTO offer);
 
-    Offer findById(Integer id);
+    OfferDTO findById(Long id);
 
-    void delete(Offer offer);
+    void delete(Long id);
 }

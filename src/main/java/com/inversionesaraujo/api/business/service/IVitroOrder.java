@@ -4,24 +4,24 @@ import java.time.Month;
 
 import org.springframework.data.domain.Page;
 
-import com.inversionesaraujo.api.business.dto.payload.OrderDataResponse;
+import com.inversionesaraujo.api.business.dto.VitroOrderDTO;
+import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.model.Status;
-import com.inversionesaraujo.api.model.VitroOrder;
 
 public interface IVitroOrder {
-    Page<VitroOrder> listAll(
+    Page<VitroOrderDTO> listAll(
         Integer tuberId, Integer page, Integer size,
         SortDirection direction, Month month, Status status
     );
 
     OrderDataResponse getData();
 
-    VitroOrder save(VitroOrder vitroOrder);
+    VitroOrderDTO save(VitroOrderDTO vitroOrder);
 
-    VitroOrder findById(Integer id);
+    VitroOrderDTO findById(Long id);
 
-    void delete(VitroOrder vitroOrder);
+    void delete(Long id);
 
-    Page<VitroOrder> search(String department, String city, String rsocial, Integer page);
+    Page<VitroOrderDTO> search(String department, String city, String rsocial, Integer page);
 }

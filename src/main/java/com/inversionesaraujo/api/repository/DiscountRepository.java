@@ -4,4 +4,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.inversionesaraujo.api.model.Discount;
 
-public interface DiscountRepository extends JpaRepository<Discount, Integer> {}
+public interface DiscountRepository extends JpaRepository<Discount, Long> {}

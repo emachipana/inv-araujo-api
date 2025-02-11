@@ -1,11 +1,11 @@
 package com.inversionesaraujo.api.business.service;
 
-import com.inversionesaraujo.api.model.InvoiceItem;
+import com.inversionesaraujo.api.business.dto.InvoiceItemDTO;
 
 public interface I_InvoiceItem {
-    InvoiceItem save(InvoiceItem item);
+    InvoiceItemDTO save(InvoiceItemDTO item);
     
-    InvoiceItem findById(Integer id);
+    InvoiceItemDTO findById(Long id);
 
-    void delete(InvoiceItem item);
+    void delete(Long id);
 }

@@ -4,24 +4,24 @@ import java.time.Month;
 
 import org.springframework.data.domain.Page;
 
-import com.inversionesaraujo.api.business.dto.payload.OrderDataResponse;
-import com.inversionesaraujo.api.model.Order;
+import com.inversionesaraujo.api.business.dto.OrderDTO;
+import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.model.Status;
 
 public interface IOrder {
-    Page<Order> listAll(
+    Page<OrderDTO> listAll(
         Status status, Integer page, Integer size, SortDirection direction,
         Month month
     );
 
     OrderDataResponse getData();
 
-    Order save(Order order);
+    OrderDTO save(OrderDTO order);
 
-    Order findById(Integer id);
+    OrderDTO findById(Long id);
 
-    void delete(Order order);
+    void delete(Long id);
 
-    Page<Order> search(String department, String city, String rsocial, Integer page);
+    Page<OrderDTO> search(String department, String city, String rsocial, Integer page);
 }

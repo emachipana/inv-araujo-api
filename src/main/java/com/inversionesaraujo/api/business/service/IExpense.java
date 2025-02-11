@@ -1,11 +1,11 @@
 package com.inversionesaraujo.api.business.service;
 
-import com.inversionesaraujo.api.model.Expense;
+import com.inversionesaraujo.api.business.dto.ExpenseDTO;
 
 public interface IExpense {
-    Expense save(Expense expense);
+    ExpenseDTO save(ExpenseDTO expense);
 
-    Expense findById(Integer id);
+    ExpenseDTO findById(Long id);
 
-    void delete(Expense expense);
+    void delete(Long id);
 }

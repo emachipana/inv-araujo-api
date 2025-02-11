@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.inversionesaraujo.api.model.Order;
 
-public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpecificationExecutor<Order> {
+public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 	Page<Order> 
 		findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(
 			String department,

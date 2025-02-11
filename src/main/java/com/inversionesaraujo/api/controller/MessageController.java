@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
+import com.inversionesaraujo.api.business.dto.MessageDTO;
+import com.inversionesaraujo.api.business.payload.MessageResponse;
+import com.inversionesaraujo.api.business.request.MessageRequest;
 import com.inversionesaraujo.api.business.service.IMessage;
-import com.inversionesaraujo.api.model.Message;
 import com.inversionesaraujo.api.model.SortDirection;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/messages")
@@ -25,7 +28,7 @@ public class MessageController {
     private IMessage messageService;
 
     @GetMapping
-    public Page<Message> getAll(
+    public Page<MessageDTO> getAll(
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "50") Integer size,
         @RequestParam(required = false) SortDirection sort
@@ -34,61 +37,47 @@ public class MessageController {
     }
 
     @GetMapping("search")
-    public Page<Message> search(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
+    public Page<MessageDTO> search(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
         return messageService.search(param, param, param, page);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
-        try {
-            Message message = messageService.findById(id);
+    public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
+        MessageDTO message = messageService.findById(id);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El mensaje se creo con exito")
-                .data(message)
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El mensaje se creo con exito")
+            .data(message)
+            .build());
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody Message message) {
-        try {
-            Message newMessage = messageService.save(message);
+    public ResponseEntity<MessageResponse> create(@RequestBody @Valid MessageRequest request) {
+        MessageDTO newMessage = messageService.save(MessageDTO
+            .builder()
+            .fullName(request.getFullName())
+            .phone(request.getPhone())
+            .subject(request.getSubject())
+            .content(request.getContent())
+            .origin(request.getOrigin())
+            .email(request.getEmail())
+            .build());
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El mensaje se creo con exito")
-                .data(newMessage)
-                .build(), HttpStatus.CREATED);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        return ResponseEntity.status(201).body(MessageResponse
+            .builder()
+            .message("El mensaje se creo con exito")
+            .data(newMessage)
+            .build());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
-        try {
-            Message message = messageService.findById(id);
-            messageService.delete(message);
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
+        messageService.delete(id);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El mensaje se elimino con exito")
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El mensaje se elimino con exito")
+            .build());
     }
 }

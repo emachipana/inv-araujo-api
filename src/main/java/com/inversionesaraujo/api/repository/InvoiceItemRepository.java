@@ -4,4 +4,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.inversionesaraujo.api.model.InvoiceItem;
 
-public interface InvoiceItemRepository extends JpaRepository<InvoiceItem, Integer> {}
+public interface InvoiceItemRepository extends JpaRepository<InvoiceItem, Long> {}

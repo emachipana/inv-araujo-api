@@ -1,11 +1,11 @@
 package com.inversionesaraujo.api.business.service;
 
-import com.inversionesaraujo.api.model.ProductImage;
+import com.inversionesaraujo.api.business.dto.ProductImageDTO;
 
 public interface IProductImage {
-    ProductImage save(ProductImage image);
+    ProductImageDTO save(ProductImageDTO image);
 
-    ProductImage findById(Integer id);
+    ProductImageDTO findById(Long id);
 
-    void delete(ProductImage image);
+    void delete(Long id);
 }

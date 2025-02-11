@@ -5,6 +5,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.ExpenseDTO;
 import com.inversionesaraujo.api.business.service.IExpense;
 import com.inversionesaraujo.api.model.Expense;
 import com.inversionesaraujo.api.repository.ExpenseRepository;
@@ -16,19 +17,23 @@ public class ExpenseImpl implements IExpense {
 
     @Transactional
     @Override
-    public Expense save(Expense expense) {
-        return expenseRepo.save(expense);
+    public ExpenseDTO save(ExpenseDTO expense) {
+        Expense expenseSaved = expenseRepo.save(ExpenseDTO.toEntity(expense));
+
+        return ExpenseDTO.toDTO(expenseSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Expense findById(Integer id) {
-        return expenseRepo.findById(id).orElseThrow(() -> new DataAccessException("El gasto no existe") {});
+    public ExpenseDTO findById(Long id) {
+        Expense expense = expenseRepo.findById(id).orElseThrow(() -> new DataAccessException("El gasto no existe") {});
+
+        return ExpenseDTO.toDTO(expense);
     }
 
     @Transactional
     @Override
-    public void delete(Expense expense) {
-        expenseRepo.delete(expense);
+    public void delete(Long id) {
+        expenseRepo.deleteById(id);
     }
 }

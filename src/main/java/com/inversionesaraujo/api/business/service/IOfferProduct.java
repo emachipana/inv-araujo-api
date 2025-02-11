@@ -1,11 +1,11 @@
 package com.inversionesaraujo.api.business.service;
 
-import com.inversionesaraujo.api.model.OfferProduct;
+import com.inversionesaraujo.api.business.dto.OfferProductDTO;
 
 public interface IOfferProduct {
-    OfferProduct save(OfferProduct item);
+    OfferProductDTO save(OfferProductDTO item);
 
-    OfferProduct findById(Integer id);
+    OfferProductDTO findById(Long id);
 
-    void delete(OfferProduct item);
+    void delete(Long id);
 }

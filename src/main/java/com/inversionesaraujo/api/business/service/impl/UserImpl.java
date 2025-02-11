@@ -7,6 +7,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.UserDTO;
 import com.inversionesaraujo.api.business.service.IUser;
 import com.inversionesaraujo.api.model.User;
 import com.inversionesaraujo.api.repository.UserRepository;
@@ -18,30 +19,38 @@ public class UserImpl implements IUser {
 
     @Transactional(readOnly = true)
     @Override
-    public List<User> listAll() {
-        return userRepo.findAll();
+    public List<UserDTO> listAll() {
+        List<User> users = userRepo.findAll();
+
+        return UserDTO.toListDTO(users);
     }
 
     @Transactional
     @Override
-    public User save(User user) {
-        return userRepo.save(user);
+    public UserDTO save(UserDTO user) {
+        User userSaved = userRepo.save(UserDTO.toEntity(user));
+
+        return UserDTO.toDTO(userSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public User findById(Integer id) {
-        return userRepo.findById(id).orElseThrow(() -> new DataAccessException("El usuario no existe") {});
+    public UserDTO findById(Long id) {
+        User user = userRepo.findById(id).orElseThrow(() -> new DataAccessException("El usuario no existe") {}); 
+
+        return UserDTO.toDTO(user);
     }
 
     @Transactional
     @Override
-    public void delete(User user) {
-        userRepo.delete(user);
+    public void delete(Long id) {
+        userRepo.deleteById(id);
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userRepo.findByUsername(username).orElseThrow(() -> new DataAccessException("El usuario no existe") {});
+    public UserDTO findByUsername(String username) {
+        User user = userRepo.findByUsername(username).orElseThrow(() -> new DataAccessException("El usuario no existe") {}); 
+
+        return UserDTO.toDTO(user);
     }
 }

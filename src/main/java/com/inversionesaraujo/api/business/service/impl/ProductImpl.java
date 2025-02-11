@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.ProductDTO;
 import com.inversionesaraujo.api.business.service.IProduct;
 import com.inversionesaraujo.api.business.spec.ProductSpecifications;
 import com.inversionesaraujo.api.model.Product;
@@ -24,34 +25,40 @@ public class ProductImpl implements IProduct {
 
     @Transactional
     @Override
-    public Product save(Product product) {
-        return productRepo.save(product);
+    public ProductDTO save(ProductDTO product) {
+        Product productSaved = productRepo.save(ProductDTO.toEntity(product)); 
+
+        return ProductDTO.toDTO(productSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Product findById(Integer id) {
-        return productRepo.findById(id).orElseThrow(() -> new DataAccessException("El producto no existe") {});
+    public ProductDTO findById(Long id) {
+        Product product = productRepo.findById(id).orElseThrow(() -> new DataAccessException("El producto no existe") {});
+
+        return ProductDTO.toDTO(product);
     }
 
     @Transactional
     @Override
-    public void delete(Product product) {
-        productRepo.delete(product);
+    public void delete(Long id) {
+        productRepo.deleteById(id);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Product> search(String name, String description, String brand, Integer page) {
+    public Page<ProductDTO> search(String name, String description, String brand, Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
 
-        return productRepo.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrBrandContainingIgnoreCase
+        Page<Product> products = productRepo.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrBrandContainingIgnoreCase
             (name, description, brand, pageable);
+
+        return ProductDTO.toPageableDTO(products); 
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Product> filterProducts(
+    public Page<ProductDTO> filterProducts(
         Double minPrice, Double maxPrice, Integer categoryId, Integer page, 
         Integer size, SortBy sort, SortDirection direction
     ) {
@@ -69,6 +76,8 @@ public class ProductImpl implements IProduct {
             pageable = PageRequest.of(page, size);
         }
 
-        return productRepo.findAll(spec, pageable);
+        Page<Product> products = productRepo.findAll(spec, pageable); 
+
+        return ProductDTO.toPageableDTO(products);
     }
 }

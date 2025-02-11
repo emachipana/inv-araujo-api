@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inversionesaraujo.api.business.dto.payload.MessageResponse;
-import com.inversionesaraujo.api.business.dto.request.InvoiceItemRequest;
+import com.inversionesaraujo.api.business.dto.InvoiceDTO;
+import com.inversionesaraujo.api.business.dto.InvoiceItemDTO;
+import com.inversionesaraujo.api.business.payload.MessageResponse;
+import com.inversionesaraujo.api.business.request.InvoiceItemRequest;
 import com.inversionesaraujo.api.business.service.I_Invoice;
 import com.inversionesaraujo.api.business.service.I_InvoiceItem;
-import com.inversionesaraujo.api.model.Invoice;
-import com.inversionesaraujo.api.model.InvoiceItem;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/invoiceItems")
@@ -28,109 +30,78 @@ public class InvoiceItemController {
     private I_Invoice invoiceService;
 
     @GetMapping("{id}")
-    public ResponseEntity<MessageResponse> getOneById(@PathVariable Integer id) {
-        try {
-            InvoiceItem item = invoiceItemService.findById(id);
+    public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
+        InvoiceItemDTO item = invoiceItemService.findById(id);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("Se encontro el item del comprobante con exito")
-                .data(item)
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("Se encontro el item del comprobante con exito")
+            .data(item)
+            .build());
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody InvoiceItemRequest request) {
-        try {
-            Invoice invoice = invoiceService.findById(request.getInvoiceId());
-            Double subTotal = request.getPrice() * request.getQuantity();
+    public ResponseEntity<MessageResponse> create(@RequestBody @Valid InvoiceItemRequest request) {
+        InvoiceDTO invoice = invoiceService.findById(request.getInvoiceId());
+        Double subTotal = request.getPrice() * request.getQuantity();
 
-            InvoiceItem newItem = invoiceItemService.save(InvoiceItem
-                .builder()
-                .invoice(invoice)
-                .subTotal(subTotal)
-                .name(request.getName())
-                .itemCode(request.getItemCode())
-                .price(request.getPrice())
-                .quantity(request.getQuantity())
-                .isIgvApply(request.isIgvApply())
-                .build());
+        InvoiceItemDTO newItem = invoiceItemService.save(InvoiceItemDTO
+            .builder()
+            .invoiceId(invoice.getId())
+            .subTotal(subTotal)
+            .name(request.getName())
+            .price(request.getPrice())
+            .quantity(request.getQuantity())
+            .isIgvApply(request.getIsIgvApply())
+            .build());
 
-            invoice.setTotal(invoice.getTotal() + subTotal);
-            invoiceService.save(invoice);
+        invoice.setTotal(invoice.getTotal() + subTotal);
+        invoiceService.save(invoice);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El item del comprobante se creo con exito")
-                .data(newItem)
-                .build(), HttpStatus.CREATED);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_ACCEPTABLE);
-        }
+        return ResponseEntity.status(201).body(MessageResponse
+            .builder()
+            .message("El item del comprobante se creo con exito")
+            .data(newItem)
+            .build());
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<MessageResponse> update(@PathVariable Integer id, @RequestBody InvoiceItemRequest request) {
-        try {
-            InvoiceItem item = invoiceItemService.findById(id);
-            Invoice invoice = item.getInvoice();
-            Double subTotal = request.getPrice() * request.getQuantity();
-            Double oldSubTotal = item.getSubTotal();
+    public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid InvoiceItemRequest request) {
+        InvoiceItemDTO item = invoiceItemService.findById(id);
+        InvoiceDTO invoice = invoiceService.findById(request.getInvoiceId());
+        Double subTotal = request.getPrice() * request.getQuantity();
+        Double oldSubTotal = item.getSubTotal();
 
-            item.setIgvApply(request.isIgvApply());
-            item.setInvoice(invoice);
-            item.setQuantity(request.getQuantity());
-            item.setPrice(request.getPrice());
-            item.setSubTotal(subTotal);
-            item.setName(request.getName());
-            item.setItemCode(request.getItemCode());
-            InvoiceItem itemUpdated = invoiceItemService.save(item);
+        item.setIsIgvApply(request.getIsIgvApply());
+        item.setQuantity(request.getQuantity());
+        item.setPrice(request.getPrice());
+        item.setSubTotal(subTotal);
+        item.setName(request.getName());
+        InvoiceItemDTO itemUpdated = invoiceItemService.save(item);
 
-            invoice.setTotal((invoice.getTotal() - oldSubTotal) + subTotal);
-            invoiceService.save(invoice);
+        invoice.setTotal((invoice.getTotal() - oldSubTotal) + subTotal);
+        invoiceService.save(invoice);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El item se actualizo con exito")
-                .data(itemUpdated)
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
+        return ResponseEntity.ok().body(MessageResponse
             .builder()
-            .message(error.getMessage())
-            .build(), HttpStatus.NOT_FOUND);
-        }
+            .message("El item se actualizo con exito")
+            .data(itemUpdated)
+            .build());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
-        try {
-            InvoiceItem item = invoiceItemService.findById(id);
-            Invoice invoice = item.getInvoice();
-            Double oldSubTotal = item.getSubTotal();
-            invoiceItemService.delete(item);
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
+        InvoiceItemDTO item = invoiceItemService.findById(id);
+        InvoiceDTO invoice = invoiceService.findById(item.getInvoiceId());
+        Double oldSubTotal = item.getSubTotal();
+        invoiceItemService.delete(id);
 
-            invoice.setTotal(invoice.getTotal() - oldSubTotal);
-            invoiceService.save(invoice);
+        invoice.setTotal(invoice.getTotal() - oldSubTotal);
+        invoiceService.save(invoice);
 
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message("El item se elimino con exito")
-                .build(), HttpStatus.OK);
-        }catch(Exception error) {
-            return new ResponseEntity<>(MessageResponse
-                .builder()
-                .message(error.getMessage())
-                .build(), HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El item se elimino con exito")
+            .build());
     }
 }

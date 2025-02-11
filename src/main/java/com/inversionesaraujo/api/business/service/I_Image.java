@@ -4,17 +4,17 @@ import java.io.IOException;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.inversionesaraujo.api.business.dto.payload.FileResponse;
-import com.inversionesaraujo.api.model.Image;
+import com.inversionesaraujo.api.business.dto.ImageDTO;
+import com.inversionesaraujo.api.business.payload.FileResponse;
 
 public interface I_Image {
-    Image save(Image image);
+    ImageDTO save(ImageDTO image);
 
-    Image findById(Integer id);
+    ImageDTO findById(Long id);
 
-    void delete(Image image);
+    void delete(Long id);
 
     FileResponse upload(MultipartFile file) throws IOException;
 
-    void deleteImage(String fileName) throws IOException;
+    void deleteImage(String filename);
 }

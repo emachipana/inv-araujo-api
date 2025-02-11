@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.ProfitDTO;
 import com.inversionesaraujo.api.business.service.IProfit;
 import com.inversionesaraujo.api.model.Profit;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -20,33 +21,42 @@ public class ProfitImpl implements IProfit {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Profit> listAll(SortDirection direction) {
+    public List<ProfitDTO> listAll(SortDirection direction) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "date");
 
-        return profitRepo.findAll(sort);
+        List<Profit> profits = profitRepo.findAll(sort);
+
+        return ProfitDTO.toListDTO(profits);
     }
 
     @Transactional
     @Override
-    public Profit save(Profit profit) {
-        return profitRepo.save(profit);
+    public ProfitDTO save(ProfitDTO profit) {
+        Profit profitSaved = profitRepo.save(ProfitDTO.toEntity(profit));
+
+        return ProfitDTO.toDTO(profitSaved);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Profit findById(Integer id) {
-        return profitRepo.findById(id).orElseThrow(() -> new DataAccessException("El ingreso no existe") {});
+    public ProfitDTO findById(Long id) {
+        Profit profit = profitRepo.findById(id).orElseThrow(() -> new DataAccessException("El ingreso no existe") {});
+
+        return ProfitDTO.toDTO(profit);
     }
 
     @Transactional
     @Override
-    public void delete(Profit profit) {
-        profitRepo.delete(profit);
+    public void delete(Long id) {
+        profitRepo.deleteById(id);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Profit findByMonth(String month) {
-        return profitRepo.findByMonth(month);
+    public ProfitDTO findByMonth(String month) {
+        Profit profit = profitRepo.findByMonth(month);
+        if(profit == null) return null;
+
+        return ProfitDTO.toDTO(profit);
     }
 }

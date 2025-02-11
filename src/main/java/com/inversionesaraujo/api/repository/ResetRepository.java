@@ -4,4 +4,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.inversionesaraujo.api.model.Reset;
 
-public interface ResetRepository extends JpaRepository<Reset, Integer> {}
+public interface ResetRepository extends JpaRepository<Reset, Long> {}
