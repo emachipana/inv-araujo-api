@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import com.inversionesaraujo.api.model.Category;
 import com.inversionesaraujo.api.model.Product;
 
 import lombok.AllArgsConstructor;
@@ -26,7 +27,8 @@ public class ProductDTO {
     private Double price;
     private Double purchasePrice;
     private Integer stock;
-    private CategoryDTO category;
+    private Long categoryId;
+    private String categoryName;
     private Boolean isActive;
     private List<ProductImageDTO> images;
     private DiscountDTO discount;
@@ -44,7 +46,8 @@ public class ProductDTO {
             .price(product.getPrice())
             .purchasePrice(product.getPurchasePrice())
             .stock(product.getStock())
-            .category(CategoryDTO.toDTO(product.getCategory(), 0))
+            .categoryId(product.getCategory().getId())
+            .categoryName(product.getCategory().getName())
             .isActive(product.getIsActive())
             .images(ProductImageDTO.toDTOList(product.getImages()))
             .discount(DiscountDTO.toDTO(product.getDiscount()))
@@ -53,6 +56,10 @@ public class ProductDTO {
 
     public static Product toEntity(ProductDTO product) {
         if(product == null) return null;
+
+        Category category = new Category();
+        category.setId(product.getCategoryId());
+        category.setName(product.getCategoryName());
 
         return Product
             .builder()
@@ -64,7 +71,7 @@ public class ProductDTO {
             .price(product.getPrice())
             .purchasePrice(product.getPurchasePrice())
             .stock(product.getStock() == null ? 0 : product.getStock())
-            .category(CategoryDTO.toEntity(product.getCategory()))
+            .category(category)
             .isActive(product.getIsActive())
             .build();
     }

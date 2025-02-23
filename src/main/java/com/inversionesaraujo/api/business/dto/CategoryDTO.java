@@ -48,8 +48,6 @@ public class CategoryDTO {
         if(category.getCategoryId() != null) parentCategory.setId(category.getCategoryId()); 
         else parentCategory = null;
 
-        System.out.println(category.getId());
-
         return Category
             .builder()
             .id(category.getId())

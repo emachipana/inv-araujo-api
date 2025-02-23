@@ -64,18 +64,20 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid ProductRequest request) {
         CategoryDTO category = categoryService.findById(request.getCategoryId());
-        // TODO - manejar el stock desde el warehouse
+    
         ProductDTO productToSave = productService.save(ProductDTO
             .builder()
             .description(request.getDescription())
             .name(request.getName())
-            .category(category)
+            .categoryId(category.getId())
+            .categoryName(category.getName())
             .brand(request.getBrand())
             .price(request.getPrice())
             .isActive(true)
             .stock(0)
             .purchasePrice(request.getPurchasePrice())
             .unit(request.getUnit())
+            .isActive(request.getIsActive())
             .build());
 
         return ResponseEntity.status(201).body(MessageResponse
@@ -88,7 +90,6 @@ public class ProductController {
     @PutMapping("{id}")
     public ResponseEntity<MessageResponse> update(@RequestBody @Valid ProductRequest request, @PathVariable Long id) {
         ProductDTO product = productService.findById(id);
-        product.setCategory(product.getCategory());
         product.setPrice(request.getPrice());
         product.setPurchasePrice(request.getPurchasePrice());
         product.setIsActive(request.getIsActive());
