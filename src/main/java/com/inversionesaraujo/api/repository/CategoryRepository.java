@@ -8,4 +8,8 @@ import com.inversionesaraujo.api.model.Category;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findByCategoryIsNull();
+
+    List<Category> findByCategoryId(Long categoryId);
+
+    Integer countByCategoryId(Long parentId);
 }

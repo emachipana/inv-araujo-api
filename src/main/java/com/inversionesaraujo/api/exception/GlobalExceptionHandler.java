@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MessageResponse> handleAllExceptions(Exception ex) {
         return ResponseEntity.status(500).body(MessageResponse
             .builder()
-            .message("Error interno del servidor: " + ex.getMessage())
+            .message(ex.getMessage())
             .build());
     }
 }

@@ -44,7 +44,7 @@ public class ProductDTO {
             .price(product.getPrice())
             .purchasePrice(product.getPurchasePrice())
             .stock(product.getStock())
-            .category(CategoryDTO.toDTO(product.getCategory()))
+            .category(CategoryDTO.toDTO(product.getCategory(), 0))
             .isActive(product.getIsActive())
             .images(ProductImageDTO.toDTOList(product.getImages()))
             .discount(DiscountDTO.toDTO(product.getDiscount()))
