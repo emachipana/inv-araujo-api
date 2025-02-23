@@ -1,6 +1,10 @@
 package com.inversionesaraujo.api.business.dto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.inversionesaraujo.api.model.Warehouse;
+import com.inversionesaraujo.api.repository.WarehouseProductRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +25,7 @@ public class WarehouseDTO {
     private String district;
     private String address;
     private String ref;
-    private Integer countProducts;
+    private Integer products;
 
     public static WarehouseDTO toDTO(Warehouse warehouse, Integer products) {
         return WarehouseDTO
@@ -33,7 +37,7 @@ public class WarehouseDTO {
             .district(warehouse.getDistrict())
             .address(warehouse.getAddress())
             .ref(warehouse.getRef())
-            .countProducts(products)
+            .products(products)
             .build();
     }
     
@@ -48,5 +52,15 @@ public class WarehouseDTO {
             .address(warehouse.getAddress())
             .ref(warehouse.getRef())
             .build();
-    }    
+    }
+
+    public static List<WarehouseDTO> toDTOList(List<Warehouse> warehouses, WarehouseProductRepository repo) {
+        return warehouses
+            .stream()
+            .map(warehouse -> {
+                Integer products = repo.countProductsByWarehouse(warehouse.getId());
+                return WarehouseDTO.toDTO(warehouse, products);
+            })
+            .collect(Collectors.toList());
+    }
 }

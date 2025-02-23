@@ -78,6 +78,11 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.POST, "/api/v1/categories/**").hasAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.PUT, "/api/v1/categories/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**").hasAnyAuthority("ADMINISTRADOR")
+                    // warehouses
+                    .requestMatchers(HttpMethod.GET, "/api/v1/warehouses/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/warehouses/**").hasAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/warehouses/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/warehouses/**").hasAnyAuthority("ADMINISTRADOR")
                     // products
                     .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasAnyAuthority("ADMINISTRADOR")

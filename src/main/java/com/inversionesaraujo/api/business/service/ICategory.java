@@ -9,7 +9,6 @@ public interface ICategory {
 
     List<CategoryDTO> getSubCategories(Long categoryId);
 
-
     CategoryDTO save(CategoryDTO category);
 
     CategoryDTO findById(Long id);
