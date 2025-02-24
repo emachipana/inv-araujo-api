@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.CategoryDTO;
 import com.inversionesaraujo.api.business.dto.ProductDTO;
+import com.inversionesaraujo.api.business.dto.WarehouseDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.ProductRequest;
 import com.inversionesaraujo.api.business.service.ICategory;
@@ -43,6 +46,11 @@ public class ProductController {
         @RequestParam(required = false) SortDirection direction
     ) {
         return productService.filterProducts(minPrice, maxPrice, categoryId, page, size, sortby, direction);
+    }
+
+    @GetMapping("{id}/warehouses")
+    public List<WarehouseDTO> getWarehouses(@PathVariable Long id) {
+        return productService.getWarehouses(id);
     }
 
     @GetMapping("/search")

@@ -58,7 +58,8 @@ public class WarehouseDTO {
         return warehouses
             .stream()
             .map(warehouse -> {
-                Integer products = repo.countProductsByWarehouse(warehouse.getId());
+                Integer products = 0;
+                if(repo != null) products = repo.countProductsByWarehouse(warehouse.getId());
                 return WarehouseDTO.toDTO(warehouse, products);
             })
             .collect(Collectors.toList());

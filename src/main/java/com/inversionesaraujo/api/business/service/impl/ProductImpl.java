@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.business.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -11,17 +13,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inversionesaraujo.api.business.dto.ProductDTO;
+import com.inversionesaraujo.api.business.dto.WarehouseDTO;
 import com.inversionesaraujo.api.business.service.IProduct;
 import com.inversionesaraujo.api.business.spec.ProductSpecifications;
 import com.inversionesaraujo.api.model.Product;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
+import com.inversionesaraujo.api.model.Warehouse;
 import com.inversionesaraujo.api.repository.ProductRepository;
+import com.inversionesaraujo.api.repository.WarehouseRepository;
 
 @Service
 public class ProductImpl implements IProduct {
     @Autowired
     private ProductRepository productRepo;
+    @Autowired 
+    private WarehouseRepository warehouseRepo;
 
     @Transactional
     @Override
@@ -81,5 +88,13 @@ public class ProductImpl implements IProduct {
         Page<Product> products = productRepo.findAll(spec, pageable); 
 
         return ProductDTO.toPageableDTO(products);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<WarehouseDTO> getWarehouses(Long productId) {
+        List<Warehouse> warehouses = warehouseRepo.findByProductId(productId);
+
+        return WarehouseDTO.toDTOList(warehouses, null);
     }
 }
