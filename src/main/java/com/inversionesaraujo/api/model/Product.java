@@ -57,6 +57,7 @@ public class Product {
     private Category category;
 
     @Builder.Default
+    @Column(nullable = false)
     private Boolean isActive = true;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

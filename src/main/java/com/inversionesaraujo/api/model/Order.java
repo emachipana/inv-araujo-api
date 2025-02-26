@@ -36,13 +36,16 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
+    @Column(nullable = false)
     private Status status = Status.PENDIENTE;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
+    @Column(nullable = false)
     private OrderLocation location = OrderLocation.ALMACEN;
 
     @Builder.Default
+    @Column(nullable = false)
     private Double total = 0.0;
 
     @OneToOne(cascade = CascadeType.ALL)

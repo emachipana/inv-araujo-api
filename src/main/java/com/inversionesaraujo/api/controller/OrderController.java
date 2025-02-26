@@ -98,6 +98,9 @@ public class OrderController {
             .date(date)
             .location(request.getLocation())
             .maxShipDate(maxShipDate)
+            .shippingType(request.getShippingType())
+            .status(request.getStatus() == null ? Status.PENDIENTE : request.getStatus())
+            .total(0.0)
             .build());
 
         return ResponseEntity.status(201).body(MessageResponse
@@ -121,6 +124,7 @@ public class OrderController {
         order.setDate(date);
         order.setMaxShipDate(maxShipDate);
         order.setLocation(request.getLocation());
+        order.setShippingType(request.getShippingType());
 
         OrderDTO orderUptaded = orderService.save(order);
 

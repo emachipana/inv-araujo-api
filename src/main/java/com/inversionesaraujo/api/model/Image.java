@@ -32,5 +32,6 @@ public class Image {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
+    @Column(nullable = false)
     private ImageType type = ImageType.IMAGE;
 }

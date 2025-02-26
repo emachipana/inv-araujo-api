@@ -40,9 +40,11 @@ public class Notification {
 	private String message;
 
 	@Builder.Default
+	@Column(nullable = false)
 	private LocalDateTime createdAt = LocalDateTime.now();
 
 	@Builder.Default
+	@Column(nullable = false)
 	private Boolean isRead = false;
 
 	@Column(nullable = false)

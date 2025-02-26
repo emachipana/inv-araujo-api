@@ -3,6 +3,7 @@ package com.inversionesaraujo.api.business.request;
 import java.time.LocalDate;
 
 import com.inversionesaraujo.api.model.OrderLocation;
+import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.Status;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -26,6 +27,9 @@ public class OrderRequest {
     
     private OrderLocation location = OrderLocation.ALMACEN;
     
+    @NotNull(message = "El tipo de entrega es requerido")
+    private ShippingType shippingType;
+
     private LocalDate date;
     private Long invoiceId;
 }

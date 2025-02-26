@@ -49,5 +49,6 @@ public class WarehouseChange {
     private Integer quantity;
 
     @Builder.Default
+    @Column(nullable = false)
     private LocalDateTime changeDate = LocalDateTime.now();
 }
