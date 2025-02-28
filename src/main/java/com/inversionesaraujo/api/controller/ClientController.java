@@ -67,6 +67,7 @@ public class ClientController {
             .createdBy(request.getCreatedBy())
             .email(request.getEmail())
             .userId(request.getUserId())
+            .consumption(0.0)
             .build());
 
         return ResponseEntity.status(201).body(MessageResponse

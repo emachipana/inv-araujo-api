@@ -32,5 +32,6 @@ public class Offer {
     private String markedWord;
 
     @Builder.Default
+    @Column(nullable = false)
     private Boolean isUsed = false;
 }

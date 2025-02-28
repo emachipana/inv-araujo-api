@@ -31,11 +31,14 @@ public class Profit {
     private String month;
 
     @Builder.Default
+    @Column(nullable = false)
     private Double totalExpenses = 0.0;
 
     @Builder.Default
+    @Column(nullable = false)
     private Double income = 0.0;
 
     @Builder.Default
+    @Column(nullable = false)
     private Double profit = 0.0;
 }

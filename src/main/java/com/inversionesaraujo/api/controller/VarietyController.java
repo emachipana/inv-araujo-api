@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.business.dto.TuberDTO;
 import com.inversionesaraujo.api.business.dto.VarietyDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.VarietyRequest;
+import com.inversionesaraujo.api.business.service.ITuber;
 import com.inversionesaraujo.api.business.service.IVariety;
 
 import jakarta.validation.Valid;
@@ -23,7 +27,14 @@ import jakarta.validation.Valid;
 public class VarietyController {
     @Autowired
     private IVariety varietyService;
-    
+    @Autowired
+    private ITuber tuberService;
+
+    @GetMapping("tuber/{tuberId}")
+    public List<VarietyDTO> getByTuberId(@PathVariable Long tuberId) {
+        return varietyService.findByTuberId(tuberId);
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
         VarietyDTO variety = varietyService.findById(id);
@@ -37,9 +48,12 @@ public class VarietyController {
 
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid VarietyRequest request) {
+        TuberDTO tuber = tuberService.findById(request.getTuberId());
+        
         VarietyDTO variety = varietyService.save(VarietyDTO
             .builder()
             .tuberId(request.getTuberId())
+            .tuberName(tuber.getName())
             .price(request.getPrice())
             .name(request.getName())
             .minPrice(request.getMinPrice())

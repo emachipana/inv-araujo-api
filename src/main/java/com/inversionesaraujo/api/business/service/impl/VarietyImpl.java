@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.business.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -35,5 +37,13 @@ public class VarietyImpl implements IVariety {
     @Override
     public void delete(Long id) {
         varietyRepo.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<VarietyDTO> findByTuberId(Long tuberId) {
+        List<Variety> varieties = varietyRepo.findByTuberId(tuberId);
+
+        return VarietyDTO.toDTOList(varieties);
     }
 }

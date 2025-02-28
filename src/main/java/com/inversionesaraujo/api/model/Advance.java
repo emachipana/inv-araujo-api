@@ -33,6 +33,7 @@ public class Advance {
   @Column(nullable = false)
   private Double amount;
 
+  @Column(nullable = false)
   @Builder.Default
   private LocalDate date = LocalDate.now();
 }

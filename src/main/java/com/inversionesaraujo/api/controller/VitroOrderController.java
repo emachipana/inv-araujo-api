@@ -93,6 +93,7 @@ public class VitroOrderController {
             .initDate(initDate)
             .finishDate(request.getFinishDate())
             .location(request.getLocation())
+            .status(request.getStatus() )
             .shippingType(request.getShippingType())
             .build());
 

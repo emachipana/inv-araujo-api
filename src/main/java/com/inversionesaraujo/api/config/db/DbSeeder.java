@@ -73,6 +73,9 @@ public class DbSeeder {
 				ProfitDTO newProfit = profitService.save(ProfitDTO.builder()
 					.date(now)
 					.month(month.toString())
+					.income(0.0)
+					.profit(0.0)
+					.totalExpenses(0.0)
 					.build());
 				
 				if(newProfit != null) {

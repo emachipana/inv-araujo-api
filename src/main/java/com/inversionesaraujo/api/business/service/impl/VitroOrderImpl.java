@@ -21,7 +21,6 @@ import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.model.Status;
 import com.inversionesaraujo.api.model.VitroOrder;
 import com.inversionesaraujo.api.repository.VitroOrderRepository;
-import com.inversionesaraujo.api.utils.OrderData;
 
 @Service
 public class VitroOrderImpl implements IVitroOrder {
@@ -84,8 +83,13 @@ public class VitroOrderImpl implements IVitroOrder {
     @Transactional(readOnly = true)
     @Override
     public OrderDataResponse getData() {
-        List<VitroOrder> orders = orderRepo.findAll();
+        List<Object[]> counts = orderRepo.countOrdersByStatus();
+        Object[] result = counts.get(0); 
 
-        return OrderData.filterData(null, VitroOrderDTO.toListDTO(orders));
+        return OrderDataResponse
+            .builder()
+            .ship(((Number) result[0]).longValue())
+            .pen(((Number) result[1]).longValue())
+            .build();
     }
 }

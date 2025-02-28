@@ -22,6 +22,7 @@ import com.inversionesaraujo.api.business.service.I_Image;
 
 import jakarta.validation.Valid;
 
+
 @RestController
 @RequestMapping("/api/v1/categories")
 public class CategoryController {
@@ -33,6 +34,11 @@ public class CategoryController {
     @GetMapping
     public List<CategoryDTO> getAll() {
         return categoryService.listAll();
+    }
+
+    @GetMapping("subcategories/{categoryId}")
+    public List<CategoryDTO> getSubCategories(@PathVariable Long categoryId) {
+        return categoryService.getSubCategories(categoryId);
     }
 
     @GetMapping("{id}")

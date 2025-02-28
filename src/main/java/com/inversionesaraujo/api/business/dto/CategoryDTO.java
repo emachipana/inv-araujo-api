@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.inversionesaraujo.api.model.Category;
+import com.inversionesaraujo.api.repository.CategoryRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,9 +24,9 @@ public class CategoryDTO {
     private Long categoryId;
     private ImageDTO image;
     private ImageDTO icon;
-    private List<CategoryDTO> subCategories;
+    private Integer subcategories;
 
-    public static CategoryDTO toDTO(Category category) {
+    public static CategoryDTO toDTO(Category category, Integer subcategories) {
         if(category == null) return null;
         
         return CategoryDTO
@@ -36,7 +37,7 @@ public class CategoryDTO {
             .categoryId(category.getCategory() != null ? category.getCategory().getId() : null)
             .image(ImageDTO.toDTO(category.getImage()))
             .icon(ImageDTO.toDTO(category.getIcon()))
-            .subCategories(toDTOList(category.getSubCategories()))
+            .subcategories(subcategories)
             .build();
     }
 
@@ -58,12 +59,15 @@ public class CategoryDTO {
             .build();
     }
 
-    public static List<CategoryDTO> toDTOList(List<Category> categories) {
+    public static List<CategoryDTO> toDTOList(List<Category> categories, CategoryRepository repo) {
         if(categories == null) return null;
 
         return categories
             .stream()
-            .map(CategoryDTO::toDTO)
+            .map(category -> {
+                Integer subcategories = repo.countByCategoryId(category.getId());
+                return CategoryDTO.toDTO(category, subcategories);
+            })
             .collect(Collectors.toList());
     }
 }

@@ -52,6 +52,7 @@ public class Invoice {
     private String serie;
 
     @Builder.Default
+    @Column(nullable = false)
     private Boolean isGenerated = false;
 
     @Column(nullable = false)

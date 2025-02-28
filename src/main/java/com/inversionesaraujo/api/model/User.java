@@ -41,6 +41,7 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
+    @Column(nullable = false)
     private Role role = Role.CLIENTE;
 
     @OneToOne

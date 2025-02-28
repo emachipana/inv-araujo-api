@@ -19,14 +19,12 @@ import lombok.Setter;
 public class TuberDTO {
     private Long id;
     private String name;
-    private List<VarietyDTO> varieties;
 
     public static TuberDTO toDTO(Tuber tuber) {
         return TuberDTO
             .builder()
             .id(tuber.getId())
             .name(tuber.getName())
-            .varieties(VarietyDTO.toDTOList(tuber.getVarieties()))
             .build();
     }
 

@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.CategoryDTO;
 import com.inversionesaraujo.api.business.dto.ProductDTO;
+import com.inversionesaraujo.api.business.dto.WarehouseDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.ProductRequest;
 import com.inversionesaraujo.api.business.service.ICategory;
@@ -45,6 +48,11 @@ public class ProductController {
         return productService.filterProducts(minPrice, maxPrice, categoryId, page, size, sortby, direction);
     }
 
+    @GetMapping("{id}/warehouses")
+    public List<WarehouseDTO> getWarehouses(@PathVariable Long id) {
+        return productService.getWarehouses(id);
+    }
+
     @GetMapping("/search")
     public Page<ProductDTO> searchProducts(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
         return productService.search(param, param, param, page);
@@ -64,18 +72,20 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid ProductRequest request) {
         CategoryDTO category = categoryService.findById(request.getCategoryId());
-        // TODO - manejar el stock desde el warehouse
+    
         ProductDTO productToSave = productService.save(ProductDTO
             .builder()
             .description(request.getDescription())
             .name(request.getName())
-            .category(category)
+            .categoryId(category.getId())
+            .categoryName(category.getName())
             .brand(request.getBrand())
             .price(request.getPrice())
             .isActive(true)
             .stock(0)
             .purchasePrice(request.getPurchasePrice())
             .unit(request.getUnit())
+            .isActive(request.getIsActive())
             .build());
 
         return ResponseEntity.status(201).body(MessageResponse
@@ -88,7 +98,6 @@ public class ProductController {
     @PutMapping("{id}")
     public ResponseEntity<MessageResponse> update(@RequestBody @Valid ProductRequest request, @PathVariable Long id) {
         ProductDTO product = productService.findById(id);
-        product.setCategory(product.getCategory());
         product.setPrice(request.getPrice());
         product.setPurchasePrice(request.getPurchasePrice());
         product.setIsActive(request.getIsActive());

@@ -43,7 +43,7 @@ public class OrderDTO {
             .client(ClientDTO.toDTO(order.getClient()))
             .status(order.getStatus())
             .location(order.getLocation())
-            .total(order.getTotal())
+            .total(order.getTotal() == null ? 0.0 : order.getTotal())
             .invoice(InvoiceDTO.toDTO(order.getInvoice()))
             .department(order.getDepartment())
             .city(order.getCity())

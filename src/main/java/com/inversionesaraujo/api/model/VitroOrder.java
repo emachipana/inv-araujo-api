@@ -41,12 +41,15 @@ public class VitroOrder {
     private String city;
 
     @Builder.Default
+    @Column(nullable = false)
     private Double total = 0.0;
 
     @Builder.Default
+    @Column(nullable = false)
     private Double totalAdvance = 0.0;
 
     @Builder.Default
+    @Column(nullable = false)
     private Double pending = 0.0;
 
     @Column(nullable = false)
@@ -57,10 +60,12 @@ public class VitroOrder {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
+    @Column(nullable = false)
     private Status status = Status.PENDIENTE;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
+    @Column(nullable = false)
     private OrderLocation location = OrderLocation.ALMACEN;
 
     @Column(nullable = false)

@@ -41,5 +41,6 @@ public class InvoiceItem {
     private Double price;
 
     @Builder.Default
+    @Column(nullable = false)
     private Boolean isIgvApply = true;
 }

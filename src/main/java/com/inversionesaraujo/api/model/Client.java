@@ -47,6 +47,7 @@ public class Client {
     private String rsocial;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     @Builder.Default
     private Role createdBy = Role.CLIENTE;
 
