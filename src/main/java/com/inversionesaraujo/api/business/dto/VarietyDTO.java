@@ -23,6 +23,7 @@ public class VarietyDTO {
     private Double price;
     private Double minPrice;
     private Long tuberId;
+    private String tuberName;
 
     public static VarietyDTO toDTO(Variety variety) {
         return VarietyDTO
@@ -32,12 +33,14 @@ public class VarietyDTO {
             .price(variety.getPrice())
             .minPrice(variety.getMinPrice())
             .tuberId(variety.getTuber().getId())
+            .tuberName(variety.getTuber().getName())
             .build();
     }
 
     public static Variety toEntity(VarietyDTO variety) {
         Tuber tuber = new Tuber();
         tuber.setId(variety.getTuberId());
+        tuber.setName(variety.getTuberName());
 
         return Variety
             .builder()

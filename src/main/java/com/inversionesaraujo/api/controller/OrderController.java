@@ -99,7 +99,7 @@ public class OrderController {
             .location(request.getLocation())
             .maxShipDate(maxShipDate)
             .shippingType(request.getShippingType())
-            .status(request.getStatus() == null ? Status.PENDIENTE : request.getStatus())
+            .status(request.getStatus())
             .total(0.0)
             .build());
 

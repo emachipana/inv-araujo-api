@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderDataResponse {
-    public Integer ship;
-    public Integer pen;
+    public Long ship;
+    public Long pen;
 }

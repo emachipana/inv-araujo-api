@@ -21,7 +21,6 @@ import com.inversionesaraujo.api.model.Order;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.model.Status;
 import com.inversionesaraujo.api.repository.OrderRepository;
-import com.inversionesaraujo.api.utils.OrderData;
 
 @Service
 public class OrderImpl implements IOrder {
@@ -81,8 +80,13 @@ public class OrderImpl implements IOrder {
     @Transactional(readOnly = true)
     @Override
     public OrderDataResponse getData() {
-        List<Order> orders = orderRepo.findAll();
-        
-        return OrderData.filterData(OrderDTO.toListDTO(orders), null);
+        List<Object[]> counts = orderRepo.countOrdersByStatus();
+        Object[] result = counts.get(0); 
+
+        return OrderDataResponse
+            .builder()
+            .ship(((Number) result[0]).longValue())
+            .pen(((Number) result[1]).longValue())
+            .build();
     }
 }

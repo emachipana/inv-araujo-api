@@ -35,9 +35,7 @@ public class ProductImpl implements IProduct {
     public ProductDTO save(ProductDTO product) {
         Product productSaved = productRepo.save(ProductDTO.toEntity(product)); 
 
-        ProductDTO convertProduct = ProductDTO.toDTO(productSaved);
-
-        return convertProduct;
+        return ProductDTO.toDTO(productSaved);
     }
 
     @Transactional(readOnly = true)
