@@ -25,15 +25,13 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String city;
 
-    @Column(nullable = false)
     private String department;
 
     private String phone;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String document;
 
     @Column(nullable = false)
@@ -41,7 +39,8 @@ public class Client {
     private DocumentType documentType;
     
     @Column(nullable = false)
-    private Double consumption;
+    @Builder.Default
+    private Double consumption = 0.0;
 
     @Column(nullable = false)
     private String rsocial;

@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.business.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ public class OfferDTO {
     private String description;
     private String markedWord;
     private Boolean isUsed;
+    private List<OfferProductDTO> items;
 
     public static OfferDTO toDTO(Offer offer) {
         return OfferDTO
@@ -30,7 +32,8 @@ public class OfferDTO {
             .title(offer.getTitle())
             .description(offer.getDescription())
             .markedWord(offer.getMarkedWord())
-            .isUsed(offer.getIsUsed())
+            .isUsed(offer.getIsUsed() != null ? offer.getIsUsed() : false)
+            .items(offer.getItems() != null ? OfferProductDTO.toDTOList(offer.getItems()) : new ArrayList<OfferProductDTO>())
             .build();
     }
 
@@ -41,7 +44,7 @@ public class OfferDTO {
             .title(offer.getTitle())
             .description(offer.getDescription())
             .markedWord(offer.getMarkedWord())
-            .isUsed(offer.getIsUsed())
+            .isUsed(offer.getIsUsed() != null ? offer.getIsUsed() : false)
             .build();
     }
 

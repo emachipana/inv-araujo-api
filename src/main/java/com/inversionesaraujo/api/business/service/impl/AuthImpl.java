@@ -40,6 +40,9 @@ public class AuthImpl implements IAuth {
             .fullName(user.getEmployee() != null ? user.getEmployee().getRsocial() : user.getClient().getRsocial())
             .role(user.getRole())
             .username(user.getUsername())
+            .isVerified(user.getIsVerified())
+            .cartId(user.getCart() != null ? user.getCart().getId() : null)
+            .totalCart(user.getCart() != null ? user.getCart().getTotal() : 0)
             .build();
 
         return AuthResponse
@@ -66,6 +69,9 @@ public class AuthImpl implements IAuth {
             .fullName(newUser.getEmployee() != null ? newUser.getEmployee().getRsocial() : newUser.getClient().getRsocial())
             .role(newUser.getRole())
             .username(newUser.getUsername())
+            .isVerified(newUser.getIsVerified())
+            .cartId(newUser.getCart() != null ? newUser.getCart().getId() : null)
+            .totalCart(newUser.getCart() != null ? newUser.getCart().getTotal() : 0)
             .build();
 
         return AuthResponse

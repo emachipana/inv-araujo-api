@@ -61,7 +61,11 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String password;
-    
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isVerified = false;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Cart cart;
 

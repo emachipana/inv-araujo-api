@@ -13,9 +13,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserResponse {
-  public Long id;
-  public Role role;
-  public String username;
-  public String fullName;
-  public ImageDTO image;
+  private Long id;
+  private Role role;
+  private String username;
+  private String fullName;
+  private ImageDTO image;
+  private Boolean isVerified;
+  private Long cartId;
+  private Double totalCart;
 }

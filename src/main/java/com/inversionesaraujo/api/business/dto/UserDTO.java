@@ -29,6 +29,7 @@ public class UserDTO {
 	private String fullName;
 	private String username;
 	private CartDTO cart;
+	private Boolean isVerified;
 	@JsonIgnore
 	private String password;
 
@@ -44,6 +45,7 @@ public class UserDTO {
 			.cart(CartDTO.toDTO(user.getCart()))
 			.password(user.getPassword())
 			.fullName(user.getEmployee() == null ? user.getClient().getRsocial() : user.getEmployee().getRsocial())
+			.isVerified(user.getIsVerified() == null ? false : user.getIsVerified())
 			.build();
 	}
 
@@ -66,6 +68,7 @@ public class UserDTO {
 			.username(user.getUsername())
 			.cart(CartDTO.toEntity(user.getCart()))
 			.password(user.getPassword())
+			.isVerified(user.getIsVerified() == null ? false : user.getIsVerified())
 			.build();
 	}
 

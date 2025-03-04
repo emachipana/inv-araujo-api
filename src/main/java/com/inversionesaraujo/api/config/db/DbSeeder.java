@@ -52,6 +52,7 @@ public class DbSeeder {
 					.username(email)
 					.role(Role.ADMINISTRADOR)
 					.password(password)
+					.isVerified(true)
 					.build();
 				
 				UserDTO savedUser = userService.save(newUser);

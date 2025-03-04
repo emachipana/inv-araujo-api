@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,11 +35,11 @@ public class Category {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "image_id")
     private Image image;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "icon_id")
     private Image icon;
 }

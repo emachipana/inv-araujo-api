@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,13 +37,13 @@ public class ImageController {
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> save(@RequestParam MultipartFile file, @RequestBody ImageType type) {
+    public ResponseEntity<MessageResponse> save(@RequestParam MultipartFile file) {
         try {
             FileResponse response = imageService.upload(file);
             ImageDTO image = imageService.save(ImageDTO
                 .builder()
                 .url(response.getFileUrl())
-                .type(type)
+                .type(ImageType.IMAGE)
                 .firebaseId(response.getFileName())
                 .build());
 

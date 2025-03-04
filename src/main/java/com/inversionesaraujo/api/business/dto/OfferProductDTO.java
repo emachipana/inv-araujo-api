@@ -1,5 +1,8 @@
 package com.inversionesaraujo.api.business.dto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.inversionesaraujo.api.model.Offer;
 import com.inversionesaraujo.api.model.OfferProduct;
 
@@ -20,17 +23,20 @@ public class OfferProductDTO {
     private ProductDTO product;
 
     public static OfferProductDTO toDTO(OfferProduct item) {
+        if(item == null) return null;
+
         return OfferProductDTO
             .builder()
             .id(item.getId())
-            .offerId(item.getOffer().getId())
+            .offerId(item.getOffer() != null ? item.getOffer().getId() : null)
             .product(ProductDTO.toDTO(item.getProduct()))
             .build();
     }
 
     public static OfferProduct toEntity(OfferProductDTO item) {
+        if(item == null) return null;
         Offer offer = new Offer();
-        offer.setId(item.getId());
+        offer.setId(item.getOfferId());
 
         return OfferProduct
             .builder()
@@ -38,5 +44,12 @@ public class OfferProductDTO {
             .offer(offer)
             .product(ProductDTO.toEntity(item.getProduct()))
             .build();
+    }
+
+    public static List<OfferProductDTO> toDTOList(List<OfferProduct> items) {
+        return items
+            .stream()
+            .map(OfferProductDTO::toDTO)
+            .collect(Collectors.toList());
     }
 }

@@ -50,6 +50,9 @@ public class UserController {
             .fullName(currentUser.getFullName())
             .role(currentUser.getRole())
             .username(currentUser.getUsername())
+            .isVerified(currentUser.getIsVerified())
+            .cartId(currentUser.getCart() != null ? currentUser.getCart().getId() : null)
+            .totalCart(currentUser.getCart() != null ? currentUser.getCart().getTotal() : 0)
             .build();
 
         return ResponseEntity.ok().body(MessageResponse
@@ -70,6 +73,9 @@ public class UserController {
             .fullName(user.getFullName())
             .role(user.getRole())
             .username(user.getUsername())
+            .isVerified(user.getIsVerified())
+            .cartId(user.getCart() != null ? user.getCart().getId() : null)
+            .totalCart(user.getCart() != null ? user.getCart().getTotal() : 0)
             .build();
 
         return ResponseEntity.ok().body(MessageResponse
@@ -101,11 +107,14 @@ public class UserController {
 
         UserResponse userResponse = UserResponse
             .builder()
-            .id(user.getId())
-            .role(user.getRole())
-            .fullName(user.getFullName())
-            .username(user.getUsername())
+            .id(updatedUser.getId())
+            .role(updatedUser.getRole())
+            .fullName(updatedUser.getFullName())
+            .username(updatedUser.getUsername())
             .image(updatedUser.getImage())
+            .isVerified(updatedUser.getIsVerified())
+            .cartId(updatedUser.getCart() != null ? updatedUser.getCart().getId() : null)
+            .totalCart(updatedUser.getCart() != null ? updatedUser.getCart().getTotal() : 0)
             .build();
         
         return ResponseEntity.ok().body(MessageResponse

@@ -13,22 +13,18 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ClientRequest {
-    @NotEmpty(message = "La ciudad es requerida")
     @Size(min = 3)
     private String city;
 
-    @NotEmpty(message = "El departamento es requerido")
     @Size(min = 3)
     private String department;
 
-    @NotEmpty(message = "El teléfono es requerido")
     @Size(min = 6)
     private String phone;
 
     @NotNull(message = "El tipo de documento es requerido")
     private DocumentType documentType;
 
-    @NotEmpty(message = "El documento es requerido")
     @Size(min = 8)
     private String document;
 

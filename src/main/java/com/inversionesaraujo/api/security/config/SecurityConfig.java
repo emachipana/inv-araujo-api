@@ -94,6 +94,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.PUT, "/api/v1/offers/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/offers/**").hasAnyAuthority("ADMINISTRADOR")
                     // offerProducts
+                    .requestMatchers(HttpMethod.GET, "/api/v1/offerProducts/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/offerProducts/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/offerProducts/**").hasAnyAuthority("ADMINISTRADOR")
                     // orders
@@ -135,7 +136,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000, https://inv-araujo-app.vercel.app")
+                        .allowedOrigins("http://localhost:3000, https://inv-araujo-app.vercel.app, http://localhost:4200")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
