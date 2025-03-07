@@ -67,12 +67,13 @@ public class ProductImpl implements IProduct {
     @Override
     public Page<ProductDTO> filterProducts(
         Double minPrice, Double maxPrice, Integer categoryId, Integer page, 
-        Integer size, SortBy sort, SortDirection direction
+        Integer size, SortBy sort, SortDirection direction, String categoryName
     ) {
         Specification<Product> spec = Specification.where(
             ProductSpecifications.priceGreaterThanOrEqual(minPrice)
             .and(ProductSpecifications.priceLessThanOrEqual(maxPrice))
             .and(ProductSpecifications.belongsToCategory(categoryId))
+            .and(ProductSpecifications.findByCategoryName(categoryName))
         );
 
         Pageable pageable;
@@ -94,5 +95,14 @@ public class ProductImpl implements IProduct {
         List<Warehouse> warehouses = warehouseRepo.findByProductId(productId);
 
         return WarehouseDTO.toDTOList(warehouses, null);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ProductDTO> getByDiscountProducts() {
+        Pageable pageable = PageRequest.of(0, 5);
+        List<Product> products = productRepo.findByDiscountProducts(pageable);
+
+        return ProductDTO.toDTOList(products);
     }
 }

@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.business.dto;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 
@@ -78,5 +79,12 @@ public class ProductDTO {
 
     public static Page<ProductDTO> toPageableDTO(Page<Product> products) {
         return products.map(ProductDTO::toDTO);
+    }
+
+    public static List<ProductDTO> toDTOList(List<Product> products) {
+        return products
+            .stream()
+            .map(ProductDTO::toDTO)
+            .collect(Collectors.toList());
     }
 }

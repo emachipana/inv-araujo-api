@@ -19,4 +19,9 @@ public class ProductSpecifications {
         return (root, query, criteriaBuilder) ->
             categoryId != null ? criteriaBuilder.equal(root.get("category").get("id"), categoryId) : null;
     }
+
+    public static Specification<Product> findByCategoryName(String name) {
+        return (root, query, criteriaBuilder) ->
+            name != null ? criteriaBuilder.equal(root.get("category").get("name"), name) : null;
+    }
 }

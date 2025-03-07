@@ -12,7 +12,8 @@ import com.inversionesaraujo.api.model.SortDirection;
 public interface IProduct {
     Page<ProductDTO> filterProducts(
         Double minPrice, Double maxPrice, Integer categoryId, 
-        Integer page, Integer size, SortBy sort, SortDirection direction
+        Integer page, Integer size, SortBy sort, SortDirection direction,
+        String categoryName
     );
 
     Page<ProductDTO> search(String name, String description, String brand, Integer page);
@@ -24,4 +25,6 @@ public interface IProduct {
     void delete(Long id);
 
     List<WarehouseDTO> getWarehouses(Long productId);
+
+    List<ProductDTO> getByDiscountProducts();
 }

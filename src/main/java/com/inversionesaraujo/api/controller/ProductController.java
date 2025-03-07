@@ -43,9 +43,15 @@ public class ProductController {
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "16") Integer size,
         @RequestParam(required = false) SortBy sortby,
-        @RequestParam(required = false) SortDirection direction
+        @RequestParam(required = false) SortDirection direction,
+        @RequestParam(required = false) String categoryName
     ) {
-        return productService.filterProducts(minPrice, maxPrice, categoryId, page, size, sortby, direction);
+        return productService.filterProducts(minPrice, maxPrice, categoryId, page, size, sortby, direction, categoryName);
+    }
+
+    @GetMapping("/withDiscounts")
+    public List<ProductDTO> getProductsWithDiscount() {
+        return productService.getByDiscountProducts();
     }
 
     @GetMapping("{id}/warehouses")
