@@ -24,4 +24,10 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
        "COALESCE(SUM(CASE WHEN o.status = 'PENDIENTE' THEN 1 ELSE 0 END), 0) " +
        "FROM Order o")
 	List<Object[]> countOrdersByStatus();
+
+	@Query("SELECT COUNT(o) " +
+       "FROM Order o " +
+       "WHERE o.status = 'PENDIENTE' " +
+       "AND FUNCTION('DATE', o.maxShipDate) = CURRENT_DATE")
+	Long totalDeliver();
 }

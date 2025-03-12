@@ -21,10 +21,13 @@ import com.inversionesaraujo.api.business.dto.InvoiceDTO;
 import com.inversionesaraujo.api.business.dto.VitroOrderDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
+import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.business.request.VitroOrderRequest;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
 import com.inversionesaraujo.api.business.service.I_Invoice;
+import com.inversionesaraujo.api.model.ShippingType;
+import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.model.Status;
 
@@ -42,14 +45,16 @@ public class VitroOrderController {
 
     @GetMapping
     public Page<VitroOrderDTO> getAll(
-        @RequestParam(required = false) Integer tuberId,
+        @RequestParam(required = false) Long tuberId,
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "20") Integer size,
         @RequestParam(defaultValue = "DESC") SortDirection sort,
         @RequestParam(required = false) Month month,
-        @RequestParam(required = false) Status status
+        @RequestParam(required = false) Status status,
+        @RequestParam(required = false) ShippingType shipType,
+        @RequestParam(required = false) SortBy sortby
     ) {
-        return orderService.listAll(tuberId, page, size, sort, month, status);
+        return orderService.listAll(tuberId, page, size, sort, month, status, sortby, shipType);
     }
 
     
@@ -61,6 +66,17 @@ public class VitroOrderController {
     @GetMapping("data")
     public ResponseEntity<MessageResponse> getData() {
         OrderDataResponse response = orderService.getData();
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("Los datos se obtuvieron con éxito")
+            .data(response)
+            .build());
+    }
+
+    @GetMapping("totalDeliver")
+    public ResponseEntity<MessageResponse> getTotalDeliver() {
+        TotalDeliverResponse response = orderService.totalDeliver();
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

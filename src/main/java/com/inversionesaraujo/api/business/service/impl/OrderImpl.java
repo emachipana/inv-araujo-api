@@ -15,9 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.inversionesaraujo.api.business.dto.OrderDTO;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
+import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.business.service.IOrder;
 import com.inversionesaraujo.api.business.spec.OrderSpecifications;
 import com.inversionesaraujo.api.model.Order;
+import com.inversionesaraujo.api.model.ShippingType;
+import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.model.Status;
 import com.inversionesaraujo.api.repository.OrderRepository;
@@ -29,13 +32,19 @@ public class OrderImpl implements IOrder {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<OrderDTO> listAll(Status status, Integer page, Integer size, SortDirection direction, Month month) {
+    public Page<OrderDTO> listAll(Status status, Integer page, Integer size, SortDirection direction, Month month, SortBy sort, ShippingType shipType) {
         Specification<Order> spec = Specification.where(
             OrderSpecifications.findByStatus(status)
             .and(OrderSpecifications.findByMonth(month))
+            .and(OrderSpecifications.findByShipType(shipType))
         );
-        Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "date");
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable;
+        if(sort != null) {
+            Sort sorted = Sort.by(Sort.Direction.fromString(direction.toString()), sort.toString());
+            pageable = PageRequest.of(page, size, sorted);
+        }else {
+            pageable = PageRequest.of(page, size);
+        }
 
         Page<Order> orders = orderRepo.findAll(spec, pageable);
 
@@ -87,6 +96,17 @@ public class OrderImpl implements IOrder {
             .builder()
             .ship(((Number) result[0]).longValue())
             .pen(((Number) result[1]).longValue())
+            .build();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public TotalDeliverResponse totalDeliver() {
+        Long total = orderRepo.totalDeliver();
+
+        return TotalDeliverResponse
+            .builder()
+            .total(total)
             .build();
     }
 }

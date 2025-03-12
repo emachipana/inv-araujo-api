@@ -6,13 +6,16 @@ import org.springframework.data.domain.Page;
 
 import com.inversionesaraujo.api.business.dto.OrderDTO;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
+import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
+import com.inversionesaraujo.api.model.ShippingType;
+import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.model.Status;
 
 public interface IOrder {
     Page<OrderDTO> listAll(
         Status status, Integer page, Integer size, SortDirection direction,
-        Month month
+        Month month, SortBy sort, ShippingType shipType
     );
 
     OrderDataResponse getData();
@@ -24,4 +27,6 @@ public interface IOrder {
     void delete(Long id);
 
     Page<OrderDTO> search(String department, String city, String rsocial, Integer page);
+
+    TotalDeliverResponse totalDeliver();
 }

@@ -5,12 +5,18 @@ import java.time.Month;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.inversionesaraujo.api.model.Order;
+import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.Status;
 
 public class OrderSpecifications {
     public static Specification<Order> findByStatus(Status status) {
         return (root, query, criteriaBuilder) ->
             status != null ? criteriaBuilder.equal(root.get("status"), status) : null;
+    }
+
+    public static Specification<Order> findByShipType(ShippingType shipType) {
+        return (root, query, criteriaBuilder) ->
+            shipType != null ? criteriaBuilder.equal(root.get("shippingType"), shipType) : null;
     }
 
     public static Specification<Order> findByMonth(Month month) {
@@ -21,5 +27,5 @@ public class OrderSpecifications {
                     Integer.class, 
                     root.get("maxShipDate")), month.getValue())
             : null;
-    }
+    }   
 }

@@ -22,11 +22,14 @@ import com.inversionesaraujo.api.business.dto.OrderDTO;
 import com.inversionesaraujo.api.business.dto.ProfitDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
+import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.business.request.OrderRequest;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.business.service.IOrder;
 import com.inversionesaraujo.api.business.service.IProfit;
 import com.inversionesaraujo.api.business.service.I_Invoice;
+import com.inversionesaraujo.api.model.ShippingType;
+import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.model.Status;
 
@@ -50,9 +53,11 @@ public class OrderController {
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "20") Integer size,
         @RequestParam(defaultValue = "DESC") SortDirection sort,
-        @RequestParam(required = false) Month month
+        @RequestParam(required = false) SortBy sortby,
+        @RequestParam(required = false) Month month,
+        @RequestParam(required = false) ShippingType shipType
     ) {
-        return orderService.listAll(status, page, size, sort, month);
+        return orderService.listAll(status, page, size, sort, month, sortby, shipType);
     }
 
     @GetMapping("search")
@@ -63,6 +68,17 @@ public class OrderController {
     @GetMapping("data")
     public ResponseEntity<MessageResponse> getData() {
         OrderDataResponse response = orderService.getData();
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("Los datos se obtuvieron con éxito")
+            .data(response)
+            .build());
+    }
+
+    @GetMapping("totalDeliver")
+    public ResponseEntity<MessageResponse> getTotalDeliver() {
+        TotalDeliverResponse response = orderService.totalDeliver();
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

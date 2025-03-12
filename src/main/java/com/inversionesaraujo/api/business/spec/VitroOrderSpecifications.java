@@ -5,6 +5,7 @@ import java.time.Month;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.inversionesaraujo.api.model.OrderVariety;
+import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.Status;
 import com.inversionesaraujo.api.model.Variety;
 import com.inversionesaraujo.api.model.VitroOrder;
@@ -12,7 +13,7 @@ import com.inversionesaraujo.api.model.VitroOrder;
 import jakarta.persistence.criteria.Join;
 
 public class VitroOrderSpecifications {
-    public static Specification<VitroOrder> findByTuberId(Integer tuberId) {
+    public static Specification<VitroOrder> findByTuberId(Long tuberId) {
         return (root, query, criteriaBuilder) -> {
             if(tuberId == null) return null;
 
@@ -36,5 +37,10 @@ public class VitroOrderSpecifications {
                     Integer.class, 
                     root.get("finishDate")), month.getValue())
             : null;
+    }
+
+    public static Specification<VitroOrder> findByShipType(ShippingType shipType) {
+        return (root, query, criteriaBuilder) ->
+            shipType != null ? criteriaBuilder.equal(root.get("shippingType"), shipType) : null;
     }
 }

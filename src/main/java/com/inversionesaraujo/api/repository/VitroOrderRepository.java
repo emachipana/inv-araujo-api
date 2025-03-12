@@ -24,4 +24,10 @@ public interface VitroOrderRepository extends JpaRepository<VitroOrder, Long>, J
        "COALESCE(SUM(CASE WHEN o.status = 'PENDIENTE' THEN 1 ELSE 0 END), 0) " +
        "FROM VitroOrder o")
 	List<Object[]> countOrdersByStatus();
+
+    @Query("SELECT COUNT(o) " +
+       "FROM VitroOrder o " +
+       "WHERE o.status = 'PENDIENTE' " +
+       "AND FUNCTION('DATE', o.finishDate) = CURRENT_DATE")
+	Long totalDeliver();
   }

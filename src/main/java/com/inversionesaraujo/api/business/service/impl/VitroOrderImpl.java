@@ -15,8 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.inversionesaraujo.api.business.dto.VitroOrderDTO;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
+import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
 import com.inversionesaraujo.api.business.spec.VitroOrderSpecifications;
+import com.inversionesaraujo.api.model.ShippingType;
+import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.model.Status;
 import com.inversionesaraujo.api.model.VitroOrder;
@@ -30,16 +33,23 @@ public class VitroOrderImpl implements IVitroOrder {
     @Transactional(readOnly = true)
     @Override
     public Page<VitroOrderDTO> listAll(
-        Integer tuberId, Integer page, Integer size, 
-        SortDirection direction, Month month, Status status
+        Long tuberId, Integer page, Integer size, 
+        SortDirection direction, Month month, Status status,
+        SortBy sortby, ShippingType shipType
     ) {
         Specification<VitroOrder> spec = Specification.where(
             VitroOrderSpecifications.findByTuberId(tuberId)
             .and(VitroOrderSpecifications.findByMonth(month))
             .and(VitroOrderSpecifications.findByStatus(status))
+            .and(VitroOrderSpecifications.findByShipType(shipType))
         );
-        Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "initDate");
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable;
+        if(sortby != null) {
+            Sort sorted = Sort.by(Sort.Direction.fromString(direction.toString()), sortby.toString());
+            pageable = PageRequest.of(page, size, sorted);
+        }else {
+            pageable = PageRequest.of(page, size);
+        }
 
         Page<VitroOrder> orders = orderRepo.findAll(spec, pageable);
 
@@ -90,6 +100,17 @@ public class VitroOrderImpl implements IVitroOrder {
             .builder()
             .ship(((Number) result[0]).longValue())
             .pen(((Number) result[1]).longValue())
+            .build();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public TotalDeliverResponse totalDeliver() {
+        Long total = orderRepo.totalDeliver();
+
+        return TotalDeliverResponse
+            .builder()
+            .total(total)
             .build();
     }
 }

@@ -37,21 +37,18 @@ public class ProductController {
 
     @GetMapping
     public Page<ProductDTO> getAll(
-        @RequestParam(required = false) Integer categoryId,
+        @RequestParam(required = false) Long categoryId,
         @RequestParam(required = false) Double minPrice,
         @RequestParam(required = false) Double maxPrice,
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "16") Integer size,
         @RequestParam(required = false) SortBy sortby,
         @RequestParam(required = false) SortDirection direction,
-        @RequestParam(required = false) String categoryName
+        @RequestParam(required = false) String categoryName,
+        @RequestParam(required = false) Integer stockLessThan,
+        @RequestParam(defaultValue = "false") Boolean withDiscount
     ) {
-        return productService.filterProducts(minPrice, maxPrice, categoryId, page, size, sortby, direction, categoryName);
-    }
-
-    @GetMapping("/withDiscounts")
-    public List<ProductDTO> getProductsWithDiscount() {
-        return productService.getByDiscountProducts();
+        return productService.filterProducts(minPrice, maxPrice, categoryId, page, size, sortby, direction, categoryName, stockLessThan, withDiscount);
     }
 
     @GetMapping("{id}/warehouses")
