@@ -12,8 +12,13 @@ import com.inversionesaraujo.api.business.service.IEmployee;
 import com.inversionesaraujo.api.model.Employee;
 import com.inversionesaraujo.api.repository.EmployeeRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 @Service
 public class EmployeeImpl implements IEmployee {
+    @PersistenceContext
+    private EntityManager entityManager;
     @Autowired
     private EmployeeRepository employeeRepo;
 
@@ -28,7 +33,7 @@ public class EmployeeImpl implements IEmployee {
     @Transactional
     @Override
     public EmployeeDTO save(EmployeeDTO employee) {
-        Employee employeeSaved = employeeRepo.save(EmployeeDTO.toEntity(employee));
+        Employee employeeSaved = employeeRepo.save(EmployeeDTO.toEntity(employee, entityManager));
 
         return EmployeeDTO.toDTO(employeeSaved);
     }

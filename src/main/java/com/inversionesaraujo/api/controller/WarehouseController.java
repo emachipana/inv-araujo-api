@@ -17,7 +17,6 @@ import com.inversionesaraujo.api.business.dto.WarehouseDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.WarehouseRequest;
 import com.inversionesaraujo.api.business.service.IWarehouse;
-
 import jakarta.validation.Valid;
 
 @RestController
@@ -52,6 +51,8 @@ public class WarehouseController {
             .district(request.getDistrict())
             .address(request.getAddress())
             .ref(request.getRef())
+            .latitude(request.getLatitude())
+            .longitude(request.getLongitude())
             .build());
 
         return ResponseEntity.status(201).body(MessageResponse

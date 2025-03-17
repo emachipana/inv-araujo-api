@@ -11,6 +11,7 @@ import com.inversionesaraujo.api.model.OrderLocation;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.Status;
 
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -54,11 +55,11 @@ public class OrderDTO {
             .build();
     }
 
-    public static Order toEntity(OrderDTO order) {
+    public static Order toEntity(OrderDTO order, EntityManager entityManager) {
         return Order
             .builder()
             .id(order.getId())
-            .client(ClientDTO.toEntity(order.getClient()))
+            .client(ClientDTO.toEntity(order.getClient(), entityManager))
             .status(order.getStatus())
             .location(order.getLocation())
             .total(order.getTotal())
@@ -68,7 +69,7 @@ public class OrderDTO {
             .date(order.getDate())
             .maxShipDate(order.getMaxShipDate())
             .shippingType(order.getShippingType())
-            .employee(EmployeeDTO.toEntity(order.getEmployee()))
+            .employee(EmployeeDTO.toEntity(order.getEmployee(), entityManager))
             .build();
     }
 

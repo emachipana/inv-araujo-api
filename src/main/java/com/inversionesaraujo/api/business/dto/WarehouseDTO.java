@@ -26,6 +26,8 @@ public class WarehouseDTO {
     private String address;
     private String ref;
     private Integer products;
+    private Double latitude;
+    private Double longitude;
 
     public static WarehouseDTO toDTO(Warehouse warehouse, Integer products) {
         return WarehouseDTO
@@ -38,6 +40,8 @@ public class WarehouseDTO {
             .address(warehouse.getAddress())
             .ref(warehouse.getRef())
             .products(products)
+            .latitude(warehouse.getLatitude())
+            .longitude(warehouse.getLongitude())
             .build();
     }
     
@@ -51,6 +55,8 @@ public class WarehouseDTO {
             .district(warehouse.getDistrict())
             .address(warehouse.getAddress())
             .ref(warehouse.getRef())
+            .latitude(warehouse.getLatitude())
+            .longitude(warehouse.getLongitude())
             .build();
     }
 

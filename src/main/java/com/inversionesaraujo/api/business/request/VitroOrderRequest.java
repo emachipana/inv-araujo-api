@@ -33,6 +33,7 @@ public class VitroOrderRequest {
     @NotNull(message = "El tipo de envío es requerido")
     private ShippingType shippingType;
 
+    private Boolean isReady = false;
     private LocalDate initDate;
     private LocalDate finishDate;
     private Long invoiceId;

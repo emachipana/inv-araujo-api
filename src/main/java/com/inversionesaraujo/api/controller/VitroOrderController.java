@@ -111,6 +111,7 @@ public class VitroOrderController {
             .location(request.getLocation())
             .status(request.getStatus() )
             .shippingType(request.getShippingType())
+            .isReady(false)
             .build());
 
         return ResponseEntity.status(201).body(MessageResponse
@@ -134,7 +135,8 @@ public class VitroOrderController {
         order.setShippingType(request.getShippingType());
         order.setPending(order.getTotal() - order.getTotalAdvance());
         order.setLocation(request.getLocation());
-        
+        order.setIsReady(request.getIsReady());
+
         VitroOrderDTO orderUpdated = orderService.save(order);
 
         return ResponseEntity.ok().body(MessageResponse

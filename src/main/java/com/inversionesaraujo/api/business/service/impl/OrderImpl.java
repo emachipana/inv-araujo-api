@@ -25,10 +25,15 @@ import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.model.Status;
 import com.inversionesaraujo.api.repository.OrderRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 @Service
 public class OrderImpl implements IOrder {
     @Autowired
     private OrderRepository orderRepo;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional(readOnly = true)
     @Override
@@ -54,7 +59,7 @@ public class OrderImpl implements IOrder {
     @Transactional
     @Override
     public OrderDTO save(OrderDTO order) {
-        Order orderSaved = orderRepo.save(OrderDTO.toEntity(order));
+        Order orderSaved = orderRepo.save(OrderDTO.toEntity(order, entityManager));
 
         return OrderDTO.toDTO(orderSaved);
     }

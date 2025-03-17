@@ -25,10 +25,15 @@ import com.inversionesaraujo.api.model.Status;
 import com.inversionesaraujo.api.model.VitroOrder;
 import com.inversionesaraujo.api.repository.VitroOrderRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 @Service
 public class VitroOrderImpl implements IVitroOrder {
     @Autowired
     private VitroOrderRepository orderRepo;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional(readOnly = true)
     @Override
@@ -59,7 +64,7 @@ public class VitroOrderImpl implements IVitroOrder {
     @Transactional
     @Override
     public VitroOrderDTO save(VitroOrderDTO vitroOrder) {
-        VitroOrder vitroOrderSaved = orderRepo.save(VitroOrderDTO.toEntity(vitroOrder)); 
+        VitroOrder vitroOrderSaved = orderRepo.save(VitroOrderDTO.toEntity(vitroOrder, entityManager)); 
 
         return VitroOrderDTO.toDTO(vitroOrderSaved);
     }

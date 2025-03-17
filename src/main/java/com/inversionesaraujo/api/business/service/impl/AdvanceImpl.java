@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.business.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -35,5 +37,13 @@ public class AdvanceImpl implements IAdvance {
 		Advance advance = advanceRepo.findById(id).orElseThrow(() -> new DataAccessException("El adelanto no existe") {});
 
 		return AdvanceDTO.toDTO(advance);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<AdvanceDTO> findByVitroOrder(Long orderId) {
+		List<Advance> advances = advanceRepo.findByVitroOrderId(orderId);
+
+		return AdvanceDTO.toDTOList(advances);
 	}
 }

@@ -7,6 +7,8 @@ import com.inversionesaraujo.api.model.DocumentType;
 import com.inversionesaraujo.api.model.Role;
 import com.inversionesaraujo.api.model.User;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +33,9 @@ public class ClientDTO {
     private String email;
     private Long userId;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public static ClientDTO toDTO(Client client) {
         if(client == null) return null;
 
@@ -50,11 +55,11 @@ public class ClientDTO {
             .build();
     }
 
-    public static Client toEntity(ClientDTO client) {
+    public static Client toEntity(ClientDTO client, EntityManager entityManager) {
         if(client == null) return null;
 
         User user = new User();
-        if(client.getUserId() != null) user.setId(client.getUserId());
+        if(client.getUserId() != null) user = entityManager.getReference(User.class, client.getUserId());
         else user = null;
 
         return Client

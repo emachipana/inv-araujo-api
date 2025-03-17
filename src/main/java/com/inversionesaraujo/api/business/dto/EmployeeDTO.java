@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.inversionesaraujo.api.model.Employee;
+import com.inversionesaraujo.api.model.Role;
 import com.inversionesaraujo.api.model.User;
 
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,6 +26,7 @@ public class EmployeeDTO {
     private String email;
     private String phone;
     private Long userId;
+    private Role role;
 
     public static EmployeeDTO toDTO(Employee employee) {
         if(employee == null) return null;
@@ -36,14 +39,15 @@ public class EmployeeDTO {
             .email(employee.getEmail())
             .phone(employee.getPhone())
             .userId(employee.getUser() != null ? employee.getUser().getId() : null)
+            .role(employee.getUser().getRole())
             .build();
     }
 
-    public static Employee toEntity(EmployeeDTO employee) {
+    public static Employee toEntity(EmployeeDTO employee, EntityManager entityManager) {
         if(employee == null) return null;
 
         User user = new User();
-        if(employee.getUserId() != null) user.setId(employee.getUserId());
+        if(employee.getUserId() != null) user = entityManager.getReference(User.class, employee.getUserId());
         else user = null;
 
         return Employee

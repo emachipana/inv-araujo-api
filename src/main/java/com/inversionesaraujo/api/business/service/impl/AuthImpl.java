@@ -6,9 +6,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.inversionesaraujo.api.business.dto.ImageDTO;
+import com.inversionesaraujo.api.business.dto.UserDTO;
 import com.inversionesaraujo.api.business.payload.AuthResponse;
-import com.inversionesaraujo.api.business.payload.UserResponse;
 import com.inversionesaraujo.api.business.request.LoginRequest;
 import com.inversionesaraujo.api.business.request.RegisterRequest;
 import com.inversionesaraujo.api.business.service.IAuth;
@@ -33,22 +32,11 @@ public class AuthImpl implements IAuth {
         authManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         User user = userRepo.findByUsername(request.getUsername()).orElseThrow();
         String token = jwtService.getToken(user);
-        UserResponse userResponse = UserResponse
-            .builder()
-            .id(user.getId())
-            .image(ImageDTO.toDTO(user.getImage()))
-            .fullName(user.getEmployee() != null ? user.getEmployee().getRsocial() : user.getClient().getRsocial())
-            .role(user.getRole())
-            .username(user.getUsername())
-            .isVerified(user.getIsVerified())
-            .cartId(user.getCart() != null ? user.getCart().getId() : null)
-            .totalCart(user.getCart() != null ? user.getCart().getTotal() : 0)
-            .build();
 
         return AuthResponse
             .builder()
             .token(token)
-            .user(userResponse)
+            .user(UserDTO.toDTO(user))
             .build();
     }
 
@@ -62,22 +50,11 @@ public class AuthImpl implements IAuth {
             .password(passwordEncoder.encode(request.getPassword()))
             .build());
         String token = jwtService.getToken(newUser);
-        UserResponse userResponse = UserResponse
-            .builder()
-            .id(newUser.getId())
-            .image(ImageDTO.toDTO(newUser.getImage()))
-            .fullName(newUser.getEmployee() != null ? newUser.getEmployee().getRsocial() : newUser.getClient().getRsocial())
-            .role(newUser.getRole())
-            .username(newUser.getUsername())
-            .isVerified(newUser.getIsVerified())
-            .cartId(newUser.getCart() != null ? newUser.getCart().getId() : null)
-            .totalCart(newUser.getCart() != null ? newUser.getCart().getTotal() : 0)
-            .build();
 
         return AuthResponse
             .builder()
             .token(token)
-            .user(userResponse)
+            .user(UserDTO.toDTO(newUser))
             .build();
     }
 }

@@ -4,6 +4,8 @@ import com.inversionesaraujo.api.model.Advance;
 import com.inversionesaraujo.api.model.VitroOrder;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,7 +36,7 @@ public class AdvanceDTO {
 
     public static Advance toEntity(AdvanceDTO advance) {
         VitroOrder order = new VitroOrder();
-        order.setId(advance.getId());
+        order.setId(advance.getVitroOrderId());
 
         return Advance
             .builder()
@@ -43,5 +45,12 @@ public class AdvanceDTO {
             .amount(advance.getAmount())
             .date(advance.getDate())
             .build();
+    }
+
+    public static List<AdvanceDTO> toDTOList(List<Advance> advances) {
+        return advances
+            .stream()
+            .map(AdvanceDTO::toDTO)
+            .collect(Collectors.toList());
     }
 }

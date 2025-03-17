@@ -1,18 +1,14 @@
 package com.inversionesaraujo.api.business.payload;
 
+import com.inversionesaraujo.api.business.dto.EmployeeDTO;
 import com.inversionesaraujo.api.business.dto.UserDTO;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class AuthResponse {
+public class EmployeeResponse {
     private UserDTO user;
-    private String token;    
+    private EmployeeDTO employee;
 }
-    

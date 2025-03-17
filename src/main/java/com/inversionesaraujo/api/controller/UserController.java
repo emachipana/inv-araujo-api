@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inversionesaraujo.api.business.dto.ImageDTO;
 import com.inversionesaraujo.api.business.dto.UserDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
-import com.inversionesaraujo.api.business.payload.UserResponse;
 import com.inversionesaraujo.api.business.request.UserRequest;
 import com.inversionesaraujo.api.business.service.IUser;
 import com.inversionesaraujo.api.business.service.I_Image;
@@ -43,22 +42,10 @@ public class UserController {
         String username = auth.getName();
         UserDTO currentUser = userService.findByUsername(username);
 
-        UserResponse userResponse = UserResponse
-            .builder()
-            .id(currentUser.getId())
-            .image(currentUser.getImage())
-            .fullName(currentUser.getFullName())
-            .role(currentUser.getRole())
-            .username(currentUser.getUsername())
-            .isVerified(currentUser.getIsVerified())
-            .cartId(currentUser.getCart() != null ? currentUser.getCart().getId() : null)
-            .totalCart(currentUser.getCart() != null ? currentUser.getCart().getTotal() : 0)
-            .build();
-
         return ResponseEntity.ok().body(MessageResponse
             .builder()
             .message("El usuario se encontro con exito")
-            .data(userResponse)
+            .data(currentUser)
             .build());
     }
 
@@ -66,22 +53,10 @@ public class UserController {
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
         UserDTO user = userService.findById(id); 
 
-        UserResponse userResponse = UserResponse
-            .builder()
-            .id(user.getId())
-            .image(user.getImage())
-            .fullName(user.getFullName())
-            .role(user.getRole())
-            .username(user.getUsername())
-            .isVerified(user.getIsVerified())
-            .cartId(user.getCart() != null ? user.getCart().getId() : null)
-            .totalCart(user.getCart() != null ? user.getCart().getTotal() : 0)
-            .build();
-
         return ResponseEntity.ok().body(MessageResponse
             .builder()
             .message("El usuario se encontro con exito")
-            .data(userResponse)
+            .data(user)
             .build());
     }
 
@@ -104,23 +79,11 @@ public class UserController {
         if(request.getNewPassword() != null) user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         
         UserDTO updatedUser = userService.save(user);
-
-        UserResponse userResponse = UserResponse
-            .builder()
-            .id(updatedUser.getId())
-            .role(updatedUser.getRole())
-            .fullName(updatedUser.getFullName())
-            .username(updatedUser.getUsername())
-            .image(updatedUser.getImage())
-            .isVerified(updatedUser.getIsVerified())
-            .cartId(updatedUser.getCart() != null ? updatedUser.getCart().getId() : null)
-            .totalCart(updatedUser.getCart() != null ? updatedUser.getCart().getTotal() : 0)
-            .build();
         
         return ResponseEntity.ok().body(MessageResponse
             .builder()
             .message("El usuario se actualizo con exito")
-            .data(userResponse)
+            .data(updatedUser)
             .build());
     }
 }

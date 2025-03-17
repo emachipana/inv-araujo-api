@@ -39,4 +39,12 @@ public class Warehouse {
 
     @Column(nullable = false)
     private String ref;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Double latitude = 0.0;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Double longitude = 0.0;
 }

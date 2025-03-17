@@ -75,6 +75,10 @@ public class VitroOrder {
     @Enumerated(EnumType.STRING)
     private ShippingType shippingType;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isReady = false;
+
     @ManyToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;

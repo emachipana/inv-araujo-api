@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.business.request;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,6 @@ public class WarehouseRequest {
     private String province;
 
     @NotEmpty(message = "El distrito es requerido")
-    @Size(min = 3)
     private String district;
 
     @NotEmpty(message = "La dirección es requerida")
@@ -31,4 +31,10 @@ public class WarehouseRequest {
     @NotEmpty(message = "La referencia es requerida")
     @Size(min = 3)
     private String ref;
+
+    @NotNull(message = "La latitud es requerida")
+    private Double latitude;
+
+    @NotNull(message = "La longitud es requerida")
+    private Double longitude;
 }

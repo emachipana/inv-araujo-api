@@ -1,5 +1,8 @@
 package com.inversionesaraujo.api.business.dto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.inversionesaraujo.api.model.OrderVariety;
 import com.inversionesaraujo.api.model.VitroOrder;
 
@@ -47,5 +50,12 @@ public class OrderVarietyDTO {
             .quantity(item.getQuantity())
             .subTotal(item.getSubTotal())
             .build();
+    }
+
+    public static List<OrderVarietyDTO> toDTOList(List<OrderVariety> items) {
+        return items
+            .stream()
+            .map(OrderVarietyDTO::toDTO)
+            .collect(Collectors.toList());
     }
 }

@@ -15,9 +15,14 @@ import com.inversionesaraujo.api.model.Client;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.repository.ClientRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 @Service
 public class ClientImpl implements IClient {
-    @Autowired
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired 
     private ClientRepository clientRepo;
 
     @Transactional(readOnly = true)
@@ -38,7 +43,7 @@ public class ClientImpl implements IClient {
     @Transactional
     @Override
     public ClientDTO save(ClientDTO client) {
-        Client clientSaved = clientRepo.save(ClientDTO.toEntity(client)); 
+        Client clientSaved = clientRepo.save(ClientDTO.toEntity(client, entityManager)); 
 
         return ClientDTO.toDTO(clientSaved);
     }

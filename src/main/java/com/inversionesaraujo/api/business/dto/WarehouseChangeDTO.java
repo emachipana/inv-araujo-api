@@ -2,6 +2,7 @@ package com.inversionesaraujo.api.business.dto;
 
 import com.inversionesaraujo.api.model.WarehouseChange;
 
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,14 +36,14 @@ public class WarehouseChangeDTO {
             .build();
     }
 
-    public static WarehouseChange toEntity(WarehouseChangeDTO item) {
+    public static WarehouseChange toEntity(WarehouseChangeDTO item, EntityManager entityManager) {
         return WarehouseChange
             .builder()
             .id(item.getId())
             .reason(item.getReason())
             .fromWarehouse(WarehouseDTO.toEntity(item.getFromWarehouse()))
             .toWarehouse(WarehouseDTO.toEntity(item.getToWarehouse()))
-            .employee(EmployeeDTO.toEntity(item.getEmployee()))
+            .employee(EmployeeDTO.toEntity(item.getEmployee(), entityManager))
             .quantity(item.getQuantity())
             .product(ProductDTO.toEntity(item.getProduct()))
             .build();

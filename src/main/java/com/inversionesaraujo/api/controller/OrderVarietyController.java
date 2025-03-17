@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,6 +43,11 @@ public class OrderVarietyController {
             .message("El item del pedido invitro se encontro con exito")
             .data(item)
             .build());
+    }
+
+    @GetMapping("vitroOrder/{id}")
+    public List<OrderVarietyDTO> getAllByVitroOrder(@PathVariable Long id) {
+        return itemService.findByVitroOrderId(id);
     }
 
     @PostMapping

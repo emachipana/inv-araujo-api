@@ -2,6 +2,7 @@ package com.inversionesaraujo.api.controller;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,6 @@ import com.inversionesaraujo.api.business.service.IAdvance;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.business.service.IProfit;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
-
 import jakarta.validation.Valid;
 
 @RestController
@@ -50,6 +50,11 @@ public class AdvanceController {
             .build());
     }
 
+    @GetMapping("vitroOrder/{id}")
+    public List<AdvanceDTO> getAllByVitroOrder(@PathVariable Long id) {
+        return advanceService.findByVitroOrder(id);
+    }
+
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid AdvanceRequest request) {
         VitroOrderDTO order = orderService.findById(request.getVitroOrderId());
@@ -68,9 +73,11 @@ public class AdvanceController {
         order.setTotalAdvance(totalAdvance);
         order.setPending(order.getTotal() - totalAdvance);
         orderService.save(order);
+        System.out.println("order updated");
 
         client.setConsumption(client.getConsumption() + amount);
         clientService.save(client);
+        System.out.println("client updated");
 
         Month month = date.getMonth();
         ProfitDTO profit = profitService.findByMonth(month.toString());

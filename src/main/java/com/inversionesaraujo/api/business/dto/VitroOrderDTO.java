@@ -11,6 +11,7 @@ import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.Status;
 import com.inversionesaraujo.api.model.VitroOrder;
 
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +38,7 @@ public class VitroOrderDTO {
     private OrderLocation location;
     private ShippingType shippingType;
     private EmployeeDTO employee;
+    private Boolean isReady;
     private InvoiceDTO invoice;
 
     public static VitroOrderDTO toDTO(VitroOrder order) {
@@ -57,14 +59,15 @@ public class VitroOrderDTO {
             .shippingType(order.getShippingType())
             .employee(EmployeeDTO.toDTO(order.getEmployee()))
             .invoice(InvoiceDTO.toDTO(order.getInvoice()))
+            .isReady(order.getIsReady())
             .build();
     }
 
-    public static VitroOrder toEntity(VitroOrderDTO order) {
+    public static VitroOrder toEntity(VitroOrderDTO order, EntityManager entityManager) {
         return VitroOrder
             .builder()
             .id(order.getId())
-            .client(ClientDTO.toEntity(order.getClient()))
+            .client(ClientDTO.toEntity(order.getClient(), entityManager))
             .department(order.getDepartment())
             .city(order.getCity())
             .total(order.getTotal() != null ? order.getTotal() : 0)
@@ -76,8 +79,9 @@ public class VitroOrderDTO {
             .status(order.getStatus())
             .location(order.getLocation())
             .shippingType(order.getShippingType())
-            .employee(EmployeeDTO.toEntity(order.getEmployee()))
+            .employee(EmployeeDTO.toEntity(order.getEmployee(), entityManager))
             .invoice(InvoiceDTO.toEntity(order.getInvoice()))
+            .isReady(order.getIsReady() != null ? order.getIsReady() : false)
             .build();
     }
 
