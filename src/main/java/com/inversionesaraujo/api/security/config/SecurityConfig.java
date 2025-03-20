@@ -49,10 +49,10 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.PUT, "/api/v1/varieties/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/varieties/**").hasAnyAuthority("ADMINISTRADOR")
                     // vitroOrders
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/vitroOrders/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/vitroOrders/**").hasAnyAuthority("ADMINISTRADOR", "ALMACENERO")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/vitroOrders/**").hasAnyAuthority("ADMINISTRADOR")
                     // orderVarieties
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/orderVarieties/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/orderVarieties/**").hasAnyAuthority("ADMINISTRADOR", "ALMACENERO")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/orderVarieties/**").hasAnyAuthority("ADMINISTRADOR")
                     // advances
                     .requestMatchers(HttpMethod.PUT, "/api/v1/advances/**").hasAnyAuthority("ADMINISTRADOR")
