@@ -19,6 +19,11 @@ public class OrderSpecifications {
             shipType != null ? criteriaBuilder.equal(root.get("shippingType"), shipType) : null;
     }
 
+    public static Specification<Order> findByWarehouse(Long warehouseId) {
+        return (root, query, criteriaBuilder) ->
+            warehouseId != null ? criteriaBuilder.equal(root.get("warehouse_id"), warehouseId) : null;
+    }
+
     public static Specification<Order> findByMonth(Month month) {
         return (root, query, criteriaBuilder) -> month != null
             ? criteriaBuilder.equal(

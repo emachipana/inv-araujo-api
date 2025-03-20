@@ -16,7 +16,7 @@ public interface IVitroOrder {
     Page<VitroOrderDTO> listAll(
         Long tuberId, Integer page, Integer size,
         SortDirection direction, Month month, Status status,
-        SortBy sortby, ShippingType shipType
+        SortBy sortby, ShippingType shipType, Boolean ordersReady
     );
 
     OrderDataResponse getData();

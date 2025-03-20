@@ -40,13 +40,14 @@ public class VitroOrderImpl implements IVitroOrder {
     public Page<VitroOrderDTO> listAll(
         Long tuberId, Integer page, Integer size, 
         SortDirection direction, Month month, Status status,
-        SortBy sortby, ShippingType shipType
+        SortBy sortby, ShippingType shipType, Boolean ordersReady
     ) {
         Specification<VitroOrder> spec = Specification.where(
             VitroOrderSpecifications.findByTuberId(tuberId)
             .and(VitroOrderSpecifications.findByMonth(month))
             .and(VitroOrderSpecifications.findByStatus(status))
             .and(VitroOrderSpecifications.findByShipType(shipType))
+            .and(VitroOrderSpecifications.ordersReady(ordersReady))
         );
         Pageable pageable;
         if(sortby != null) {

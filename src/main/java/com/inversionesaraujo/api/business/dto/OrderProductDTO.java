@@ -1,5 +1,8 @@
 package com.inversionesaraujo.api.business.dto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.inversionesaraujo.api.model.Order;
 import com.inversionesaraujo.api.model.OrderProduct;
 
@@ -47,5 +50,12 @@ public class OrderProductDTO {
             .subTotal(item.getSubTotal())
             .price(item.getPrice())
             .build();
+    }
+
+    public static List<OrderProductDTO> toDTOList(List<OrderProduct> items) {
+        return items
+            .stream()
+            .map(OrderProductDTO::toDTO)
+            .collect(Collectors.toList());
     }
 }

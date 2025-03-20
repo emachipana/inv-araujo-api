@@ -8,7 +8,6 @@ import com.inversionesaraujo.api.model.Role;
 import com.inversionesaraujo.api.model.User;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,9 +31,6 @@ public class ClientDTO {
     private Role createdBy;
     private String email;
     private Long userId;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     public static ClientDTO toDTO(Client client) {
         if(client == null) return null;

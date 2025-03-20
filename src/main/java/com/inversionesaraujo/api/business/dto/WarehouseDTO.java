@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.inversionesaraujo.api.model.Warehouse;
+import com.inversionesaraujo.api.model.WarehouseProduct;
 import com.inversionesaraujo.api.repository.WarehouseProductRepository;
 
 import lombok.AllArgsConstructor;
@@ -30,6 +31,8 @@ public class WarehouseDTO {
     private Double longitude;
 
     public static WarehouseDTO toDTO(Warehouse warehouse, Integer products) {
+        if(warehouse == null) return null;
+
         return WarehouseDTO
             .builder()
             .id(warehouse.getId())
@@ -46,6 +49,8 @@ public class WarehouseDTO {
     }
     
     public static Warehouse toEntity(WarehouseDTO warehouse) {
+        if(warehouse == null) return null;
+
         return Warehouse
             .builder()
             .id(warehouse.getId())
@@ -66,6 +71,20 @@ public class WarehouseDTO {
             .map(warehouse -> {
                 Integer products = 0;
                 if(repo != null) products = repo.countProductsByWarehouse(warehouse.getId());
+                return WarehouseDTO.toDTO(warehouse, products);
+            })
+            .collect(Collectors.toList());
+    }
+
+    public static List<WarehouseDTO> toDTOList(List<Warehouse> warehouses, WarehouseProductRepository repo, Long productId) {
+        return warehouses
+            .stream()
+            .map(warehouse -> {
+                Integer products = 0;
+                if(repo != null) {
+                    WarehouseProduct item = repo.findByWarehouseIdAndProductId(warehouse.getId(), productId);
+                    products = item.getQuantity();
+                }
                 return WarehouseDTO.toDTO(warehouse, products);
             })
             .collect(Collectors.toList());

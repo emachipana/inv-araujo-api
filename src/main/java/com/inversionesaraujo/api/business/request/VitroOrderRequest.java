@@ -37,4 +37,5 @@ public class VitroOrderRequest {
     private LocalDate initDate;
     private LocalDate finishDate;
     private Long invoiceId;
+    private Long imageId;
 }

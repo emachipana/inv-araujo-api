@@ -29,6 +29,11 @@ public class VitroOrderSpecifications {
             status != null ? criteriaBuilder.equal(root.get("status"), status) : null;
     }
 
+    public static Specification<VitroOrder> ordersReady(Boolean ordersReady) {
+        return (root, query, criteriaBuilder) -> 
+            ordersReady ? criteriaBuilder.isTrue(root.get("isReady")) : null;
+    }
+
     public static Specification<VitroOrder> findByMonth(Month month) {
         return (root, query, criteriaBuilder) -> month != null 
             ? criteriaBuilder.equal(

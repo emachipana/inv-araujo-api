@@ -89,4 +89,9 @@ public class VitroOrder {
 
     @OneToMany(mappedBy = "vitroOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderVariety> items;
+
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    @Builder.Default
+    private Image image = null;
 }

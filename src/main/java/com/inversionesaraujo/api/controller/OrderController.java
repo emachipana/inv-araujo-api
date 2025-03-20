@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.ClientDTO;
+import com.inversionesaraujo.api.business.dto.ImageDTO;
 import com.inversionesaraujo.api.business.dto.InvoiceDTO;
 import com.inversionesaraujo.api.business.dto.OrderDTO;
 import com.inversionesaraujo.api.business.dto.ProfitDTO;
+import com.inversionesaraujo.api.business.dto.WarehouseDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
@@ -27,6 +29,8 @@ import com.inversionesaraujo.api.business.request.OrderRequest;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.business.service.IOrder;
 import com.inversionesaraujo.api.business.service.IProfit;
+import com.inversionesaraujo.api.business.service.IWarehouse;
+import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.I_Invoice;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
@@ -46,6 +50,10 @@ public class OrderController {
     private I_Invoice invoiceService;
     @Autowired
     private IProfit profitService;
+    @Autowired
+    private IWarehouse warehouseService;
+    @Autowired
+    private I_Image imageService;
 
     @GetMapping
     public Page<OrderDTO> getAll(
@@ -55,9 +63,10 @@ public class OrderController {
         @RequestParam(defaultValue = "DESC") SortDirection sort,
         @RequestParam(required = false) SortBy sortby,
         @RequestParam(required = false) Month month,
-        @RequestParam(required = false) ShippingType shipType
+        @RequestParam(required = false) ShippingType shipType,
+        @RequestParam(required = false) Long warehouseId
     ) {
-        return orderService.listAll(status, page, size, sort, month, sortby, shipType);
+        return orderService.listAll(status, page, size, sort, month, sortby, shipType, warehouseId);
     }
 
     @GetMapping("search")
@@ -102,6 +111,7 @@ public class OrderController {
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid OrderRequest request) {
         ClientDTO client = clientService.findById(request.getClientId());
         InvoiceDTO invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
+        WarehouseDTO warehouse = request.getWarehouseId() == null ? null : warehouseService.findById(request.getWarehouseId());
         LocalDate date = request.getDate() == null ? LocalDate.now() : request.getDate();
         LocalDate maxShipDate = date.plusDays(3);
 
@@ -117,6 +127,8 @@ public class OrderController {
             .shippingType(request.getShippingType())
             .status(request.getStatus())
             .total(0.0)
+            .warehouse(warehouse)
+            .evidence(null)
             .build());
 
         return ResponseEntity.status(201).body(MessageResponse
@@ -130,6 +142,8 @@ public class OrderController {
     public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid OrderRequest request) {
         OrderDTO order = orderService.findById(id);
         InvoiceDTO invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
+        WarehouseDTO warehouse = request.getWarehouseId() == null ? null : warehouseService.findById(request.getWarehouseId());
+        ImageDTO evidence = request.getImageId() == null ? null : imageService.findById(request.getImageId());
         LocalDate date = request.getDate();
         LocalDate maxShipDate = date.plusDays(3);
         
@@ -141,6 +155,8 @@ public class OrderController {
         order.setMaxShipDate(maxShipDate);
         order.setLocation(request.getLocation());
         order.setShippingType(request.getShippingType());
+        order.setWarehouse(warehouse);
+        order.setEvidence(evidence);
 
         OrderDTO orderUptaded = orderService.save(order);
 

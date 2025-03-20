@@ -15,7 +15,7 @@ import com.inversionesaraujo.api.model.Status;
 public interface IOrder {
     Page<OrderDTO> listAll(
         Status status, Integer page, Integer size, SortDirection direction,
-        Month month, SortBy sort, ShippingType shipType
+        Month month, SortBy sort, ShippingType shipType, Long warehouseId
     );
 
     OrderDataResponse getData();

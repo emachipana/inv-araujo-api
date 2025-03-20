@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.business.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -35,5 +37,13 @@ public class OrderProductImpl implements IOrderProduct {
     @Override
     public void delete(Long id) {
         orderProductRepo.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<OrderProductDTO> findByOrderId(Long orderId) {
+        List<OrderProduct> items = orderProductRepo.findByOrderId(orderId);
+
+        return OrderProductDTO.toDTOList(items);
     }
 }

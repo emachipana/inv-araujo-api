@@ -32,4 +32,6 @@ public class OrderRequest {
 
     private LocalDate date;
     private Long invoiceId;
+    private Long warehouseId;
+    private Long imageId;
 }

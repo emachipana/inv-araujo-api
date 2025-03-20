@@ -21,14 +21,21 @@ import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.model.Warehouse;
 import com.inversionesaraujo.api.repository.ProductRepository;
+import com.inversionesaraujo.api.repository.WarehouseProductRepository;
 import com.inversionesaraujo.api.repository.WarehouseRepository;
 
 @Service
 public class ProductImpl implements IProduct {
+
+    private final WarehouseProductRepository warehouseProductRepository;
     @Autowired
     private ProductRepository productRepo;
     @Autowired 
     private WarehouseRepository warehouseRepo;
+
+    ProductImpl(WarehouseProductRepository warehouseProductRepository) {
+        this.warehouseProductRepository = warehouseProductRepository;
+    }
 
     @Transactional
     @Override
@@ -97,6 +104,6 @@ public class ProductImpl implements IProduct {
     public List<WarehouseDTO> getWarehouses(Long productId) {
         List<Warehouse> warehouses = warehouseRepo.findByProductId(productId);
 
-        return WarehouseDTO.toDTOList(warehouses, null);
+        return WarehouseDTO.toDTOList(warehouses, warehouseProductRepository, productId);
     }
 }

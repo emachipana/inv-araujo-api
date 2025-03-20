@@ -71,4 +71,14 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;
+
+    @OneToOne
+    @JoinColumn(name = "warehouse_id")
+    @Builder.Default
+    private Warehouse warehouse = null;
+
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    @Builder.Default
+    private Image image = null;
 }

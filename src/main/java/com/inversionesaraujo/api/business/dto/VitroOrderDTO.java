@@ -40,6 +40,7 @@ public class VitroOrderDTO {
     private EmployeeDTO employee;
     private Boolean isReady;
     private InvoiceDTO invoice;
+    private ImageDTO evidence;
 
     public static VitroOrderDTO toDTO(VitroOrder order) {
         return VitroOrderDTO
@@ -60,6 +61,7 @@ public class VitroOrderDTO {
             .employee(EmployeeDTO.toDTO(order.getEmployee()))
             .invoice(InvoiceDTO.toDTO(order.getInvoice()))
             .isReady(order.getIsReady())
+            .evidence(ImageDTO.toDTO(order.getImage()))
             .build();
     }
 
@@ -82,6 +84,7 @@ public class VitroOrderDTO {
             .employee(EmployeeDTO.toEntity(order.getEmployee(), entityManager))
             .invoice(InvoiceDTO.toEntity(order.getInvoice()))
             .isReady(order.getIsReady() != null ? order.getIsReady() : false)
+            .image(ImageDTO.toEntity(order.getEvidence()))
             .build();
     }
 

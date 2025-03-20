@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
 import java.time.Month;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,11 @@ public class OrderProductController {
             .message("El item del pedido se encontro con exito")
             .data(item)
             .build());
+    }
+
+    @GetMapping("order/{id}")
+    public List<OrderProductDTO> getAllByOrder(@PathVariable Long id) {
+        return itemService.findByOrderId(id);
     }
 
     @PostMapping

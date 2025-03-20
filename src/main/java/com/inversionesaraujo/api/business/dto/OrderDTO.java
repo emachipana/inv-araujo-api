@@ -36,6 +36,8 @@ public class OrderDTO {
     private LocalDate maxShipDate;
     private ShippingType shippingType;
     private EmployeeDTO employee;
+    private WarehouseDTO warehouse;
+    private ImageDTO evidence;
 
     public static OrderDTO toDTO(Order order) {
         return OrderDTO
@@ -52,6 +54,8 @@ public class OrderDTO {
             .maxShipDate(order.getMaxShipDate())
             .shippingType(order.getShippingType())
             .employee(EmployeeDTO.toDTO(order.getEmployee()))
+            .warehouse(WarehouseDTO.toDTO(order.getWarehouse(), 0))
+            .evidence(ImageDTO.toDTO(order.getImage()))
             .build();
     }
 
@@ -68,8 +72,11 @@ public class OrderDTO {
             .city(order.getCity())
             .date(order.getDate())
             .maxShipDate(order.getMaxShipDate())
+            .warehouse(WarehouseDTO.toEntity(order.getWarehouse()))
             .shippingType(order.getShippingType())
             .employee(EmployeeDTO.toEntity(order.getEmployee(), entityManager))
+            .warehouse(WarehouseDTO.toEntity(order.getWarehouse()))
+            .image(ImageDTO.toEntity(order.getEvidence()))
             .build();
     }
 

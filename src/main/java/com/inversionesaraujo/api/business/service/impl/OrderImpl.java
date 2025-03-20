@@ -37,11 +37,17 @@ public class OrderImpl implements IOrder {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<OrderDTO> listAll(Status status, Integer page, Integer size, SortDirection direction, Month month, SortBy sort, ShippingType shipType) {
+    public Page<OrderDTO> listAll(
+        Status status, Integer page, Integer size,
+        SortDirection direction, Month month, SortBy sort,
+        ShippingType shipType,
+        Long warehouseId
+    ) {
         Specification<Order> spec = Specification.where(
             OrderSpecifications.findByStatus(status)
             .and(OrderSpecifications.findByMonth(month))
             .and(OrderSpecifications.findByShipType(shipType))
+            .and(OrderSpecifications.findByWarehouse(warehouseId))
         );
         Pageable pageable;
         if(sort != null) {

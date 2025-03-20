@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.ClientDTO;
+import com.inversionesaraujo.api.business.dto.ImageDTO;
 import com.inversionesaraujo.api.business.dto.InvoiceDTO;
 import com.inversionesaraujo.api.business.dto.VitroOrderDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
@@ -25,6 +26,7 @@ import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.business.request.VitroOrderRequest;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
+import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.I_Invoice;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
@@ -42,6 +44,8 @@ public class VitroOrderController {
     private I_Invoice invoiceService;
     @Autowired
     private IClient clientService;
+    @Autowired
+    private I_Image imageService;
 
     @GetMapping
     public Page<VitroOrderDTO> getAll(
@@ -52,11 +56,11 @@ public class VitroOrderController {
         @RequestParam(required = false) Month month,
         @RequestParam(required = false) Status status,
         @RequestParam(required = false) ShippingType shipType,
-        @RequestParam(required = false) SortBy sortby
+        @RequestParam(required = false) SortBy sortby,
+        @RequestParam(defaultValue = "false") Boolean ordersReady
     ) {
-        return orderService.listAll(tuberId, page, size, sort, month, status, sortby, shipType);
+        return orderService.listAll(tuberId, page, size, sort, month, status, sortby, shipType, ordersReady);
     }
-
     
     @GetMapping("search")
     public Page<VitroOrderDTO> search(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
@@ -112,6 +116,7 @@ public class VitroOrderController {
             .status(request.getStatus() )
             .shippingType(request.getShippingType())
             .isReady(false)
+            .evidence(null)
             .build());
 
         return ResponseEntity.status(201).body(MessageResponse
@@ -125,7 +130,8 @@ public class VitroOrderController {
     public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid VitroOrderRequest request) {
         VitroOrderDTO order = orderService.findById(id);
         InvoiceDTO invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
-
+        ImageDTO evidence = request.getImageId() == null ? null : imageService.findById(request.getImageId());
+        
         order.setDepartment(request.getDepartment());
         order.setCity(request.getCity());
         order.setInitDate(request.getInitDate());
@@ -136,6 +142,7 @@ public class VitroOrderController {
         order.setPending(order.getTotal() - order.getTotalAdvance());
         order.setLocation(request.getLocation());
         order.setIsReady(request.getIsReady());
+        order.setEvidence(evidence);
 
         VitroOrderDTO orderUpdated = orderService.save(order);
 

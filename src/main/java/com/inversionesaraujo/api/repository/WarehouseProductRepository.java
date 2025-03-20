@@ -9,4 +9,6 @@ import com.inversionesaraujo.api.model.WarehouseProduct;
 public interface WarehouseProductRepository extends JpaRepository<WarehouseProduct, Long> {
     @Query("SELECT COUNT(wp.product.id) FROM WarehouseProduct wp WHERE wp.warehouse.id = :warehouseId")
     Integer countProductsByWarehouse(@Param("warehouseId") Long warehouseId);
+
+    WarehouseProduct findByWarehouseIdAndProductId(Long warehouseId, Long productId);
 }
