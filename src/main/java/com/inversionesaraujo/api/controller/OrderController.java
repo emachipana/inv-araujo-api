@@ -34,6 +34,7 @@ import com.inversionesaraujo.api.business.service.IProfit;
 import com.inversionesaraujo.api.business.service.IWarehouse;
 import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.I_Invoice;
+import com.inversionesaraujo.api.model.OrderLocation;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -69,9 +70,10 @@ public class OrderController {
         @RequestParam(required = false) Month month,
         @RequestParam(required = false) ShippingType shipType,
         @RequestParam(required = false) Long warehouseId,
-        @RequestParam(required = false) Long employeeId
+        @RequestParam(required = false) Long employeeId,
+        @RequestParam(required = false) OrderLocation location
     ) {
-        return orderService.listAll(status, page, size, sort, month, sortby, shipType, warehouseId, employeeId);
+        return orderService.listAll(status, page, size, sort, month, sortby, shipType, warehouseId, employeeId, location);
     }
 
     @GetMapping("search")

@@ -30,6 +30,7 @@ import com.inversionesaraujo.api.business.service.IEmployee;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
 import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.I_Invoice;
+import com.inversionesaraujo.api.model.OrderLocation;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -62,9 +63,10 @@ public class VitroOrderController {
         @RequestParam(required = false) ShippingType shipType,
         @RequestParam(required = false) SortBy sortby,
         @RequestParam(defaultValue = "false") Boolean ordersReady,
-        @RequestParam(required = false) Long employeeId
+        @RequestParam(required = false) Long employeeId,
+        @RequestParam(required = false) OrderLocation location
     ) {
-        return orderService.listAll(tuberId, page, size, sort, month, status, sortby, shipType, ordersReady, employeeId);
+        return orderService.listAll(tuberId, page, size, sort, month, status, sortby, shipType, ordersReady, employeeId, location);
     }
     
     @GetMapping("search")

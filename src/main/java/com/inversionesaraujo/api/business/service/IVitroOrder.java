@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import com.inversionesaraujo.api.business.dto.VitroOrderDTO;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
+import com.inversionesaraujo.api.model.OrderLocation;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -17,7 +18,7 @@ public interface IVitroOrder {
         Long tuberId, Integer page, Integer size,
         SortDirection direction, Month month, Status status,
         SortBy sortby, ShippingType shipType, Boolean ordersReady,
-        Long employeeId
+        Long employeeId, OrderLocation location
     );
 
     OrderDataResponse getData();

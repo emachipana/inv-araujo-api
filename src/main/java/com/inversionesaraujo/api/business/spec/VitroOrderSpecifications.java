@@ -4,6 +4,7 @@ import java.time.Month;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import com.inversionesaraujo.api.model.OrderLocation;
 import com.inversionesaraujo.api.model.OrderVariety;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.Status;
@@ -27,6 +28,11 @@ public class VitroOrderSpecifications {
     public static Specification<VitroOrder> findByStatus(Status status) {
         return (root, query, criteriaBuilder) -> 
             status != null ? criteriaBuilder.equal(root.get("status"), status) : null;
+    }
+
+    public static Specification<VitroOrder> findByLocation(OrderLocation location) {
+        return (root, query, criteriaBuilder) -> 
+            location != null ? criteriaBuilder.equal(root.get("location"), location) : null;
     }
 
     public static Specification<VitroOrder> ordersReady(Boolean ordersReady) {

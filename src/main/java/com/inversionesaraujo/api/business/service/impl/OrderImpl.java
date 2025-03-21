@@ -19,6 +19,7 @@ import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.business.service.IOrder;
 import com.inversionesaraujo.api.business.spec.OrderSpecifications;
 import com.inversionesaraujo.api.model.Order;
+import com.inversionesaraujo.api.model.OrderLocation;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -40,7 +41,8 @@ public class OrderImpl implements IOrder {
     public Page<OrderDTO> listAll(
         Status status, Integer page, Integer size,
         SortDirection direction, Month month, SortBy sort,
-        ShippingType shipType, Long warehouseId, Long employeeId
+        ShippingType shipType, Long warehouseId, Long employeeId,
+        OrderLocation location
     ) {
         Specification<Order> spec = Specification.where(
             OrderSpecifications.findByStatus(status)
@@ -48,6 +50,7 @@ public class OrderImpl implements IOrder {
             .and(OrderSpecifications.findByShipType(shipType))
             .and(OrderSpecifications.findByWarehouse(warehouseId))
             .and(OrderSpecifications.findByEmployee(employeeId))
+            .and(OrderSpecifications.findByLocation(location))
         );
         Pageable pageable;
         if(sort != null) {

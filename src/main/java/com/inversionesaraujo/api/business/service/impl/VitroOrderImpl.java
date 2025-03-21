@@ -18,6 +18,7 @@ import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
 import com.inversionesaraujo.api.business.spec.VitroOrderSpecifications;
+import com.inversionesaraujo.api.model.OrderLocation;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -41,7 +42,7 @@ public class VitroOrderImpl implements IVitroOrder {
         Long tuberId, Integer page, Integer size, 
         SortDirection direction, Month month, Status status,
         SortBy sortby, ShippingType shipType, Boolean ordersReady,
-        Long employeeId
+        Long employeeId, OrderLocation location
     ) {
         Specification<VitroOrder> spec = Specification.where(
             VitroOrderSpecifications.findByTuberId(tuberId)
@@ -50,6 +51,7 @@ public class VitroOrderImpl implements IVitroOrder {
             .and(VitroOrderSpecifications.findByShipType(shipType))
             .and(VitroOrderSpecifications.ordersReady(ordersReady))
             .and(VitroOrderSpecifications.findByEmployee(employeeId))
+            .and(VitroOrderSpecifications.findByLocation(location))
         );
         Pageable pageable;
         if(sortby != null) {

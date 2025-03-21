@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import com.inversionesaraujo.api.business.dto.OrderDTO;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
+import com.inversionesaraujo.api.model.OrderLocation;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -16,7 +17,7 @@ public interface IOrder {
     Page<OrderDTO> listAll(
         Status status, Integer page, Integer size, SortDirection direction,
         Month month, SortBy sort, ShippingType shipType, Long warehouseId,
-        Long employeeId
+        Long employeeId, OrderLocation location
     );
 
     OrderDataResponse getData();
