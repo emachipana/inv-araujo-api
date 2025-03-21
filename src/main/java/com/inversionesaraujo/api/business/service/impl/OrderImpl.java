@@ -40,14 +40,14 @@ public class OrderImpl implements IOrder {
     public Page<OrderDTO> listAll(
         Status status, Integer page, Integer size,
         SortDirection direction, Month month, SortBy sort,
-        ShippingType shipType,
-        Long warehouseId
+        ShippingType shipType, Long warehouseId, Long employeeId
     ) {
         Specification<Order> spec = Specification.where(
             OrderSpecifications.findByStatus(status)
             .and(OrderSpecifications.findByMonth(month))
             .and(OrderSpecifications.findByShipType(shipType))
             .and(OrderSpecifications.findByWarehouse(warehouseId))
+            .and(OrderSpecifications.findByEmployee(employeeId))
         );
         Pageable pageable;
         if(sort != null) {

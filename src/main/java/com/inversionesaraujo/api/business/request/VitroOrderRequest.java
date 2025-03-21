@@ -38,4 +38,5 @@ public class VitroOrderRequest {
     private LocalDate finishDate;
     private Long invoiceId;
     private Long imageId;
+    private Long employeeId;
 }

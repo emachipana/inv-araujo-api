@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.ClientDTO;
+import com.inversionesaraujo.api.business.dto.EmployeeDTO;
 import com.inversionesaraujo.api.business.dto.ImageDTO;
 import com.inversionesaraujo.api.business.dto.InvoiceDTO;
 import com.inversionesaraujo.api.business.dto.OrderDTO;
@@ -27,6 +28,7 @@ import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.business.request.OrderRequest;
 import com.inversionesaraujo.api.business.service.IClient;
+import com.inversionesaraujo.api.business.service.IEmployee;
 import com.inversionesaraujo.api.business.service.IOrder;
 import com.inversionesaraujo.api.business.service.IProfit;
 import com.inversionesaraujo.api.business.service.IWarehouse;
@@ -54,6 +56,8 @@ public class OrderController {
     private IWarehouse warehouseService;
     @Autowired
     private I_Image imageService;
+    @Autowired
+    private IEmployee employeeService;
 
     @GetMapping
     public Page<OrderDTO> getAll(
@@ -64,9 +68,10 @@ public class OrderController {
         @RequestParam(required = false) SortBy sortby,
         @RequestParam(required = false) Month month,
         @RequestParam(required = false) ShippingType shipType,
-        @RequestParam(required = false) Long warehouseId
+        @RequestParam(required = false) Long warehouseId,
+        @RequestParam(required = false) Long employeeId
     ) {
-        return orderService.listAll(status, page, size, sort, month, sortby, shipType, warehouseId);
+        return orderService.listAll(status, page, size, sort, month, sortby, shipType, warehouseId, employeeId);
     }
 
     @GetMapping("search")
@@ -144,6 +149,7 @@ public class OrderController {
         InvoiceDTO invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
         WarehouseDTO warehouse = request.getWarehouseId() == null ? null : warehouseService.findById(request.getWarehouseId());
         ImageDTO evidence = request.getImageId() == null ? null : imageService.findById(request.getImageId());
+        EmployeeDTO employee = request.getEmployeeId() == null ? null : employeeService.findById(request.getEmployeeId());
         LocalDate date = request.getDate();
         LocalDate maxShipDate = date.plusDays(3);
         
@@ -157,6 +163,7 @@ public class OrderController {
         order.setShippingType(request.getShippingType());
         order.setWarehouse(warehouse);
         order.setEvidence(evidence);
+        order.setEmployee(employee);
 
         OrderDTO orderUptaded = orderService.save(order);
 

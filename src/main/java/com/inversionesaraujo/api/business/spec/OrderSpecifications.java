@@ -21,7 +21,12 @@ public class OrderSpecifications {
 
     public static Specification<Order> findByWarehouse(Long warehouseId) {
         return (root, query, criteriaBuilder) ->
-            warehouseId != null ? criteriaBuilder.equal(root.get("warehouse_id"), warehouseId) : null;
+            warehouseId != null ? criteriaBuilder.equal(root.get("warehouse").get("id"), warehouseId) : null;
+    }
+
+    public static Specification<Order> findByEmployee(Long employeeId) {
+        return (root, query, criteriaBuilder) ->
+            employeeId != null ? criteriaBuilder.equal(root.get("employee").get("id"), employeeId) : null;
     }
 
     public static Specification<Order> findByMonth(Month month) {

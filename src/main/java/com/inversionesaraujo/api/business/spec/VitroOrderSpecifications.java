@@ -48,4 +48,9 @@ public class VitroOrderSpecifications {
         return (root, query, criteriaBuilder) ->
             shipType != null ? criteriaBuilder.equal(root.get("shippingType"), shipType) : null;
     }
+
+    public static Specification<VitroOrder> findByEmployee(Long employee_id) {
+        return (root, query, criteriaBuilder) ->
+            employee_id != null ? criteriaBuilder.equal(root.get("employee").get("id"), employee_id) : null;
+    }
 }

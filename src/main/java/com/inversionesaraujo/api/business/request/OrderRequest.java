@@ -34,4 +34,5 @@ public class OrderRequest {
     private Long invoiceId;
     private Long warehouseId;
     private Long imageId;
+    private Long employeeId;
 }

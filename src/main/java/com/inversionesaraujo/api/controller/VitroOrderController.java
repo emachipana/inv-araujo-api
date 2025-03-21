@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.ClientDTO;
+import com.inversionesaraujo.api.business.dto.EmployeeDTO;
 import com.inversionesaraujo.api.business.dto.ImageDTO;
 import com.inversionesaraujo.api.business.dto.InvoiceDTO;
 import com.inversionesaraujo.api.business.dto.VitroOrderDTO;
@@ -25,6 +26,7 @@ import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.business.request.VitroOrderRequest;
 import com.inversionesaraujo.api.business.service.IClient;
+import com.inversionesaraujo.api.business.service.IEmployee;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
 import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.I_Invoice;
@@ -46,6 +48,8 @@ public class VitroOrderController {
     private IClient clientService;
     @Autowired
     private I_Image imageService;
+    @Autowired
+    private IEmployee employeeService;
 
     @GetMapping
     public Page<VitroOrderDTO> getAll(
@@ -57,9 +61,10 @@ public class VitroOrderController {
         @RequestParam(required = false) Status status,
         @RequestParam(required = false) ShippingType shipType,
         @RequestParam(required = false) SortBy sortby,
-        @RequestParam(defaultValue = "false") Boolean ordersReady
+        @RequestParam(defaultValue = "false") Boolean ordersReady,
+        @RequestParam(required = false) Long employeeId
     ) {
-        return orderService.listAll(tuberId, page, size, sort, month, status, sortby, shipType, ordersReady);
+        return orderService.listAll(tuberId, page, size, sort, month, status, sortby, shipType, ordersReady, employeeId);
     }
     
     @GetMapping("search")
@@ -131,6 +136,7 @@ public class VitroOrderController {
         VitroOrderDTO order = orderService.findById(id);
         InvoiceDTO invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
         ImageDTO evidence = request.getImageId() == null ? null : imageService.findById(request.getImageId());
+        EmployeeDTO employee = request.getEmployeeId() == null ? null : employeeService.findById(request.getEmployeeId());
         
         order.setDepartment(request.getDepartment());
         order.setCity(request.getCity());
@@ -143,6 +149,7 @@ public class VitroOrderController {
         order.setLocation(request.getLocation());
         order.setIsReady(request.getIsReady());
         order.setEvidence(evidence);
+        order.setEmployee(employee);
 
         VitroOrderDTO orderUpdated = orderService.save(order);
 
