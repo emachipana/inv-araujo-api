@@ -56,6 +56,13 @@ public class ProductController {
         return productService.getWarehouses(id);
     }
 
+    @GetMapping("{id}/related")
+    public List<ProductDTO> getRelatedProducts(@PathVariable Long id) {
+        ProductDTO product = productService.findById(id);
+
+        return productService.findRelatedProducts(product.getId(), product.getCategoryId());
+    }
+
     @GetMapping("/search")
     public Page<ProductDTO> searchProducts(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
         return productService.search(param, param, param, page);

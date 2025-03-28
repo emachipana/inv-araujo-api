@@ -26,16 +26,12 @@ import com.inversionesaraujo.api.repository.WarehouseRepository;
 
 @Service
 public class ProductImpl implements IProduct {
-
-    private final WarehouseProductRepository warehouseProductRepository;
+    @Autowired
+    private WarehouseProductRepository warehouseProductRepository;
     @Autowired
     private ProductRepository productRepo;
     @Autowired 
     private WarehouseRepository warehouseRepo;
-
-    ProductImpl(WarehouseProductRepository warehouseProductRepository) {
-        this.warehouseProductRepository = warehouseProductRepository;
-    }
 
     @Transactional
     @Override
@@ -105,5 +101,18 @@ public class ProductImpl implements IProduct {
         List<Warehouse> warehouses = warehouseRepo.findByProductId(productId);
 
         return WarehouseDTO.toDTOList(warehouses, warehouseProductRepository, productId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ProductDTO> findRelatedProducts(Long productId, Long categoryId) {
+        List<Product> relatedProducts = productRepo.findRelatedProducts(categoryId, productId);
+
+        if (relatedProducts.size() < 4) {
+            List<Product> randomProducts = productRepo.findRandomProducts(productId, 4 - relatedProducts.size());
+            relatedProducts.addAll(randomProducts);
+        }
+
+        return ProductDTO.toDTOList(relatedProducts);
     }
 }
