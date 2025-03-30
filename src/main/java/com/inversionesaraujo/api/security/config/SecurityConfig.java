@@ -38,6 +38,8 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.POST, "/api/v1/messages/**").permitAll()
                     // notifications
                     .requestMatchers(HttpMethod.POST, "/api/v1/notifications/**").permitAll()
+                    // payments
+                    .requestMatchers(HttpMethod.POST, "/api/v1/payments/**").permitAll()
                     // tubers
                     .requestMatchers(HttpMethod.GET, "/api/v1/tubers/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.POST, "/api/v1/tubers/**").hasAnyAuthority("ADMINISTRADOR")
@@ -51,9 +53,11 @@ public class SecurityConfig {
                     // vitroOrders
                     .requestMatchers(HttpMethod.PUT, "/api/v1/vitroOrders/**").hasAnyAuthority("ADMINISTRADOR", "ALMACENERO")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/vitroOrders/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/vitroOrders/**").permitAll()
                     // orderVarieties
                     .requestMatchers(HttpMethod.PUT, "/api/v1/orderVarieties/**").hasAnyAuthority("ADMINISTRADOR", "ALMACENERO")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/orderVarieties/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/orderVarieties/**").permitAll()
                     // advances
                     .requestMatchers(HttpMethod.PUT, "/api/v1/advances/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/advances/**").hasAnyAuthority("ADMINISTRADOR")
@@ -104,6 +108,7 @@ public class SecurityConfig {
                     // orderProducts
                     .requestMatchers(HttpMethod.PUT, "/api/v1/orderProducts/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/orderProducts/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/orderProducts/**").permitAll()
                     // productImages
                     .requestMatchers(HttpMethod.GET, "/api/v1/productImages/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.POST, "/api/v1/productImages/**").hasAnyAuthority("ADMINISTRADOR")
