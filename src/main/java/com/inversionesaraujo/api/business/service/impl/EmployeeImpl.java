@@ -52,11 +52,20 @@ public class EmployeeImpl implements IEmployee {
         employeeRepo.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public EmployeeDTO findByEmail(String email) {
         Employee employee = employeeRepo.findByEmail(email);
         if(employee == null) return null;
 
         return EmployeeDTO.toDTO(employee);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<EmployeeDTO> search(String document, String rsocial, String email) {
+       List<Employee> employees = employeeRepo.findByDocumentContainingIgnoreCaseOrRsocialContainingIgnoreCaseOrEmailContainingIgnoreCase(document, rsocial, email);
+
+       return EmployeeDTO.toListDTO(employees);
     }
 }

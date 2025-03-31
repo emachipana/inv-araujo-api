@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.EmployeeDTO;
@@ -40,6 +41,11 @@ public class EmployeeController {
       return employeeService.listAll();
     }
 
+    @GetMapping("/search")
+    public List<EmployeeDTO> search(@RequestParam String param) {
+        return employeeService.search(param, param, param);
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
         EmployeeDTO employee = employeeService.findById(id);
@@ -59,7 +65,6 @@ public class EmployeeController {
             .document(request.getDocument())
             .email(request.getEmail())
             .phone(request.getPhone())
-            .userId(request.getUserId())
             .build());
 
         String defaultPassword = "12345678";
