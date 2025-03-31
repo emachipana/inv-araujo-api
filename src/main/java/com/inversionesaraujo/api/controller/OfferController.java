@@ -30,6 +30,11 @@ public class OfferController {
         return offerService.listAll();
     }
 
+    @GetMapping("/used")
+    public List<OfferDTO> getAllUsed() {
+        return offerService.listUsedBanners();
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
         OfferDTO offer = offerService.findById(id);

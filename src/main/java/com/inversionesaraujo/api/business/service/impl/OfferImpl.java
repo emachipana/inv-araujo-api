@@ -46,4 +46,12 @@ public class OfferImpl implements IOffer {
     public void delete(Long id) {
         offerRepo.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<OfferDTO> listUsedBanners() {
+        List<Offer> offers = offerRepo.findByIsUsed(true);
+
+        return OfferDTO.toListDTO(offers);
+    }
 }
