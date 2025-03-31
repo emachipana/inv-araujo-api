@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "warehouse_products")
+@Table(
+    name = "warehouse_products",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"product_id", "warehouse_id"})
+)
 public class WarehouseProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

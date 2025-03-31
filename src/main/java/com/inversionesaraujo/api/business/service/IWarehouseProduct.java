@@ -7,5 +7,7 @@ public interface IWarehouseProduct {
 
     WarehouseProductDTO findById(Long id);
 
+    WarehouseProductDTO existingItem(Long productId, Long warehouseId);
+
     void delete(Long id);
 }

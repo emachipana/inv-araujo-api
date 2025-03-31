@@ -32,5 +32,12 @@ public class WarehouseProductImpl implements IWarehouseProduct {
     public void delete(Long id) {
         itemRepo.deleteById(id);
     }
+
+    @Override
+    public WarehouseProductDTO existingItem(Long productId, Long warehouseId) {
+        WarehouseProduct item = itemRepo.findByWarehouseIdAndProductId(warehouseId, productId);
+
+       return WarehouseProductDTO.toDTO(item);
+    }
     
 }
