@@ -11,6 +11,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.Message;
 import com.inversionesaraujo.api.business.dto.NotificationDTO;
 import com.inversionesaraujo.api.business.request.NotificationRequest;
 import com.inversionesaraujo.api.business.service.INotification;
@@ -18,6 +20,7 @@ import com.inversionesaraujo.api.business.spec.NotificationSpecifications;
 import com.inversionesaraujo.api.model.Notification;
 import com.inversionesaraujo.api.model.NotificationType;
 import com.inversionesaraujo.api.repository.NotificationRepository;
+import com.inversionesaraujo.api.repository.UserTokenRepository;
 
 @Service
 public class NotificationImpl implements INotification {
@@ -25,6 +28,8 @@ public class NotificationImpl implements INotification {
     private NotificationRepository notificationRepo;
     @Autowired
     private SimpMessagingTemplate template;
+    @Autowired
+    private UserTokenRepository tokenRepo;
 
     @Transactional
     @Override
@@ -63,6 +68,23 @@ public class NotificationImpl implements INotification {
         template.convertAndSend("/topic/notifications", notification);
     }
 
+    public void sendPushNotification(String token, String title, String body) {
+        try {
+            Message message = Message.builder()
+                .setToken(token)
+                .setNotification(com.google.firebase.messaging.Notification
+                    .builder()
+                    .setTitle(title)
+                    .setBody(body)
+                    .build())
+                .build();
+
+            FirebaseMessaging.getInstance().send(message);
+        } catch (Exception e) {
+            System.out.println("Error enviando notificación FCM: " + e.getMessage());
+        }
+    }
+
     @Override
     public NotificationDTO create(NotificationRequest request) {
        Map<NotificationType, String> messages = Map.of(
@@ -89,6 +111,9 @@ public class NotificationImpl implements INotification {
 
         Notification notification = notificationRepo.save(NotificationDTO.toEntity(prev));
         template.convertAndSend("/topic/notifications", notification);
+
+        String userToken = tokenRepo.findLastToken();
+        if(userToken != null) sendPushNotification(userToken, message, message + "Se acaba de registrar un pedido");
 
         return NotificationDTO.toDTO(notification);
     }

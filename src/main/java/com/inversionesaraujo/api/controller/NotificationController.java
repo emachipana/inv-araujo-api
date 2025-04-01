@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inversionesaraujo.api.business.dto.NotificationDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.NotificationRequest;
+import com.inversionesaraujo.api.business.request.UserTokenRequest;
 import com.inversionesaraujo.api.business.service.INotification;
+import com.inversionesaraujo.api.business.service.IUserToken;
 
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,6 +27,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class NotificationController {
     @Autowired
     private INotification notiService;
+    @Autowired
+    private IUserToken tokenService;
+
+    @PostMapping("/register-token")
+    public ResponseEntity<MessageResponse> registerToken(@RequestBody @Valid UserTokenRequest request) {
+        tokenService.saveOrUpdateToken(request.getUserId(), request.getToken());
+        
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("Token registrado correctamente")
+            .build());
+    }
 
     @GetMapping("/getByUser")
     public ResponseEntity<MessageResponse> getAllByUserId(Authentication auth) {
