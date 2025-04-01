@@ -14,13 +14,16 @@ public class UserTokenImpl implements IUserToken {
 
     @Override
     public void saveOrUpdateToken(Long userId, String token) {
+        System.out.println(userId);
+        System.out.println(token);
         UserToken newToken = UserToken
             .builder()
             .userId(userId)
             .token(token)
             .build();
 
-        repo.save(newToken);
+        UserToken saved = repo.save(newToken);
+        System.out.println(saved);
 
         // UserToken existingToken = repo.findByUserId(userId);
 
