@@ -32,7 +32,6 @@ public class NotificationController {
 
     @PostMapping("/register-token")
     public ResponseEntity<MessageResponse> registerToken(@RequestBody @Valid UserTokenRequest request) {
-        System.out.println(request.getToken());
         tokenService.saveOrUpdateToken(request.getUserId(), request.getToken());
         
         return ResponseEntity.ok().body(MessageResponse

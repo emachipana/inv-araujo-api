@@ -16,7 +16,6 @@ public class WarehouseProductImpl implements IWarehouseProduct {
 
     @Override
     public WarehouseProductDTO save(WarehouseProductDTO item) {
-        System.out.println(item.toString());
         WarehouseProduct itemSaved = itemRepo.save(WarehouseProductDTO.toEntity(item));
 
         return WarehouseProductDTO.toDTO(itemSaved);

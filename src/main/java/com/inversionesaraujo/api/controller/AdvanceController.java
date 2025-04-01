@@ -73,11 +73,9 @@ public class AdvanceController {
         order.setTotalAdvance(totalAdvance);
         order.setPending(order.getTotal() - totalAdvance);
         orderService.save(order);
-        System.out.println("order updated");
 
         client.setConsumption(client.getConsumption() + amount);
         clientService.save(client);
-        System.out.println("client updated");
 
         Month month = date.getMonth();
         ProfitDTO profit = profitService.findByMonth(month.toString());

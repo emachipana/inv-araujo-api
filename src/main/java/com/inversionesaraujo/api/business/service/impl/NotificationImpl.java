@@ -79,8 +79,6 @@ public class NotificationImpl implements INotification {
                     .build())
                 .build();
 
-            System.out.println(message);
-
             FirebaseMessaging.getInstance().send(message);
         } catch (Exception e) {
             System.out.println("Error enviando notificación FCM: " + e.getMessage());
@@ -115,10 +113,8 @@ public class NotificationImpl implements INotification {
         template.convertAndSend("/topic/notifications", notification);
 
         String userToken = tokenRepo.findLastToken();
-        System.out.println(userToken);
         if(userToken != null) {
-            System.out.println("Enviando");
-            sendPushNotification(userToken, message, message + "Se acaba de registrar un pedido");
+            sendPushNotification(userToken, message, "Se acaba de registrar un pedido");
         }
 
         return NotificationDTO.toDTO(notification);

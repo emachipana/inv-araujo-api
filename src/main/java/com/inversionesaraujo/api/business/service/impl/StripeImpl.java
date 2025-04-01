@@ -17,7 +17,6 @@ public class StripeImpl implements IStripe {
     @Override
     public String createPaymentIntent(Double amount) throws StripeException {
         Stripe.apiKey = secretKey;
-		System.out.println(amount);
 
         PaymentIntentCreateParams params = PaymentIntentCreateParams
 			.builder()
