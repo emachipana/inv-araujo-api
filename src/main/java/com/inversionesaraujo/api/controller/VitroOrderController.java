@@ -24,12 +24,15 @@ import com.inversionesaraujo.api.business.dto.VitroOrderDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
+import com.inversionesaraujo.api.business.request.NotificationRequest;
 import com.inversionesaraujo.api.business.request.VitroOrderRequest;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.business.service.IEmployee;
+import com.inversionesaraujo.api.business.service.INotification;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
 import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.I_Invoice;
+import com.inversionesaraujo.api.model.NotificationType;
 import com.inversionesaraujo.api.model.OrderLocation;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
@@ -51,6 +54,8 @@ public class VitroOrderController {
     private I_Image imageService;
     @Autowired
     private IEmployee employeeService;
+    @Autowired
+    private INotification notiService;
 
     @GetMapping
     public Page<VitroOrderDTO> getAll(
@@ -108,7 +113,7 @@ public class VitroOrderController {
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody @Valid VitroOrderRequest request) {
+    public ResponseEntity<MessageResponse> create(@RequestBody @Valid VitroOrderRequest request, @RequestParam(defaultValue = "true") Boolean alert) {
         ClientDTO client = clientService.findById(request.getClientId());
         LocalDate initDate = request.getInitDate() != null ? request.getInitDate() : LocalDate.now();
 
@@ -125,6 +130,17 @@ public class VitroOrderController {
             .isReady(false)
             .evidence(null)
             .build());
+
+        if (alert) {
+            NotificationRequest notiRequest = NotificationRequest
+                .builder()
+                .userId(1L)
+                .type(NotificationType.NEW_VITRO_ORDER)
+                .redirectTo("/invitro/" + order.getId())
+                .build();
+    
+            notiService.create(notiRequest);
+        }
 
         return ResponseEntity.status(201).body(MessageResponse
             .builder()

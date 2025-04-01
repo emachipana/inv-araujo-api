@@ -31,4 +31,6 @@ public interface IOrder {
     Page<OrderDTO> search(String department, String city, String rsocial, Integer page);
 
     TotalDeliverResponse totalDeliver();
+
+    void sendNewOrder(OrderDTO order, Double total);
 }

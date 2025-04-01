@@ -22,12 +22,14 @@ public class WarehouseProductDTO {
     private Long warehouseId;
 
     public static WarehouseProductDTO toDTO(WarehouseProduct item) {
+        if(item == null) return null;
+
         return WarehouseProductDTO
             .builder()
             .id(item.getId())
-            .quantity(item.getQuantity())
-            .productId(item.getProduct().getId())
-            .warehouseId(item.getWarehouse().getId())
+            .quantity(item.getQuantity() != null ? item.getQuantity() : 0)
+            .productId(item.getProduct() != null ? item.getProduct().getId() : null)
+            .warehouseId(item.getWarehouse() != null ? item.getWarehouse().getId() : null)
             .build();
     }
 

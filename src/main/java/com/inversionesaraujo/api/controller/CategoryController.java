@@ -76,7 +76,7 @@ public class CategoryController {
     @PutMapping("{id}")
     public ResponseEntity<MessageResponse> update(@RequestBody @Valid CategoryRequest request, @PathVariable Long id) {
         CategoryDTO category = categoryService.findById(id);
-        ImageDTO image = request.getImageId() == null ? null : imageService.findById(request.getImageId());
+        ImageDTO image = request.getImageId() == null ? category.getImage() : imageService.findById(request.getImageId());
         ImageDTO icon = request.getIconId() == null ? null : imageService.findById(request.getIconId());
 
         category.setName(request.getName());

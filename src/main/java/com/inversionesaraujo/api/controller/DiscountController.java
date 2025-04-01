@@ -81,6 +81,7 @@ public class DiscountController {
         DiscountDTO discount = discountService.findById(id);
         ProductDTO product = productService.findById(discount.getProductId());
         product.setDiscount(null);
+        productService.save(product);
         discountService.delete(discount.getId());
 
         return ResponseEntity.ok().body(MessageResponse

@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,8 @@ public class OrderImpl implements IOrder {
     private OrderRepository orderRepo;
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private SimpMessagingTemplate template;
 
     @Transactional(readOnly = true)
     @Override
@@ -122,5 +125,27 @@ public class OrderImpl implements IOrder {
             .builder()
             .total(total)
             .build();
+    }
+
+    @Override
+    public void sendNewOrder(OrderDTO order, Double total) {
+        OrderDTO orderNotification = OrderDTO
+            .builder()
+            .id(order.getId())
+            .client(order.getClient())
+            .invoice(null)
+            .department(order.getDepartment())
+            .city(order.getCity())
+            .date(order.getDate())
+            .location(order.getLocation())
+            .maxShipDate(order.getMaxShipDate())
+            .shippingType(order.getShippingType())
+            .status(order.getStatus())
+            .total(total)
+            .warehouse(order.getWarehouse())
+            .evidence(null)
+            .build();
+
+        template.convertAndSend("/topic/orders", orderNotification);
     }
 }

@@ -26,7 +26,7 @@ public class TuberDTO {
             .builder()
             .id(tuber.getId())
             .name(tuber.getName())
-            .varieties(VarietyDTO.toDTOList(tuber.getVarieties()))
+            .varieties(tuber.getVarieties() != null ? VarietyDTO.toDTOList(tuber.getVarieties()) : null)
             .build();
     }
 

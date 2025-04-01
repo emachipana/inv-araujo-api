@@ -42,13 +42,20 @@ public class WarehouseProductController {
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid WarehouseProductRequest request) {
         ProductDTO product = productService.findById(request.getProductId());
+        WarehouseProductDTO existingItem = itemService.existingItem(product.getId(), request.getWarehouseId());
 
-        WarehouseProductDTO itemSaved = itemService.save(WarehouseProductDTO
-            .builder()
-            .quantity(request.getQuantity())
-            .productId(product.getId())
-            .warehouseId(request.getWarehouseId())
-            .build());
+        WarehouseProductDTO itemSaved;
+        if(existingItem != null) {
+            existingItem.setQuantity(existingItem.getQuantity() + request.getQuantity());
+            itemSaved = itemService.save(existingItem);
+        }else {
+            itemSaved = itemService.save(WarehouseProductDTO
+                .builder()
+                .quantity(request.getQuantity())
+                .productId(product.getId())
+                .warehouseId(request.getWarehouseId())
+                .build());
+        }
 
         product.setStock(product.getStock() + request.getQuantity());
         productService.save(product);

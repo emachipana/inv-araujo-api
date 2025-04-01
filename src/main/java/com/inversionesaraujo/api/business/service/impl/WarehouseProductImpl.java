@@ -16,6 +16,7 @@ public class WarehouseProductImpl implements IWarehouseProduct {
 
     @Override
     public WarehouseProductDTO save(WarehouseProductDTO item) {
+        System.out.println(item.toString());
         WarehouseProduct itemSaved = itemRepo.save(WarehouseProductDTO.toEntity(item));
 
         return WarehouseProductDTO.toDTO(itemSaved);
@@ -31,6 +32,13 @@ public class WarehouseProductImpl implements IWarehouseProduct {
     @Override
     public void delete(Long id) {
         itemRepo.deleteById(id);
+    }
+
+    @Override
+    public WarehouseProductDTO existingItem(Long productId, Long warehouseId) {
+        WarehouseProduct item = itemRepo.findByWarehouseIdAndProductId(warehouseId, productId);
+
+       return WarehouseProductDTO.toDTO(item);
     }
     
 }

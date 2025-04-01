@@ -7,6 +7,8 @@ import com.inversionesaraujo.api.business.dto.EmployeeDTO;
 public interface IEmployee {
     List<EmployeeDTO> listAll();
 
+    List<EmployeeDTO> search(String document, String rsocial, String email);
+
     EmployeeDTO save(EmployeeDTO employee);
 
     EmployeeDTO findById(Long id);

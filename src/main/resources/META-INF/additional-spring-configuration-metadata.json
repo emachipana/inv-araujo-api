@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "stripe.secret.key",
+  "type": "java.lang.String",
+  "description": "Secret key for stripe payment"
+}]}

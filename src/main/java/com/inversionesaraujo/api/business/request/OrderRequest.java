@@ -35,4 +35,5 @@ public class OrderRequest {
     private Long warehouseId;
     private Long imageId;
     private Long employeeId;
+    private Double total;
 }

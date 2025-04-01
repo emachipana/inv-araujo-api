@@ -25,4 +25,6 @@ public interface IProduct {
     void delete(Long id);
 
     List<WarehouseDTO> getWarehouses(Long productId);
+
+    List<ProductDTO> findRelatedProducts(Long productId, Long categoryId);
 }

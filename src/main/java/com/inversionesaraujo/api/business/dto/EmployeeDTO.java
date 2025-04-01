@@ -39,7 +39,7 @@ public class EmployeeDTO {
             .email(employee.getEmail())
             .phone(employee.getPhone())
             .userId(employee.getUser() != null ? employee.getUser().getId() : null)
-            .role(employee.getUser().getRole())
+            .role(employee.getUser() != null ? employee.getUser().getRole() : null)
             .build();
     }
 

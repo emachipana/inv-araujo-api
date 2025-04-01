@@ -5,7 +5,9 @@ import java.util.List;
 import com.inversionesaraujo.api.business.dto.OfferDTO;
 
 public interface IOffer {
-    List <OfferDTO> listAll();
+    List<OfferDTO> listAll();
+
+    List<OfferDTO> listUsedBanners();
 
     OfferDTO save(OfferDTO offer);
 
