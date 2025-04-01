@@ -99,6 +99,7 @@ public class OrderProductController {
                 .profit(subTotal)
                 .income(subTotal)
                 .month(month.toString())
+                .totalExpenses(0.0)
                 .build()
             );
         }else {

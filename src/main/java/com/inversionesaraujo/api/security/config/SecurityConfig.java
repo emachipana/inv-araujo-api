@@ -38,6 +38,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.POST, "/api/v1/messages/**").permitAll()
                     // notifications
                     .requestMatchers(HttpMethod.POST, "/api/v1/notifications/**").permitAll()
+                    .requestMatchers("/api/v1/ws/**").permitAll()
                     // payments
                     .requestMatchers(HttpMethod.POST, "/api/v1/payments/**").permitAll()
                     // tubers
