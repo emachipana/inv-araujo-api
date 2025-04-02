@@ -13,7 +13,8 @@ public interface IProduct {
     Page<ProductDTO> filterProducts(
         Double minPrice, Double maxPrice, Long categoryId, 
         Integer page, Integer size, SortBy sort, SortDirection direction,
-        String categoryName, Integer stockLessThan, Boolean withDiscount
+        String categoryName, Integer stockLessThan, Boolean withDiscount,
+        Boolean activeProducts
     );
 
     Page<ProductDTO> search(String name, String description, String brand, Integer page);

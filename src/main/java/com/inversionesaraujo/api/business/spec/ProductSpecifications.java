@@ -45,5 +45,10 @@ public class ProductSpecifications {
     public static Specification<Product> hasDiscount(Boolean withDiscounts) {
         return (root, query, criteriaBuilder) -> 
             withDiscounts ? criteriaBuilder.isNotNull(root.get("discount")) : null;
-    }    
+    }
+
+    public static Specification<Product> activeProducts(Boolean activeProducts) {
+        return (root, query, criteriaBuilder) -> 
+            activeProducts ? criteriaBuilder.isTrue(root.get("isActive")) : null;
+    }
 }

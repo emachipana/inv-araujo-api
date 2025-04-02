@@ -20,7 +20,7 @@ public class UserTokenImpl implements IUserToken {
             .token(token)
             .build();
 
-        UserToken saved = repo.save(newToken);
+        repo.save(newToken);
 
         // UserToken existingToken = repo.findByUserId(userId);
 

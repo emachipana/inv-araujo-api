@@ -46,9 +46,10 @@ public class ProductController {
         @RequestParam(required = false) SortDirection direction,
         @RequestParam(required = false) String categoryName,
         @RequestParam(required = false) Integer stockLessThan,
-        @RequestParam(defaultValue = "false") Boolean withDiscount
+        @RequestParam(defaultValue = "false") Boolean withDiscount,
+        @RequestParam(defaultValue = "true") Boolean activeProducts
     ) {
-        return productService.filterProducts(minPrice, maxPrice, categoryId, page, size, sortby, direction, categoryName, stockLessThan, withDiscount);
+        return productService.filterProducts(minPrice, maxPrice, categoryId, page, size, sortby, direction, categoryName, stockLessThan, withDiscount, activeProducts);
     }
 
     @GetMapping("{id}/warehouses")

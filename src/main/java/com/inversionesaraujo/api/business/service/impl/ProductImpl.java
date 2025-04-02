@@ -71,7 +71,7 @@ public class ProductImpl implements IProduct {
     public Page<ProductDTO> filterProducts(
         Double minPrice, Double maxPrice, Long categoryId, Integer page, 
         Integer size, SortBy sort, SortDirection direction, String categoryName,
-        Integer stockLessThan, Boolean withDiscount
+        Integer stockLessThan, Boolean withDiscount, Boolean activeProducts
     ) {
         Specification<Product> spec = Specification.where(
             ProductSpecifications.priceGreaterThanOrEqual(minPrice)
@@ -80,6 +80,7 @@ public class ProductImpl implements IProduct {
             .and(ProductSpecifications.findByCategoryName(categoryName))
             .and(ProductSpecifications.hasDiscount(withDiscount))
             .and(ProductSpecifications.stockLessThanOrEqual(stockLessThan))
+            .and(ProductSpecifications.activeProducts(activeProducts))
         );
 
         Pageable pageable;
