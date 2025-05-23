@@ -52,6 +52,7 @@ public class InvoiceItemController {
             .price(request.getPrice())
             .quantity(request.getQuantity())
             .isIgvApply(request.getIsIgvApply())
+            .unit(request.getUnit())
             .build());
 
         invoice.setTotal(invoice.getTotal() + subTotal);

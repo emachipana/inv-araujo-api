@@ -19,7 +19,7 @@ public interface I_Invoice {
 
     void delete(Long id);
 
-    FileResponse generateAndUploadPDF(InvoiceDTO invoice);
+    FileResponse getAndUploadDoc(InvoiceDTO invoice);
 
     Page<InvoiceDTO> search(String rsocial, String document, Integer page);
 }

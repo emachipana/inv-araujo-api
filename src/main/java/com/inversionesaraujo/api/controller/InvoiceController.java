@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.InvoiceRequest;
 import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.I_Invoice;
+import com.inversionesaraujo.api.business.service.I_InvoiceItem;
 import com.inversionesaraujo.api.model.InvoiceType;
 import com.inversionesaraujo.api.model.SortDirection;
 
@@ -31,6 +34,8 @@ public class InvoiceController {
     private I_Invoice invoiceService;
     @Autowired
     private I_Image imageService;
+    @Autowired
+    private I_InvoiceItem itemService;
 
     @GetMapping
     public Page<InvoiceDTO> getAll(
@@ -68,8 +73,7 @@ public class InvoiceController {
                 .build());
         }
 
-        // TODO - Get items by query
-        Integer items = 0;
+        Integer items = itemService.countByInvoiceId(id);
 
         if(items == 0) {
             return ResponseEntity.status(406).body(MessageResponse
@@ -78,17 +82,15 @@ public class InvoiceController {
                 .build());
         }
 
-        FileResponse response = invoiceService.generateAndUploadPDF(invoice);
-        invoice.setPdfUrl(response.getFileUrl());
-        invoice.setIsGenerated(true);
-        invoice.setSerie((invoice.getInvoiceType() == InvoiceType.BOLETA ? "B-" : "F-") + invoice.getId());
-        invoice.setPdfFirebaseId(response.getFileName());
-        InvoiceDTO updatedInvoice = invoiceService.save(invoice);
+        FileResponse response = invoiceService.getAndUploadDoc(invoice);
+
+        invoice.setIsSended(true);
+        invoiceService.save(invoice);
 
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
             .message("El PDF se genero correctamente")
-            .data(updatedInvoice)
+            .data(response)
             .build());
     }
 
@@ -104,7 +106,7 @@ public class InvoiceController {
 
         imageService.deleteImage(invoice.getPdfFirebaseId());
         invoice.setPdfUrl(null);
-        invoice.setIsGenerated(false);
+        // invoice.setIsGenerated(false);
         invoice.setSerie(null);
         invoice.setPdfFirebaseId(null);
 
@@ -125,6 +127,11 @@ public class InvoiceController {
             .document(request.getDocument())
             .documentType(request.getDocumentType())
             .rsocial(request.getRsocial())
+            .serie(request.getInvoiceType() == InvoiceType.BOLETA ? "B001" : "F001")
+            .address(request.getAddress())
+            .issueDate(request.getIssueDate() != null ? request.getIssueDate() : LocalDateTime.now())
+            .isSended(false)
+            .total(0.0)
             .build());
 
         return ResponseEntity.status(201).body(MessageResponse
@@ -142,7 +149,6 @@ public class InvoiceController {
         invoice.setDocument(request.getDocument());
         invoice.setRsocial(request.getRsocial());
         invoice.setIssueDate(request.getIssueDate());
-        invoice.setComment(request.getComment());
         invoice.setAddress(request.getAddress());
         InvoiceDTO updatedInvoice = invoiceService.save(invoice);
 

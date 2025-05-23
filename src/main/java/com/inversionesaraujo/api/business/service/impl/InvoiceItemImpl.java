@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.business.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -35,5 +37,17 @@ public class InvoiceItemImpl implements I_InvoiceItem {
     @Override
     public void delete(Long id) {
         itemRepo.deleteById(id);
+    }
+
+    @Override
+    public List<InvoiceItemDTO> findByInvoiceId(Long invoiceId) {
+        List<InvoiceItem> items = itemRepo.findByInvoiceId(invoiceId);
+
+        return InvoiceItemDTO.toListDTO(items);
+    }
+
+    @Override
+    public Integer countByInvoiceId(Long invoiceId) {
+        return itemRepo.countByInvoiceId(invoiceId);
     }
 }

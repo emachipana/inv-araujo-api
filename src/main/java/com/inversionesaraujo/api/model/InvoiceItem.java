@@ -29,6 +29,9 @@ public class InvoiceItem {
     private Invoice invoice;
 
     @Column(nullable = false)
+    private String unit;
+
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)

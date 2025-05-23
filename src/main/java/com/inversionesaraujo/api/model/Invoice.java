@@ -1,6 +1,6 @@
 package com.inversionesaraujo.api.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,20 +41,21 @@ public class Invoice {
     private String rsocial;
 
     @Column(nullable = false)
-    private LocalDate issueDate;
+    private LocalDateTime issueDate;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String comment;
-
-    private String pdfUrl;
-    private String pdfFirebaseId;
+    @Column(nullable = false)
     private String address;
+
+    @Column(nullable = false)
     private String serie;
 
     @Builder.Default
     @Column(nullable = false)
-    private Boolean isGenerated = false;
+    private Boolean isSended = false;
 
     @Column(nullable = false)
     private Double total;
+
+    private String pdfUrl;
+    private String pdfFirebaseId;
 }

@@ -1,6 +1,6 @@
 package com.inversionesaraujo.api.business.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.data.domain.Page;
 
@@ -25,13 +25,12 @@ public class InvoiceDTO {
     private String document;
     private DocumentType documentType;
     private String rsocial;
-    private LocalDate issueDate;
-    private String comment;
-    private String pdfUrl;
+    private LocalDateTime issueDate;
     private String address;
     private String serie;
-    private Boolean isGenerated;
+    private Boolean isSended;
     private Double total;
+    private String pdfUrl;
     private String pdfFirebaseId;
 
     public static InvoiceDTO toDTO(Invoice invoice) {
@@ -45,13 +44,12 @@ public class InvoiceDTO {
             .documentType(invoice.getDocumentType())
             .rsocial(invoice.getRsocial())
             .issueDate(invoice.getIssueDate())
-            .comment(invoice.getComment())
-            .pdfUrl(invoice.getPdfUrl())
             .address(invoice.getAddress())
             .serie(invoice.getSerie())
-            .isGenerated(invoice.getIsGenerated())
+            .isSended(invoice.getIsSended())
             .total(invoice.getTotal())
             .pdfFirebaseId(invoice.getPdfFirebaseId())
+            .pdfUrl(invoice.getPdfUrl())
             .build();
     }
 
@@ -65,13 +63,12 @@ public class InvoiceDTO {
             .documentType(invoice.getDocumentType())
             .rsocial(invoice.getRsocial())
             .issueDate(invoice.getIssueDate())
-            .comment(invoice.getComment())
             .document(invoice.getDocument())
             .pdfUrl(invoice.getPdfUrl())
             .address(invoice.getAddress())
             .serie(invoice.getSerie())
             .pdfFirebaseId(invoice.getPdfFirebaseId())
-            .isGenerated(invoice.getIsGenerated())
+            .isSended(invoice.getIsSended())
             .total(invoice.getTotal())
             .build();
     }

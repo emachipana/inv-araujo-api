@@ -15,6 +15,9 @@ public class InvoiceItemRequest {
     @NotEmpty(message = "El nombre del item es requerido")
     private String name;
 
+    @NotEmpty(message = "La unidad del item es requerida")
+    private String unit;
+
     @NotNull(message = "El precio del item es requerido")
     @Positive(message = "Debe ser mayor a 0")
     private Double price;

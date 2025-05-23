@@ -29,9 +29,14 @@ public class AuthImpl implements IAuth {
 
     @Override
     public AuthResponse login(LoginRequest request) {
+        System.out.println(request.getUsername());
+        System.out.println(request.getPassword());
         authManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        System.out.println(request.getUsername());
+        System.out.println(request.getPassword());
         User user = userRepo.findByUsername(request.getUsername()).orElseThrow();
         String token = jwtService.getToken(user);
+        System.out.println(token);
 
         return AuthResponse
             .builder()
