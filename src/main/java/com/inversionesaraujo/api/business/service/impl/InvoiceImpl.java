@@ -166,8 +166,8 @@ public class InvoiceImpl implements I_Invoice {
         LocalDateTime localDateTime = invoice.getIssueDate();
         ZoneOffset offset = ZoneOffset.of("-05:00");
         OffsetDateTime offsetDateTime = localDateTime.atOffset(offset);
-
-        String issueDate = offsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+        String issueDate = offsetDateTime.format(formatter);
 
         InvoiceBodyDTO payload = InvoiceBodyDTO
             .builder()
@@ -198,8 +198,8 @@ public class InvoiceImpl implements I_Invoice {
             System.out.println("No se pudo imprimir el JSON: " + e.getMessage());
         }
 
-        String apiUrl = "";
-        String apiToken = "Bearer";
+        String apiUrl = "https://facturacion.apisperu.com/api/v1/invoice/pdf";
+        String apiToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VybmFtZSI6ImludmVyc2lvbmVzYXJhdWpvIiwiY29tcGFueSI6IjIwNjAwOTY0NDcxIiwiaWF0IjoxNzQ3MDA1MTA2LCJleHAiOjgwNTQyMDUxMDZ9.EgthSaMbkpCNwar8S8aLUWB2Lcx9OsUAXWJpkeGZDA6gU5G8Gky9SXGH7o6HUaVzVB9PhLL879x7lYxWyMpFmKOAMGviSPS_awmSN-1a_aF7OgsWJesmLcmqJKDkQljyPDcQDNEZEVv7f4Wg7x2OttvldoCQa1rABJeFO2VmeGwC3y8ABKBmy7Ykfc6n11ZuXcNh3MFOSU5WTXuxHDlSVWRMAsOJ97i-6QXcJ8MNXdhYHpmXzE_I9d5JHBe-CSSR4ahtnRz-0ZbXnLnqNLhYKDWnGHrcREscEedI6g5gh9HJx3mDa8anc9391fW3UkpiWbcPhjw0G8P4hHoWcE969F8oAXHvuUxpPGqxwlnB5tcYfEjcQyXXlxwPgcHIXjOM3kLXJiV2w7BOz76cjMP_khwyEgF8vjiw4Tub7tAH9MCd1fVBB1aFwIFQctmPSXZGBdM-YC9Jf9blj-9dinhqOG-lUkEunYrSeBy2GbTZxf_373m7KE248hTns2QeNQoeVqfvTtNjeeLayv3qeFhFfagbISV8oj2Mqm8wBcZr4ab5T3dMkzxDdZlCUWgEdMwD2lOowf5Kgvt085nemAPEWaoaXJKPbkZee0NmfCJaE68YyiE8dqjIL8rwGKudDGXIndEQAaKMQ8OoncAVoYtZrBbTFouVaxCk-ND06L0a--8";
 
         byte[] pdfBytes;
         try {
