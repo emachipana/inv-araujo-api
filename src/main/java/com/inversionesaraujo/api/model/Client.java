@@ -39,6 +39,10 @@ public class Client {
     private DocumentType documentType;
     
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private InvoiceType invoicePreference;
+
+    @Column(nullable = false)
     @Builder.Default
     private Double consumption = 0.0;
 

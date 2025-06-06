@@ -32,5 +32,7 @@ public interface IOrder {
 
     TotalDeliverResponse totalDeliver();
 
-    void sendNewOrder(OrderDTO order, Double total);
+    void alertNewOrder(OrderDTO order);
+
+    void createAndSendInvoice(OrderDTO order);
 }

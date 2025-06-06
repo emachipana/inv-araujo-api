@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.business.request;
 
 import com.inversionesaraujo.api.model.DocumentType;
+import com.inversionesaraujo.api.model.InvoiceType;
 import com.inversionesaraujo.api.model.Role;
 
 import jakarta.validation.constraints.Email;
@@ -38,6 +39,9 @@ public class ClientRequest {
     @NotEmpty(message = "El email es requerido")
     @Email(message = "El formato es incorrecto")
     private String email;
+
+    @NotNull(message = "El comprobante preferido es requerido")
+    private InvoiceType invoicePreference;
 
     private Long userId;
 }

@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,28 @@ public class EmailImpl implements IEmail {
             LOGGER.info("El email se envio con exito");
         }catch(MessagingException | UnsupportedEncodingException error) {
             LOGGER.error("Hubo un error al enviar el email", error);
+        }
+
+        return send;
+    }
+
+    @Override
+    public boolean sendEmailWithAttachment(EmailRequest request, byte[] attachment, String filename) {
+        boolean send = false;
+        MimeMessage message = sender.createMimeMessage();
+
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(request.getDestination());
+            helper.setText(request.getContent(), true);
+            helper.setSubject(request.getSubject());
+            helper.setFrom("i2115610@continental.edu.pe", "Inversiones Araujo");
+            helper.addAttachment(filename, new ByteArrayResource(attachment));
+            sender.send(message);
+            send = true;
+            LOGGER.info("El email con adjunto se envio con exito");
+        } catch (MessagingException | UnsupportedEncodingException error) {
+            LOGGER.error("Hubo un error al enviar el email con adjunto", error);
         }
 
         return send;

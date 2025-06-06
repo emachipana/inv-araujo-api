@@ -85,6 +85,8 @@ public class InvoiceController {
         FileResponse response = invoiceService.getAndUploadDoc(invoice);
 
         invoice.setIsSended(true);
+        invoice.setPdfUrl(response.getFileUrl());
+        invoice.setPdfFirebaseId(response.getFileName());
         invoiceService.save(invoice);
 
         return ResponseEntity.status(201).body(MessageResponse

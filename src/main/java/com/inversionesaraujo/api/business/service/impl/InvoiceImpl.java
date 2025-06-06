@@ -89,8 +89,7 @@ public class InvoiceImpl implements I_Invoice {
         invoiceRepo.deleteById(id);
     }
 
-    @Override
-    public FileResponse getAndUploadDoc(InvoiceDTO invoice) {
+    public byte[] sendInvoiceToSunat(InvoiceDTO invoice) {
         InvoicePayDTO formaPago = InvoicePayDTO
             .builder()
             .moneda("PEN")
@@ -198,13 +197,13 @@ public class InvoiceImpl implements I_Invoice {
             System.out.println("No se pudo imprimir el JSON: " + e.getMessage());
         }
 
-        String apiUrl = "https://facturacion.apisperu.com/api/v1/invoice/pdf";
-        String apiToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1c2VybmFtZSI6ImludmVyc2lvbmVzYXJhdWpvIiwiY29tcGFueSI6IjIwNjAwOTY0NDcxIiwiaWF0IjoxNzQ3MDA1MTA2LCJleHAiOjgwNTQyMDUxMDZ9.EgthSaMbkpCNwar8S8aLUWB2Lcx9OsUAXWJpkeGZDA6gU5G8Gky9SXGH7o6HUaVzVB9PhLL879x7lYxWyMpFmKOAMGviSPS_awmSN-1a_aF7OgsWJesmLcmqJKDkQljyPDcQDNEZEVv7f4Wg7x2OttvldoCQa1rABJeFO2VmeGwC3y8ABKBmy7Ykfc6n11ZuXcNh3MFOSU5WTXuxHDlSVWRMAsOJ97i-6QXcJ8MNXdhYHpmXzE_I9d5JHBe-CSSR4ahtnRz-0ZbXnLnqNLhYKDWnGHrcREscEedI6g5gh9HJx3mDa8anc9391fW3UkpiWbcPhjw0G8P4hHoWcE969F8oAXHvuUxpPGqxwlnB5tcYfEjcQyXXlxwPgcHIXjOM3kLXJiV2w7BOz76cjMP_khwyEgF8vjiw4Tub7tAH9MCd1fVBB1aFwIFQctmPSXZGBdM-YC9Jf9blj-9dinhqOG-lUkEunYrSeBy2GbTZxf_373m7KE248hTns2QeNQoeVqfvTtNjeeLayv3qeFhFfagbISV8oj2Mqm8wBcZr4ab5T3dMkzxDdZlCUWgEdMwD2lOowf5Kgvt085nemAPEWaoaXJKPbkZee0NmfCJaE68YyiE8dqjIL8rwGKudDGXIndEQAaKMQ8OoncAVoYtZrBbTFouVaxCk-ND06L0a--8";
+        String apiUrl = System.getenv("SUNAT_URL");
+        String apiToken = System.getenv("SUNAT_TOKEN");
 
         byte[] pdfBytes;
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", apiToken);
+            headers.set("Authorization", "Bearer " + apiToken);
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpEntity<InvoiceBodyDTO> requestEntity = new HttpEntity<>(payload, headers);
@@ -228,23 +227,33 @@ public class InvoiceImpl implements I_Invoice {
             throw new RuntimeException(e);
         }
 
+        return pdfBytes;
+    }
+
+    public FileResponse uploadToFirebase(InvoiceDTO invoice, byte[] pdfBytes) {
         Bucket bucket = StorageClient.getInstance().bucket();
         String type = invoice.getInvoiceType().toString();
         String fileName = type.toLowerCase() + "-" + invoice.getId() + "-" + invoice.getRsocial().toLowerCase().replaceAll("\\s+", "") + ".pdf";
         bucket.create(fileName, pdfBytes, "application/pdf");
 
         String pdfUrl = String.format(
-                "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media",
-                bucket.getName(),
-                URLEncoder.encode(fileName, StandardCharsets.UTF_8)
+            "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media",
+            bucket.getName(),
+            URLEncoder.encode(fileName, StandardCharsets.UTF_8)
         );
 
-        // 4. Retornar el FileResponse
         return FileResponse
-                .builder()
-                .fileUrl(pdfUrl)
-                .fileName(fileName)
-                .build();
+            .builder()
+            .fileUrl(pdfUrl)
+            .fileName(fileName)
+            .build();
+    }
+
+    @Override
+    public FileResponse getAndUploadDoc(InvoiceDTO invoice) {
+        byte[] pdfBytes = sendInvoiceToSunat(invoice);
+
+        return uploadToFirebase(invoice, pdfBytes);
     }
 
     @Transactional(readOnly = true)

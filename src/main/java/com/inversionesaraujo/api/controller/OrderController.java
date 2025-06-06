@@ -26,17 +26,14 @@ import com.inversionesaraujo.api.business.dto.WarehouseDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
-import com.inversionesaraujo.api.business.request.NotificationRequest;
 import com.inversionesaraujo.api.business.request.OrderRequest;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.business.service.IEmployee;
-import com.inversionesaraujo.api.business.service.INotification;
 import com.inversionesaraujo.api.business.service.IOrder;
 import com.inversionesaraujo.api.business.service.IProfit;
 import com.inversionesaraujo.api.business.service.IWarehouse;
 import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.I_Invoice;
-import com.inversionesaraujo.api.model.NotificationType;
 import com.inversionesaraujo.api.model.OrderLocation;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
@@ -62,8 +59,6 @@ public class OrderController {
     private I_Image imageService;
     @Autowired
     private IEmployee employeeService;
-    @Autowired
-    private INotification notiService;
 
     @GetMapping
     public Page<OrderDTO> getAll(
@@ -119,8 +114,23 @@ public class OrderController {
             .build());
     }
 
+    @PostMapping("{id}/finalize")
+    public ResponseEntity<MessageResponse> postCreate(@PathVariable Long id, @RequestParam(defaultValue = "true") Boolean alert) {
+        OrderDTO order = orderService.findById(id);
+
+        if(alert) orderService.alertNewOrder(order);
+
+        orderService.createAndSendInvoice(order);
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El pedido se notifico y se envió el comprobante con éxito")
+            .data(order)
+            .build());
+    }
+
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody @Valid OrderRequest request, @RequestParam(defaultValue = "true") Boolean alert) {
+    public ResponseEntity<MessageResponse> create(@RequestBody @Valid OrderRequest request) {
         ClientDTO client = clientService.findById(request.getClientId());
         InvoiceDTO invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
         WarehouseDTO warehouse = request.getWarehouseId() == null ? null : warehouseService.findById(request.getWarehouseId());
@@ -142,19 +152,6 @@ public class OrderController {
             .warehouse(warehouse)
             .evidence(null)
             .build());
-
-        if(alert) {
-            NotificationRequest notiRequest = NotificationRequest
-                .builder()
-                .userId(1L)
-                .type(NotificationType.NEW_ORDER)
-                .redirectTo("/pedidos/" + order.getId())
-                .build();
-    
-            notiService.create(notiRequest);
-
-            orderService.sendNewOrder(order, request.getTotal());
-        }
 
         return ResponseEntity.status(201).body(MessageResponse
             .builder()

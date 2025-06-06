@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.business.service.impl;
 
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
@@ -10,15 +11,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inversionesaraujo.api.business.dto.InvoiceDTO;
+import com.inversionesaraujo.api.business.dto.InvoiceItemDTO;
 import com.inversionesaraujo.api.business.dto.OrderDTO;
+import com.inversionesaraujo.api.business.dto.OrderProductDTO;
+import com.inversionesaraujo.api.business.payload.FileResponse;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
+import com.inversionesaraujo.api.business.request.EmailRequest;
+import com.inversionesaraujo.api.business.request.NotificationRequest;
 import com.inversionesaraujo.api.business.service.IOrder;
 import com.inversionesaraujo.api.business.spec.OrderSpecifications;
+import com.inversionesaraujo.api.model.InvoiceType;
+import com.inversionesaraujo.api.model.NotificationType;
 import com.inversionesaraujo.api.model.Order;
 import com.inversionesaraujo.api.model.OrderLocation;
 import com.inversionesaraujo.api.model.ShippingType;
@@ -37,7 +45,15 @@ public class OrderImpl implements IOrder {
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
-    private SimpMessagingTemplate template;
+    private NotificationImpl notiService;
+    @Autowired
+    private InvoiceImpl invoiceService;
+    @Autowired
+    private InvoiceItemImpl invoiceItemService;
+    @Autowired
+    private OrderProductImpl orderProductService;
+    @Autowired
+    private EmailImpl emailService;
 
     @Transactional(readOnly = true)
     @Override
@@ -128,24 +144,88 @@ public class OrderImpl implements IOrder {
     }
 
     @Override
-    public void sendNewOrder(OrderDTO order, Double total) {
-        OrderDTO orderNotification = OrderDTO
+    public void alertNewOrder(OrderDTO order) {
+        NotificationRequest notiRequest = NotificationRequest
             .builder()
-            .id(order.getId())
-            .client(order.getClient())
-            .invoice(null)
-            .department(order.getDepartment())
-            .city(order.getCity())
-            .date(order.getDate())
-            .location(order.getLocation())
-            .maxShipDate(order.getMaxShipDate())
-            .shippingType(order.getShippingType())
-            .status(order.getStatus())
-            .total(total)
-            .warehouse(order.getWarehouse())
-            .evidence(null)
+            .userId(1L)
+            .type(NotificationType.NEW_ORDER)
+            .redirectTo("/pedidos/" + order.getId())
             .build();
 
-        template.convertAndSend("/topic/orders", orderNotification);
+        notiService.create(notiRequest);
+    }
+
+    private InvoiceDTO createInvoice(OrderDTO order) {
+        LocalDateTime issueDate = LocalDateTime.now();
+        InvoiceType invoiceType = order.getClient().getInvoicePreference();
+
+        InvoiceDTO invoice = InvoiceDTO
+            .builder()
+            .invoiceType(order.getClient().getInvoicePreference())
+            .document(order.getClient().getDocument())
+            .documentType(order.getClient().getDocumentType())
+            .rsocial(order.getClient().getRsocial())
+            .issueDate(issueDate)
+            .address(order.getClient().getCity() + ", " + order.getClient().getDepartment())
+            .serie(invoiceType == InvoiceType.FACTURA ? "F001" : "B001")
+            .total(0.0)
+            .isSended(false)
+            .build();
+
+        InvoiceDTO savedInvoice = invoiceService.save(invoice);
+
+        List<OrderProductDTO> orderItems = orderProductService.findByOrderId(order.getId());
+        Double total = 0.0;
+
+        for (OrderProductDTO item : orderItems) {
+            Double subTotal = item.getSubTotal();
+
+            InvoiceItemDTO invoiceItem = InvoiceItemDTO
+                .builder()
+                .invoiceId(savedInvoice.getId())
+                .name(item.getProduct().getName())
+                .quantity(item.getQuantity())
+                .price(item.getPrice())
+                .subTotal(subTotal)
+                .unit(item.getProduct().getUnit().toUpperCase())
+                .isIgvApply(true)
+                .build();
+
+            invoiceItemService.save(invoiceItem);
+            total += subTotal;
+        }
+
+        savedInvoice.setTotal(total);
+        savedInvoice = invoiceService.save(savedInvoice);
+
+        return savedInvoice;
+    }
+
+    @Override
+    public void createAndSendInvoice(OrderDTO order) {
+        InvoiceDTO invoice = createInvoice(order);
+
+        byte[] attachment = invoiceService.sendInvoiceToSunat(invoice);
+
+        EmailRequest emailRequest = EmailRequest
+            .builder()
+            .destination(order.getClient().getEmail())
+            .subject("Comprobante de pago - Inversiones Araujo")
+            .content("Estimado cliente, adjuntamos el comprobante generado por su pedido.")
+            .build();
+
+        String filename = String.format("%s_%s.pdf", invoice.getSerie(), invoice.getRsocial().toUpperCase());
+
+        emailService.sendEmailWithAttachment(emailRequest, attachment, filename);
+
+        FileResponse response = invoiceService.uploadToFirebase(invoice, attachment);
+
+        invoice.setPdfUrl(response.getFileUrl());
+        invoice.setPdfFirebaseId(response.getFileName());
+        invoice.setIsSended(true);
+
+        invoiceService.save(invoice);
+
+        System.out.println("Se completo con éxito: creación, almacenamiento y envio del comprobante");
     }
 }
