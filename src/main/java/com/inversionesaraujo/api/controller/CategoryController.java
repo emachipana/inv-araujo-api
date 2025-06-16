@@ -36,11 +36,6 @@ public class CategoryController {
         return categoryService.listAll();
     }
 
-    @GetMapping("subcategories/{categoryId}")
-    public List<CategoryDTO> getSubCategories(@PathVariable Long categoryId) {
-        return categoryService.getSubCategories(categoryId);
-    }
-
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
         CategoryDTO category = categoryService.findById(id);
@@ -55,15 +50,12 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid CategoryRequest request) {
         ImageDTO image = request.getImageId() == null ? null : imageService.findById(request.getImageId());
-        ImageDTO icon = request.getIconId() == null ? null : imageService.findById(request.getIconId());
 
         CategoryDTO savedCategory = categoryService.save(CategoryDTO
             .builder()
             .name(request.getName())
             .description(request.getDescription())
-            .categoryId(request.getCategoryId())
             .image(image)
-            .icon(icon)
             .build());
 
         return ResponseEntity.status(201).body(MessageResponse
@@ -77,13 +69,10 @@ public class CategoryController {
     public ResponseEntity<MessageResponse> update(@RequestBody @Valid CategoryRequest request, @PathVariable Long id) {
         CategoryDTO category = categoryService.findById(id);
         ImageDTO image = request.getImageId() == null ? category.getImage() : imageService.findById(request.getImageId());
-        ImageDTO icon = request.getIconId() == null ? null : imageService.findById(request.getIconId());
 
         category.setName(request.getName());
         category.setDescription(request.getDescription());
-        category.setCategoryId(request.getCategoryId());
         category.setImage(image);
-        category.setIcon(icon);
 
         CategoryDTO updatedCategory = categoryService.save(category);
 

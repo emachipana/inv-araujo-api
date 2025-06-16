@@ -21,19 +21,16 @@ public class CategoryImpl implements ICategory {
 	@Override
 	public CategoryDTO save(CategoryDTO category) {
         Category categorySaved = categoryRepo.save(CategoryDTO.toEntity(category));
-        Integer subcategories = 0;
-        if(category.getId() != null) subcategories = categoryRepo.countByCategoryId(category.getId());
 
-        return CategoryDTO.toDTO(categorySaved, subcategories);
+        return CategoryDTO.toDTO(categorySaved);
     }
 
     @Transactional(readOnly = true)
 	@Override
 	public CategoryDTO findById(Long id) {
         Category category = categoryRepo.findById(id).orElseThrow(() -> new DataAccessException("La categoria no existe") {});
-        Integer subcategories = categoryRepo.countByCategoryId(category.getId());
 
-	    return CategoryDTO.toDTO(category, subcategories);
+	    return CategoryDTO.toDTO(category);
     }
 
     @Transactional
@@ -45,15 +42,8 @@ public class CategoryImpl implements ICategory {
     @Transactional(readOnly = true)
     @Override
     public List<CategoryDTO> listAll() {
-        List<Category> categories = categoryRepo.findByCategoryIsNull();
+        List<Category> categories = categoryRepo.findAll();
 
-        return CategoryDTO.toDTOList(categories, categoryRepo);
-    }
-
-    @Override
-    public List<CategoryDTO> getSubCategories(Long categoryId) {
-        List<Category> subcategories = categoryRepo.findByCategoryId(categoryId);
-
-        return CategoryDTO.toDTOList(subcategories, categoryRepo);
+        return CategoryDTO.toDTOList(categories);
     }
 }

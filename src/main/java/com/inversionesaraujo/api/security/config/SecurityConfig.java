@@ -36,6 +36,9 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/api/v1/messages/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/messages/**").hasAnyAuthority("ADMINISTRADOR")
                     .requestMatchers(HttpMethod.POST, "/api/v1/messages/**").permitAll()
+                    // chatbot
+                    .requestMatchers(HttpMethod.POST, "/api/v1/chatbot/question").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/chatbot/add-data").hasAnyAuthority("ADMINISTRADOR")
                     // notifications
                     .requestMatchers(HttpMethod.POST, "/api/v1/notifications/**").permitAll()
                     .requestMatchers("/api/v1/ws/**").permitAll()

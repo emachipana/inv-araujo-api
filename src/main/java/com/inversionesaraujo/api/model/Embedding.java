@@ -5,8 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,23 +12,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Builder
-@Table(name = "categories")
-public class Category {
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "embeddings")
+public class Embedding {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String name;
+    @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
+    private String text;
 
-    @Column(nullable = false)
-    private String description;
-
-    @OneToOne
-    @JoinColumn(name = "image_id")
-    private Image image;
+    @Column(columnDefinition = "JSON")
+    private String vector;
 }
