@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.inversionesaraujo.api.model.Invoice;
 import com.inversionesaraujo.api.model.InvoiceItem;
+import com.inversionesaraujo.api.model.ProductUnit;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,7 @@ public class InvoiceItemDTO {
     private Integer quantity;
     private Double price;
     private Double subTotal;
-    private String unit;
+    private ProductUnit unit;
     private Boolean isIgvApply;
 
     public static InvoiceItemDTO toDTO(InvoiceItem item) {

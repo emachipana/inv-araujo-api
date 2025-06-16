@@ -57,5 +57,4 @@ public class Invoice {
     private Double total;
 
     private String pdfUrl;
-    private String pdfFirebaseId;
 }

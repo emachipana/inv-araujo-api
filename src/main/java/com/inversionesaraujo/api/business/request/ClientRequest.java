@@ -14,11 +14,11 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ClientRequest {
-    @Size(min = 3)
     private String city;
 
-    @Size(min = 3)
     private String department;
+
+    private String address;
 
     @Size(min = 6)
     private String phone;

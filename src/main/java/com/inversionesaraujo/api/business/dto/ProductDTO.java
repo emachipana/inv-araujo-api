@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 
 import com.inversionesaraujo.api.model.Category;
 import com.inversionesaraujo.api.model.Product;
+import com.inversionesaraujo.api.model.ProductUnit;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,7 @@ public class ProductDTO {
     private String name;
     private String description;
     private String brand;
-    private String unit;
+    private ProductUnit unit;
     private Double price;
     private Double purchasePrice;
     private Integer stock;

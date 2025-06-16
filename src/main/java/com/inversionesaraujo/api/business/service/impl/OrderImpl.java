@@ -1,9 +1,12 @@
 package com.inversionesaraujo.api.business.service.impl;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
+import java.net.URL;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -17,8 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.inversionesaraujo.api.business.dto.InvoiceDTO;
 import com.inversionesaraujo.api.business.dto.InvoiceItemDTO;
 import com.inversionesaraujo.api.business.dto.OrderDTO;
+import com.inversionesaraujo.api.business.dto.ClientDTO;
 import com.inversionesaraujo.api.business.dto.OrderProductDTO;
-import com.inversionesaraujo.api.business.payload.FileResponse;
+import com.inversionesaraujo.api.business.dto.ProductDTO;
+import com.inversionesaraujo.api.business.dto.ProfitDTO;
+import com.inversionesaraujo.api.business.payload.ApiSunatResponse;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.business.request.EmailRequest;
@@ -54,6 +60,12 @@ public class OrderImpl implements IOrder {
     private OrderProductImpl orderProductService;
     @Autowired
     private EmailImpl emailService;
+    @Autowired
+    private ClientImpl clientService;
+    @Autowired
+    private ProfitImpl profitService;
+    @Autowired
+    private ProductImpl productService;
 
     @Transactional(readOnly = true)
     @Override
@@ -166,7 +178,7 @@ public class OrderImpl implements IOrder {
             .documentType(order.getClient().getDocumentType())
             .rsocial(order.getClient().getRsocial())
             .issueDate(issueDate)
-            .address(order.getClient().getCity() + ", " + order.getClient().getDepartment())
+            .address(order.getClient().getAddress() != null ? order.getClient().getAddress() : order.getClient().getCity() + ", " + order.getClient().getDepartment())
             .serie(invoiceType == InvoiceType.FACTURA ? "F001" : "B001")
             .total(0.0)
             .isSended(false)
@@ -187,7 +199,7 @@ public class OrderImpl implements IOrder {
                 .quantity(item.getQuantity())
                 .price(item.getPrice())
                 .subTotal(subTotal)
-                .unit(item.getProduct().getUnit().toUpperCase())
+                .unit(item.getProduct().getUnit())
                 .isIgvApply(true)
                 .build();
 
@@ -196,7 +208,9 @@ public class OrderImpl implements IOrder {
         }
 
         savedInvoice.setTotal(total);
+        order.setInvoice(savedInvoice);
         savedInvoice = invoiceService.save(savedInvoice);
+        orderRepo.save(OrderDTO.toEntity(order, entityManager));
 
         return savedInvoice;
     }
@@ -205,7 +219,7 @@ public class OrderImpl implements IOrder {
     public void createAndSendInvoice(OrderDTO order) {
         InvoiceDTO invoice = createInvoice(order);
 
-        byte[] attachment = invoiceService.sendInvoiceToSunat(invoice);
+        ApiSunatResponse sunatResponse = invoiceService.sendInvoiceToSunat(invoice);
 
         EmailRequest emailRequest = EmailRequest
             .builder()
@@ -216,16 +230,72 @@ public class OrderImpl implements IOrder {
 
         String filename = String.format("%s_%s.pdf", invoice.getSerie(), invoice.getRsocial().toUpperCase());
 
+        byte[] attachment = null;
+        try (InputStream in = new URL(sunatResponse.getEnlace_del_pdf()).openStream()) {
+            attachment = IOUtils.toByteArray(in);
+        } catch (Exception e) {
+            throw new RuntimeException("No se pudo descargar el PDF de SUNAT", e);
+        }
+
         emailService.sendEmailWithAttachment(emailRequest, attachment, filename);
 
-        FileResponse response = invoiceService.uploadToFirebase(invoice, attachment);
-
-        invoice.setPdfUrl(response.getFileUrl());
-        invoice.setPdfFirebaseId(response.getFileName());
+        invoice.setPdfUrl(sunatResponse.getEnlace_del_pdf());
         invoice.setIsSended(true);
 
         invoiceService.save(invoice);
 
         System.out.println("Se completo con éxito: creación, almacenamiento y envio del comprobante");
+    }
+
+    @Override
+    public void orderPaid(OrderDTO order) {
+        ClientDTO client = order.getClient();
+        Double total = order.getTotal();
+
+        client.setConsumption(client.getConsumption() + total);
+        clientService.save(client);
+
+        Month month = order.getDate().getMonth();
+        ProfitDTO profit = profitService.findByMonth(month.toString());
+        if(profit == null) {
+            profitService.save(ProfitDTO.builder()
+                .date(order.getDate())
+                .profit(total)
+                .income(total)
+                .month(month.toString())
+                .totalExpenses(0.0)
+                .build()
+            );
+        }else {
+            Double income = profit.getIncome() + total;
+            profit.setIncome(income);
+            profit.setProfit(income - profit.getTotalExpenses());
+            profitService.save(profit);
+        }
+    }
+
+    @Override
+    public void cancelOrder(OrderDTO order) {
+        ClientDTO client = order.getClient();
+
+        client.setConsumption(client.getConsumption() - order.getTotal());
+        clientService.save(client);
+
+        Month month = order.getDate().getMonth();
+        ProfitDTO profit = profitService.findByMonth(month.toString());
+        Double income = (profit.getIncome() - order.getTotal());
+        profit.setIncome(income);
+        profit.setProfit(income - profit.getTotalExpenses());
+        profitService.save(profit);
+
+        List<OrderProductDTO> products = orderProductService.findByOrderId(order.getId());
+        
+        for(OrderProductDTO item : products) {
+            ProductDTO product = item.getProduct();
+            Integer firstStock = product.getStock() + item.getQuantity();
+
+            product.setStock(firstStock);
+            productService.save(product);
+        }
     }
 }

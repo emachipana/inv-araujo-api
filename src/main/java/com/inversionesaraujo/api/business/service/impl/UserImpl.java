@@ -53,4 +53,9 @@ public class UserImpl implements IUser {
 
         return UserDTO.toDTO(user);
     }
+
+    @Override
+    public Boolean existsByUsername(String username) {
+        return userRepo.existsByUsername(username);
+    }
 }

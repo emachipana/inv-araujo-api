@@ -17,17 +17,18 @@ import com.inversionesaraujo.api.business.dto.ResetDTO;
 import com.inversionesaraujo.api.business.dto.UserDTO;
 import com.inversionesaraujo.api.business.payload.AuthResponse;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
-import com.inversionesaraujo.api.business.payload.ValidCodeResponse;
+import com.inversionesaraujo.api.business.payload.ValidateCodeResponse;
 import com.inversionesaraujo.api.business.request.ChangePasswordRequest;
 import com.inversionesaraujo.api.business.request.EmailRequest;
 import com.inversionesaraujo.api.business.request.LoginRequest;
 import com.inversionesaraujo.api.business.request.RegisterRequest;
-import com.inversionesaraujo.api.business.request.SendCodeRequest;
-import com.inversionesaraujo.api.business.request.ValidCodeRequest;
+import com.inversionesaraujo.api.business.request.GenerateCodeRequest;
+import com.inversionesaraujo.api.business.request.ValidateCodeRequest;
 import com.inversionesaraujo.api.business.service.IAuth;
 import com.inversionesaraujo.api.business.service.IEmail;
 import com.inversionesaraujo.api.business.service.IReset;
 import com.inversionesaraujo.api.business.service.IUser;
+import com.inversionesaraujo.api.model.GenerateCodeAction;
 
 import jakarta.validation.Valid;
 
@@ -67,52 +68,81 @@ public class AuthController {
             .build());
     }
 
-    @PostMapping("sendCode")
-    public ResponseEntity<MessageResponse> sendCode(@RequestBody @Valid SendCodeRequest request) {
-        UserDTO user = userService.findByUsername(request.getEmail());
+    @PostMapping("generate-code")
+    public ResponseEntity<MessageResponse> sendCode(@RequestBody @Valid GenerateCodeRequest request) {
+        String email = request.getEmail();
+
+        if(request.getAction() == GenerateCodeAction.RECOVERY_PASSWORD) {
+            userService.findByUsername(request.getEmail());
+        }else {
+            if(userService.existsByUsername(email)) {
+                return ResponseEntity.status(406).body(MessageResponse
+                    .builder()
+                    .message("El email ya esta registrado")
+                    .build());
+            }
+        }
+
+        String content = request.getAction() == GenerateCodeAction.RECOVERY_PASSWORD
+            ? "Para recuperar tu contraseña, ingresa el siguiente código: "
+            : "Para validar tu email, ingresa el siguiente código: ";
+
+        String subject = request.getAction() == GenerateCodeAction.RECOVERY_PASSWORD
+            ? "Recuperación de contraseña | Inversiones Araujo"
+            : "Validación de email | Inversiones Araujo";
+
         String code = resetService.generateCode();
-        emailService.sendEmail(EmailRequest
+        Boolean isSended = emailService.sendEmail(EmailRequest
             .builder()
-            .content("Tu codigo de recuperacion es: " + code)
-            .destination(user.getUsername())
-            .subject("Recuperación de cuenta | Inversiones Araujo")
+            .content(content + code)
+            .destination(email)
+            .subject(subject)
             .build());
+
+        if(!isSended) {
+            return ResponseEntity.status(500).body(MessageResponse
+                .builder()
+                .message("Hubo un error al enviar el codigo")
+                .build());
+        }
 
         LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Lima"));
 
         ResetDTO reset = resetService.save(ResetDTO
             .builder()
             .code(code)
-            .userId(user.getId())
+            .email(email)
             .expiresAt(now.plusMinutes(30))
             .build());
+
+        reset.setCode("******");
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()
             .data(reset)
-            .message("El codigo de recuperacion se genero y se envio con exito")
+            .message("El codigo se genero y se envio con exito")
             .build());
     }
 
-    @PostMapping("validCode")
-    public ResponseEntity<MessageResponse> validCode(@RequestBody @Valid ValidCodeRequest request) {
+    @PostMapping("validate-code")
+    public ResponseEntity<MessageResponse> validateCode(@RequestBody @Valid ValidateCodeRequest request) {
         ResetDTO reset = resetService.findById(request.getResetId());
         Boolean isValid = resetService.validCode(reset, request.getCode());
-        ValidCodeResponse response = ValidCodeResponse
+        ValidateCodeResponse response = ValidateCodeResponse
             .builder()
-            .userId(!isValid ? null : reset.getUserId())
+            .email(isValid ? reset.getEmail() : null)
             .isValid(isValid)
             .build();
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()
             .data(response)
-            .message(isValid ? "El codigo es correcto" : "El codigo no es correcto")
+            .message(isValid ? "El codigo es válido" : "El codigo no es válido")
             .build());
     }
 
-    @PutMapping("changePassword/{userId}")
-    public ResponseEntity<MessageResponse> changePassword(@RequestBody @Valid ChangePasswordRequest request, @PathVariable Long userId) {
+    @PutMapping("change-password/{email}")
+    public ResponseEntity<MessageResponse> changePassword(@RequestBody @Valid ChangePasswordRequest request, @PathVariable String email) {
         ResetDTO reset = resetService.findById(request.getResetId());
         Boolean isValid = resetService.validCode(reset, request.getCode());
         if(!isValid) {
@@ -122,7 +152,7 @@ public class AuthController {
                 .build());
         }
 
-        UserDTO user = userService.findById(userId);
+        UserDTO user = userService.findByUsername(email);
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userService.save(user);
 

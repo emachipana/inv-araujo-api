@@ -2,11 +2,7 @@ package com.inversionesaraujo.api.business.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -28,16 +24,10 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.cloud.storage.Bucket;
-import com.google.firebase.cloud.StorageClient;
-import com.inversionesaraujo.api.business.dto.InvoiceAddressDTO;
-import com.inversionesaraujo.api.business.dto.InvoiceBodyDTO;
-import com.inversionesaraujo.api.business.dto.InvoiceClientDTO;
-import com.inversionesaraujo.api.business.dto.InvoiceCompanyDTO;
+import com.inversionesaraujo.api.business.dto.InvoiceSunatDTO;
 import com.inversionesaraujo.api.business.dto.InvoiceDTO;
-import com.inversionesaraujo.api.business.dto.InvoiceDetailDTO;
-import com.inversionesaraujo.api.business.dto.InvoicePayDTO;
-import com.inversionesaraujo.api.business.payload.FileResponse;
+import com.inversionesaraujo.api.business.dto.InvoiceDetailSunatDTO;
+import com.inversionesaraujo.api.business.payload.ApiSunatResponse;
 import com.inversionesaraujo.api.business.service.I_Invoice;
 import com.inversionesaraujo.api.business.spec.InvoiceSpecifications;
 import com.inversionesaraujo.api.model.DocumentType;
@@ -89,104 +79,68 @@ public class InvoiceImpl implements I_Invoice {
         invoiceRepo.deleteById(id);
     }
 
-    public byte[] sendInvoiceToSunat(InvoiceDTO invoice) {
-        InvoicePayDTO formaPago = InvoicePayDTO
-            .builder()
-            .moneda("PEN")
-            .tipo("Contado")
-            .build();
-
-        InvoiceAddressDTO clientAddress = InvoiceAddressDTO
-            .builder()
-            .direccion(invoice.getAddress())
-            .provincia("HUANCAYO")
-            .departamento("JUNIN")
-            .distrito("HUANCAYO")
-            .ubigueo("120133")
-            .build();
-
-        InvoiceAddressDTO companyAddress = InvoiceAddressDTO
-            .builder()
-            .direccion("JR. SAN BERNARDO NRO. S/N JUNIN - HUANCAYO - SAPALLANGA")
-            .provincia("HUANCAYO")
-            .departamento("JUNIN")
-            .distrito("SAPALLANGA")
-            .ubigueo("120133")
-            .build();
-
-        InvoiceClientDTO client = InvoiceClientDTO
-            .builder()
-            .tipoDoc(invoice.getDocumentType() == DocumentType.DNI ? "1" : "6")
-            .numDoc(Long.parseLong(invoice.getDocument()))
-            .rznSocial(invoice.getRsocial())
-            .address(clientAddress)
-            .build();
-        
-        InvoiceCompanyDTO company = InvoiceCompanyDTO
-            .builder()
-            .ruc(20600964471L)
-            .razonSocial("INVERSIONES ARAUJO JL E.I.R.L.")
-            .address(companyAddress)
-            .build();
-
+    @Override
+    public ApiSunatResponse sendInvoiceToSunat(InvoiceDTO invoice) {
         Double total = invoice.getTotal();
         Double subtotal = BigDecimal.valueOf(total / 1.18).setScale(2, RoundingMode.HALF_UP).doubleValue();
         Double igv = BigDecimal.valueOf(total - subtotal).setScale(2, RoundingMode.HALF_UP).doubleValue();
 
         List<InvoiceItem> items = itemRepo.findByInvoiceId(invoice.getId());
 
-        List<InvoiceDetailDTO> details = items
+        List<InvoiceDetailSunatDTO> details = items
             .stream()
             .map(item -> {
                 Double priceItem = item.getPrice();
                 Double priceSub = BigDecimal.valueOf(priceItem / 1.18).setScale(2, RoundingMode.HALF_UP).doubleValue();
                 Double totalSub = priceSub * item.getQuantity();
-                Double igvItem = BigDecimal.valueOf(totalSub * 0.18).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                Double totalItem = item.getPrice() * item.getQuantity();
+                Double igvItem = BigDecimal.valueOf(totalItem - totalSub).setScale(2, RoundingMode.HALF_UP).doubleValue();
 
                 String codProducto = String.format("%03d", items.indexOf(item) + 1);
-                return InvoiceDetailDTO
+                return InvoiceDetailSunatDTO
                     .builder()
-                    .codProducto(codProducto)
-                    .unidad(item.getUnit())
+                    .unidad_de_medida(item.getUnit())
+                    .codigo(codProducto)
                     .descripcion(item.getName())
                     .cantidad(item.getQuantity())
-                    .mtoValorUnitario(priceSub)
-                    .mtoValorVenta(totalSub)
-                    .mtoBaseIgv(totalSub)
-                    .porcentajeIgv(18)
+                    .valor_unitario(priceSub)
+                    .precio_unitario(priceItem)
+                    .subtotal(totalSub)
+                    .total(totalItem)
                     .igv(igvItem)
-                    .tipAfeIgv(10)
-                    .totalImpuestos(igvItem)
-                    .mtoPrecioUnitario(priceItem)
+                    .tipo_de_igv(1)
+                    .anticipo_regularizacion(false)
                     .build();
             })
             .toList();
 
         LocalDateTime localDateTime = invoice.getIssueDate();
-        ZoneOffset offset = ZoneOffset.of("-05:00");
-        OffsetDateTime offsetDateTime = localDateTime.atOffset(offset);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
-        String issueDate = offsetDateTime.format(formatter);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String issueDate = localDateTime.format(formatter);
 
-        InvoiceBodyDTO payload = InvoiceBodyDTO
+        Boolean isFirstType = invoice.getInvoiceType() == InvoiceType.FACTURA;
+
+        InvoiceSunatDTO payload = InvoiceSunatDTO
             .builder()
-            .ublVersion("2.1")
-            .tipoOperacion("01")
-            .tipoDoc(invoice.getInvoiceType() == InvoiceType.FACTURA ? "01" : "03")
+            .operacion("generar_comprobante")
+            .tipo_de_comprobante(isFirstType ? 1 : 2)
             .serie(invoice.getSerie())
-            .correlativo(invoice.getId().toString())
-            .fechaEmision(issueDate)
-            .formaPago(formaPago)
-            .tipoMoneda("PEN")
-            .client(client)
-            .company(company)
-            .mtoOperGravadas(subtotal)
-            .mtoIGV(igv)
-            .valorVenta(subtotal)
-            .totalImpuestos(igv)
-            .subTotal(total)
-            .mtoImpVenta(total)
-            .details(details)
+            .numero(invoice.getId().intValue())
+            .sunat_transaction(1)
+            .cliente_tipo_de_documento(invoice.getDocumentType() == DocumentType.RUC ? 6 : 1)
+            .cliente_numero_de_documento(invoice.getDocument())
+            .cliente_denominacion(invoice.getRsocial())
+            .cliente_direccion(invoice.getAddress())
+            .fecha_de_emision(issueDate)
+            .moneda(1)
+            .porcentaje_de_igv(18.0)
+            .total_gravada(subtotal)
+            .total_igv(igv)
+            .total(total)
+            .detraccion(false)
+            .enviar_automaticamente_a_la_sunat(true)
+            .enviar_automaticamente_al_cliente(false)
+            .items(details)
             .build();
 
         try {
@@ -200,19 +154,23 @@ public class InvoiceImpl implements I_Invoice {
         String apiUrl = System.getenv("SUNAT_URL");
         String apiToken = System.getenv("SUNAT_TOKEN");
 
-        byte[] pdfBytes;
+        ApiSunatResponse apiResponse;
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + apiToken);
+            headers.set("Authorization", apiToken);
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<InvoiceBodyDTO> requestEntity = new HttpEntity<>(payload, headers);
+            HttpEntity<InvoiceSunatDTO> requestEntity = new HttpEntity<>(payload, headers);
 
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<byte[]> response = restTemplate.postForEntity(apiUrl, requestEntity, byte[].class);
+            ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                pdfBytes = response.getBody();
+                // Debug: imprime el JSON de respuesta
+                System.out.println("Respuesta de la API Sunat:\n" + response.getBody());
+
+                ObjectMapper mapper = new ObjectMapper();
+                apiResponse = mapper.readValue(response.getBody(), ApiSunatResponse.class);
             } else {
                 throw new RuntimeException("Error: " + response.getStatusCode());
             }
@@ -227,33 +185,7 @@ public class InvoiceImpl implements I_Invoice {
             throw new RuntimeException(e);
         }
 
-        return pdfBytes;
-    }
-
-    public FileResponse uploadToFirebase(InvoiceDTO invoice, byte[] pdfBytes) {
-        Bucket bucket = StorageClient.getInstance().bucket();
-        String type = invoice.getInvoiceType().toString();
-        String fileName = type.toLowerCase() + "-" + invoice.getId() + "-" + invoice.getRsocial().toLowerCase().replaceAll("\\s+", "") + ".pdf";
-        bucket.create(fileName, pdfBytes, "application/pdf");
-
-        String pdfUrl = String.format(
-            "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media",
-            bucket.getName(),
-            URLEncoder.encode(fileName, StandardCharsets.UTF_8)
-        );
-
-        return FileResponse
-            .builder()
-            .fileUrl(pdfUrl)
-            .fileName(fileName)
-            .build();
-    }
-
-    @Override
-    public FileResponse getAndUploadDoc(InvoiceDTO invoice) {
-        byte[] pdfBytes = sendInvoiceToSunat(invoice);
-
-        return uploadToFirebase(invoice, pdfBytes);
+        return apiResponse;
     }
 
     @Transactional(readOnly = true)

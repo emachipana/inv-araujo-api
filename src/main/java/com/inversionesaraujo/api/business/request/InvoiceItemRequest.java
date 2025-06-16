@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.business.request;
 
+import com.inversionesaraujo.api.model.ProductUnit;
+
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -16,7 +18,7 @@ public class InvoiceItemRequest {
     private String name;
 
     @NotEmpty(message = "La unidad del item es requerida")
-    private String unit;
+    private ProductUnit unit;
 
     @NotNull(message = "El precio del item es requerido")
     @Positive(message = "Debe ser mayor a 0")

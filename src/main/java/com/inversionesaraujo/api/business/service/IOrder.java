@@ -35,4 +35,8 @@ public interface IOrder {
     void alertNewOrder(OrderDTO order);
 
     void createAndSendInvoice(OrderDTO order);
+
+    void orderPaid(OrderDTO order);
+
+    void cancelOrder(OrderDTO order);
 }

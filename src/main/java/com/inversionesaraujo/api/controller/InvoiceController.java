@@ -16,10 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.InvoiceDTO;
-import com.inversionesaraujo.api.business.payload.FileResponse;
+import com.inversionesaraujo.api.business.payload.ApiSunatResponse;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.InvoiceRequest;
-import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.I_Invoice;
 import com.inversionesaraujo.api.business.service.I_InvoiceItem;
 import com.inversionesaraujo.api.model.InvoiceType;
@@ -32,8 +31,6 @@ import jakarta.validation.Valid;
 public class InvoiceController {
     @Autowired
     private I_Invoice invoiceService;
-    @Autowired
-    private I_Image imageService;
     @Autowired
     private I_InvoiceItem itemService;
 
@@ -82,42 +79,16 @@ public class InvoiceController {
                 .build());
         }
 
-        FileResponse response = invoiceService.getAndUploadDoc(invoice);
+        ApiSunatResponse sunatResponse = invoiceService.sendInvoiceToSunat(invoice);
 
         invoice.setIsSended(true);
-        invoice.setPdfUrl(response.getFileUrl());
-        invoice.setPdfFirebaseId(response.getFileName());
+        invoice.setPdfUrl(sunatResponse.getEnlace_del_pdf());
         invoiceService.save(invoice);
 
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
             .message("El PDF se genero correctamente")
-            .data(response)
-            .build());
-    }
-
-    @DeleteMapping("deletePDF/{id}")
-    public ResponseEntity<MessageResponse> deletePDF(@PathVariable Long id) {
-        InvoiceDTO invoice = invoiceService.findById(id);
-        if(invoice.getPdfUrl() == null) {
-            return ResponseEntity.status(406).body(MessageResponse
-                .builder()
-                .message("El comprobante not tiene un pdf generado")
-                .build());
-        }
-
-        imageService.deleteImage(invoice.getPdfFirebaseId());
-        invoice.setPdfUrl(null);
-        // invoice.setIsGenerated(false);
-        invoice.setSerie(null);
-        invoice.setPdfFirebaseId(null);
-
-        InvoiceDTO updatedInvoice = invoiceService.save(invoice);
-
-        return ResponseEntity.ok().body(MessageResponse
-            .builder()
-            .message("El PDF se elimino correctamente")
-            .data(updatedInvoice)
+            .data(sunatResponse)
             .build());
     }
 
@@ -163,10 +134,10 @@ public class InvoiceController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
-        InvoiceDTO invoice = invoiceService.findById(id);
-        String firebaseId = invoice.getPdfFirebaseId();
-        invoiceService.delete(invoice.getId());
-        if(firebaseId != null) imageService.deleteImage(firebaseId);
+        invoiceService.delete(id);
+        // String firebaseId = invoice.getPdfFirebaseId();
+        // invoiceService.delete(invoice.getId());
+        // if(firebaseId != null) imageService.deleteImage(firebaseId);
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

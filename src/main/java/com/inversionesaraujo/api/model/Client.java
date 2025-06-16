@@ -29,6 +29,8 @@ public class Client {
 
     private String department;
 
+    private String address;
+
     private String phone;
 
     @Column(unique = true)

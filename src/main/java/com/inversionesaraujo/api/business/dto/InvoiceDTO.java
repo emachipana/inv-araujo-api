@@ -31,7 +31,6 @@ public class InvoiceDTO {
     private Boolean isSended;
     private Double total;
     private String pdfUrl;
-    private String pdfFirebaseId;
 
     public static InvoiceDTO toDTO(Invoice invoice) {
         if(invoice == null) return null;
@@ -48,7 +47,6 @@ public class InvoiceDTO {
             .serie(invoice.getSerie())
             .isSended(invoice.getIsSended())
             .total(invoice.getTotal())
-            .pdfFirebaseId(invoice.getPdfFirebaseId())
             .pdfUrl(invoice.getPdfUrl())
             .build();
     }
@@ -67,7 +65,6 @@ public class InvoiceDTO {
             .pdfUrl(invoice.getPdfUrl())
             .address(invoice.getAddress())
             .serie(invoice.getSerie())
-            .pdfFirebaseId(invoice.getPdfFirebaseId())
             .isSended(invoice.getIsSended())
             .total(invoice.getTotal())
             .build();

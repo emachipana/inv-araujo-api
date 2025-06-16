@@ -21,7 +21,6 @@ import com.inversionesaraujo.api.business.dto.EmployeeDTO;
 import com.inversionesaraujo.api.business.dto.ImageDTO;
 import com.inversionesaraujo.api.business.dto.InvoiceDTO;
 import com.inversionesaraujo.api.business.dto.OrderDTO;
-import com.inversionesaraujo.api.business.dto.ProfitDTO;
 import com.inversionesaraujo.api.business.dto.WarehouseDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
@@ -30,7 +29,6 @@ import com.inversionesaraujo.api.business.request.OrderRequest;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.business.service.IEmployee;
 import com.inversionesaraujo.api.business.service.IOrder;
-import com.inversionesaraujo.api.business.service.IProfit;
 import com.inversionesaraujo.api.business.service.IWarehouse;
 import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.I_Invoice;
@@ -51,8 +49,6 @@ public class OrderController {
     private IClient clientService;
     @Autowired
     private I_Invoice invoiceService;
-    @Autowired
-    private IProfit profitService;
     @Autowired
     private IWarehouse warehouseService;
     @Autowired
@@ -191,20 +187,35 @@ public class OrderController {
             .build());
     }
 
+    @PutMapping("{id}/status")
+    public ResponseEntity<MessageResponse> updateStatus(@PathVariable Long id, @RequestParam Status status) {
+        OrderDTO order = orderService.findById(id);
+        order.setStatus(status);
+
+        if(status == Status.PAGADO) orderService.orderPaid(order);
+
+        if(status == Status.CANCELADO) orderService.cancelOrder(order);
+
+        OrderDTO orderUpdated = orderService.save(order);
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El estado del pedido se actualizo con exito")
+            .data(orderUpdated)
+            .build());
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
         OrderDTO order = orderService.findById(id);
-        ClientDTO client = order.getClient();
-        LocalDate date = order.getDate();
-        Month month = date.getMonth();
-        ProfitDTO profit = profitService.findByMonth(month.toString());
-        Double income = profit.getIncome() - order.getTotal();
-        profit.setIncome(income);
-        profit.setProfit(income - profit.getTotalExpenses());
-        profitService.save(profit);
+        Status orderStatus = order.getStatus();
 
-        client.setConsumption(client.getConsumption() - order.getTotal());
-        clientService.save(client);
+        if(orderStatus == Status.ENTREGADO || orderStatus == Status.PAGADO) {
+            return ResponseEntity.status(400).body(MessageResponse
+                .builder()
+                .message("No puedes eliminar el pedido una vez que ya esté" + orderStatus.toString().toLowerCase())
+                .build());
+        }
 
         orderService.delete(order.getId());
 

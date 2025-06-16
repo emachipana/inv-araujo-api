@@ -33,6 +33,7 @@ public class ClientDTO {
     private Role createdBy;
     private String email;
     private Long userId;
+    private String address;
 
     public static ClientDTO toDTO(Client client) {
         if(client == null) return null;
@@ -51,6 +52,7 @@ public class ClientDTO {
             .email(client.getEmail())
             .invoicePreference(client.getInvoicePreference())
             .userId(client.getUser() != null ? client.getUser().getId() : null)
+            .address(client.getAddress())
             .build();
     }
 
@@ -75,6 +77,7 @@ public class ClientDTO {
             .email(client.getEmail())
             .user(user)
             .invoicePreference(client.getInvoicePreference())
+            .address(client.getAddress())
             .build(); 
     }
 

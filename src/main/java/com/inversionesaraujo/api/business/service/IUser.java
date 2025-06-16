@@ -14,4 +14,6 @@ public interface IUser {
     UserDTO findByUsername(String username);
 
     void delete(Long id);
+
+    Boolean existsByUsername(String username);
 }

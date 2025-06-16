@@ -2,6 +2,8 @@ package com.inversionesaraujo.api.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,8 +30,9 @@ public class InvoiceItem {
     @JoinColumn(name = "invoice_id", nullable = false)
     private Invoice invoice;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String unit;
+    private ProductUnit unit;
 
     @Column(nullable = false)
     private String name;

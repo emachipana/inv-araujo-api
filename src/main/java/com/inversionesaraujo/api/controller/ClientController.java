@@ -67,6 +67,7 @@ public class ClientController {
             .createdBy(request.getCreatedBy())
             .email(request.getEmail())
             .userId(request.getUserId())
+            .address(request.getAddress())
             .consumption(0.0)
             .invoicePreference(request.getInvoicePreference())
             .build());
@@ -86,6 +87,7 @@ public class ClientController {
         client.setPhone(request.getPhone());
         client.setDocument(request.getDocument());
         client.setRsocial(request.getRsocial());
+        client.setAddress(request.getAddress());
         ClientDTO clientUpdated = clientService.save(client);
 
         return ResponseEntity.ok().body(MessageResponse
