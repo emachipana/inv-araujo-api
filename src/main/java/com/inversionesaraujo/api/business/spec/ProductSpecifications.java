@@ -2,7 +2,6 @@ package com.inversionesaraujo.api.business.spec;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.inversionesaraujo.api.model.Category;
 import com.inversionesaraujo.api.model.Product;
 
 public class ProductSpecifications {
@@ -22,19 +21,8 @@ public class ProductSpecifications {
     }
 
     public static Specification<Product> belongsToCategory(Long categoryId) {
-        return (root, query, criteriaBuilder) -> {
-            if (categoryId == null) return null;
-
-            var subquery = query.subquery(Long.class);
-            var subRoot = subquery.from(Category.class);
-            subquery.select(subRoot.get("id"))
-                    .where(criteriaBuilder.equal(subRoot.get("category").get("id"), categoryId));
-
-            return criteriaBuilder.or(
-                criteriaBuilder.equal(root.get("category").get("id"), categoryId),
-                root.get("category").get("id").in(subquery)
-            );
-        };
+        return (root, query, criteriaBuilder) ->
+            categoryId != null ? criteriaBuilder.equal(root.get("category").get("id"), categoryId) : null;
     }
 
     public static Specification<Product> findByCategoryName(String name) {

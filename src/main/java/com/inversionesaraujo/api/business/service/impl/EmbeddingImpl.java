@@ -46,7 +46,7 @@ public class EmbeddingImpl implements IEmbedding {
 	public String answer(String question) throws JsonProcessingException {
 		String betterEmbedding = betterAnswer(question);
 
-		String prompt = "Contexto: Eres asistente virtual de Inversiones Araujo, Ubicación: Huancayo, Sapallanga, Respuesta embedding: " + betterEmbedding + "\n\n" + "Pregunta: " + question + "\nRespuesta:";
+		String prompt = "Rol: Asistente virtual, Empresa: Inversiones Araujo, Ocupación: Agricultura, Ubicación: Sapallanga, Contacto: 990849369, Acción: responde solo preguntas de la empresa servicialmente, Dato embedding: " + betterEmbedding + "\n\n" + "Pregunta: " + question;
 
 		return cohereService.generate(prompt);
 	}
@@ -67,7 +67,7 @@ public class EmbeddingImpl implements IEmbedding {
 		}
 
 		double maxSimilarity = 0.0;
-		String result = "No encontré una respuesta clara. ¿Puedes reformular la pregunta o ser más específico?";
+		String result = "No se encontró, responde con sentido";
 		
 		for (Embedding embedding : embeddings) {
 			try {

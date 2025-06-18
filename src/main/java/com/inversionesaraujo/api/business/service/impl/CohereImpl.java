@@ -64,7 +64,7 @@ public class CohereImpl implements ICohere {
         Map<String, Object> body = new HashMap<>();
         body.put("model", "command-r-plus");
         body.put("prompt", prompt);
-        body.put("max_tokens", 100);
+        body.put("max_tokens", 80);
         body.put("temperature", 0.5);
         body.put("stop_sequences", List.of("Usuario:"));
     

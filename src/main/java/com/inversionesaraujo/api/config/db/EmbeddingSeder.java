@@ -19,60 +19,46 @@ public class EmbeddingSeder implements CommandLineRunner {
             System.out.println("Embeddings ya cargados");
             return;
         }
-
+        
         List<String> texts = List.of(
             // Ubicación
-            "Estamos ubicados en Huancayo, distrito de Sapallanga, exactamente en Jr. San Bernardo.",
-            "Nuestra tienda/almacén/local se encuentra a 2 cuadras del cementerio de Sapallanga.",
-            "Pueden visitarnos en nuestro punto de venta en Sapallanga o coordinar envíos a domicilio.",
-            
+            "Ubicación: Jr. San Bernardo, Sapallanga, Huancayo",
+            "¿Donde estan ubicados? En Sapallanga, Huancayo, a 2 cuadras del cementerio",
+            "¿Donde esta ubicada la tienda? En Sapallanga, Huancayo, a 2 cuadras del cementerio",
+
             // Horarios
-            "Horario de atención: Lunes a Viernes de 9:00 AM a 6:00 PM.",
-            "Sábados de 9:00 AM a 12:00 PM. Domingos no hay atención al público.",
+            "Horario de atención: Lunes a Viernes de 9:00 AM a 6:00 PM",
+            "Horario de atención los Sábados: 9:00 AM a 12:00 PM",
+            "Domingos no hay atención en la tienda",
             
             // Productos
-            "Somos una empresa agrícola que vende insumos agrícolas en general.",
-            "Producimos plántulas in vitro de papa y olluco, bajo pedido.",
-            "Trabajamos con una gran variedad de papa nativa y mejorada.",
-            "Ofrecemos semillas, fertilizantes, abonos y herramientas para el campo.",
-            "Especialistas en cultivos andinos y productos para la agricultura.",
+            "Venta de insumos agrícolas en general",
+            "Plántulas in vitro de papa y olluco bajo pedido",
+            "Semillas de papa nativa y variedades mejoradas",
+            "Fertilizantes y abonos para cultivos",
+            "Herramientas y equipos para agricultura",
+            "¿Que variedades de plantulas invitro ofrecen? Todas las variedades en nativas y mejoradas",
+            "¿Que variedades de semillas ofrecen? Todas las variedades en nativas y mejoradas",
             
             // Plántulas
-            "Las plántulas/plantines/plantas in vitro se entregan en tapers especiales con gel nutritivo.",
-            "Cada taper contiene 40 unidades de brotes/plántulas de alta calidad.",
-            "Precio por plántula in vitro: S/ 0.80. Precios especiales por volumen.",
+            "Plántulas in vitro en tapers con gel nutritivo",
+            "Venta por taper con 40 unidades de plántulas",
+            "Precio de plántula in vitro: S/ 0.80 c/u",
             
-            // Pedidos y pagos
-            "Para iniciar tu pedido se requiere un adelanto del 50%.",
-            "Tiempo de producción varía según la cantidad solicitada.",
-            "Aceptamos pagos con tarjeta. También Yape.",
+            // Pagos
+            "Adelanto del 50% para confirmar pedidos de plántulas",
+            "Metodos de pago: tarjeta de crédito/débito y Yape",
             
-            // Envíos y delivery
-            "¿Hacen delivery? No ofrecemos delivery directo, pero puedes recoger en tienda.",
-            "Recojo en nuestro almacén/tienda/local en Sapallanga, Huancayo.",
-            "¿Hacen envíos? Sí, enviamos a provincias a través de Shalom.",
-            "Los envíos son contra entrega, el cliente paga al recibir el pedido.",
-            "El traslado desde nuestro almacén a la agencia de transporte no tiene costo adicional.",
-            
-            // Garantías y condiciones
-            "Tomamos fotos como evidencia del estado de los productos antes del envío.",
-            "No nos hacemos responsables por daños ocurridos durante el transporte.",
-            "Los clientes pueden revisar su pedido antes de retirarlo de nuestro local.",
+            // Envíos
+            "Recojo de pedidos en tienda en Sapallanga",
+            "Envíos a provincias mediante agencia Shalom",
+            "Método de pago: contra entrega",
             
             // Contacto
-            "WhatsApp: 990 849 360 | Correo: inversionesaraujojl@gmail.com",
-            "Contáctanos para consultas sobre disponibilidad y precios especiales.",
-            
-            // Preguntas frecuentes
-            "¿Dónde están ubicados? En Jr. San Bernardo, Sapallanga, Huancayo.",
-            "¿Qué métodos de pago aceptan? Tarjeta de crédito/débito.",
-            "¿Hacen envíos a provincia? Sí, a través de Shalom.",
-            "¿Cuál es el horario de atención? L-V 9AM-6PM, Sáb 9AM-12PM.",
-            "¿Venden al por mayor? Sí, contáctanos para precios por volumen.",
-            "¿Qué productos ofrecen? Semillas, fertilizantes, herramientas y plántulas in vitro.",
-            "¿Las plántulas tienen garantía? Se entregan en óptimas condiciones, verificables al momento de la entrega.",
-            "¿Tienen ofertas? Sí, consulta por nuestras promociones estacionales.",
-            "¿Qué variedades de papa manejan? Trabajamos con variedades nativas y mejoradas, consulta disponibilidad."
+            "Contacto por WhatsApp: 990 849 369",
+            "Correo electrónico: inversionesaraujojl@gmail.com",
+            "Número de contacto: 990 949 369",
+            "Teléfono de contacto: 990 949 369"
         );
 
         for (String text : texts) {
