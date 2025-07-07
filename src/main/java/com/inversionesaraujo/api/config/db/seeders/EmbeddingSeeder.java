@@ -1,20 +1,19 @@
-package com.inversionesaraujo.api.config.db;
+package com.inversionesaraujo.api.config.db.seeders;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.inversionesaraujo.api.business.service.IEmbedding;
 
 @Component
-public class EmbeddingSeder implements CommandLineRunner {
+public class EmbeddingSeeder {
     @Autowired
     private IEmbedding embeddingService;
     
-    @Override
-    public void run(String... args) throws Exception {
+    public void seed() throws JsonProcessingException {
         if(embeddingService.count() > 0) {
             System.out.println("Embeddings ya cargados");
             return;
@@ -27,38 +26,38 @@ public class EmbeddingSeder implements CommandLineRunner {
             "¿Donde esta ubicada la tienda? En Sapallanga, Huancayo, a 2 cuadras del cementerio",
 
             // Horarios
-            "Horario de atención: Lunes a Viernes de 9:00 AM a 6:00 PM",
-            "Horario de atención los Sábados: 9:00 AM a 12:00 PM",
-            "Domingos no hay atención en la tienda",
+            "Horario de atencion: Lunes a Viernes de 9AM a 6PM",
+            "Horario de atencion los Sábados: 9AM a 12PM",
+            "Domingos no hay atencion en la tienda",
             
             // Productos
-            "Venta de insumos agrícolas en general",
-            "Plántulas in vitro de papa y olluco bajo pedido",
+            "Venta de insumos agricolas en general",
+            "Plantulas in vitro de papa y olluco bajo pedido",
             "Semillas de papa nativa y variedades mejoradas",
             "Fertilizantes y abonos para cultivos",
             "Herramientas y equipos para agricultura",
-            "¿Que variedades de plantulas invitro ofrecen? Todas las variedades en nativas y mejoradas",
-            "¿Que variedades de semillas ofrecen? Todas las variedades en nativas y mejoradas",
+            "¿Que variedades de plantulas invitro ofrecen? Todas las variedades de papa en nativas y mejoradas",
+            "¿Que variedades de semillas ofrecen? Todas las variedades de papa en nativas y mejoradas",
             
-            // Plántulas
-            "Plántulas in vitro en tapers con gel nutritivo",
-            "Venta por taper con 40 unidades de plántulas",
-            "Precio de plántula in vitro: S/ 0.80 c/u",
+            // Plantulas
+            "Plantulas in vitro en tapers con gel nutritivo",
+            "Venta por taper con 40 unidades de plantulas",
+            "Precio de plantula in vitro: S/ 0.80 c/u",
             
             // Pagos
-            "Adelanto del 50% para confirmar pedidos de plántulas",
-            "Metodos de pago: tarjeta de crédito/débito y Yape",
+            "Adelanto del 50% para confirmar pedidos de plantulas",
+            "Metodos de pago: tarjeta de credito/debito y Yape",
             
-            // Envíos
+            // Envios
             "Recojo de pedidos en tienda en Sapallanga",
-            "Envíos a provincias mediante agencia Shalom",
+            "Envios a provincias mediante agencia Shalom",
             "Método de pago: contra entrega",
             
             // Contacto
-            "Contacto por WhatsApp: 990 849 369",
+            "Contacto por WhatsApp: 990849369",
             "Correo electrónico: inversionesaraujojl@gmail.com",
-            "Número de contacto: 990 949 369",
-            "Teléfono de contacto: 990 949 369"
+            "Número de contacto: 990949369",
+            "Teléfono de contacto: 990949369"
         );
 
         for (String text : texts) {

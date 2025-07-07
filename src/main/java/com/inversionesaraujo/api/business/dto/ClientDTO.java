@@ -4,8 +4,6 @@ import org.springframework.data.domain.Page;
 
 import com.inversionesaraujo.api.model.Client;
 import com.inversionesaraujo.api.model.DocumentType;
-import com.inversionesaraujo.api.model.InvoiceType;
-import com.inversionesaraujo.api.model.Role;
 import com.inversionesaraujo.api.model.User;
 
 import jakarta.persistence.EntityManager;
@@ -27,13 +25,13 @@ public class ClientDTO {
     private String phone;
     private String document;
     private DocumentType documentType;
-    private InvoiceType invoicePreference;
     private Double consumption;
     private String rsocial;
-    private Role createdBy;
+    private String createdBy;
     private String email;
     private Long userId;
     private String address;
+    private InvoiceClientDetailDTO invoiceDetail;
 
     public static ClientDTO toDTO(Client client) {
         if(client == null) return null;
@@ -50,7 +48,7 @@ public class ClientDTO {
             .rsocial(client.getRsocial())
             .createdBy(client.getCreatedBy())
             .email(client.getEmail())
-            .invoicePreference(client.getInvoicePreference())
+            .invoiceDetail(InvoiceClientDetailDTO.toDTO(client.getInvoiceDetail()))
             .userId(client.getUser() != null ? client.getUser().getId() : null)
             .address(client.getAddress())
             .build();
@@ -76,7 +74,7 @@ public class ClientDTO {
             .createdBy(client.getCreatedBy())
             .email(client.getEmail())
             .user(user)
-            .invoicePreference(client.getInvoicePreference())
+            .invoiceDetail(InvoiceClientDetailDTO.toEntity(client.getInvoiceDetail(), entityManager))
             .address(client.getAddress())
             .build(); 
     }

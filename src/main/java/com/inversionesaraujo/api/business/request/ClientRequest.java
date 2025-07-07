@@ -1,8 +1,6 @@
 package com.inversionesaraujo.api.business.request;
 
 import com.inversionesaraujo.api.model.DocumentType;
-import com.inversionesaraujo.api.model.InvoiceType;
-import com.inversionesaraujo.api.model.Role;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -34,14 +32,11 @@ public class ClientRequest {
     private String rsocial;
 
     @NotNull(message = "El origen de creación es requerido")
-    private Role createdBy;
+    private String createdBy;
 
     @NotEmpty(message = "El email es requerido")
     @Email(message = "El formato es incorrecto")
     private String email;
 
-    @NotNull(message = "El comprobante preferido es requerido")
-    private InvoiceType invoicePreference;
-
-    private Long userId;
+    private Long employeeId;
 }

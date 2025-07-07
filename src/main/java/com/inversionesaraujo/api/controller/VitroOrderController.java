@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,23 +18,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.ClientDTO;
-import com.inversionesaraujo.api.business.dto.EmployeeDTO;
-import com.inversionesaraujo.api.business.dto.ImageDTO;
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.InvoiceDTO;
 import com.inversionesaraujo.api.business.dto.VitroOrderDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
+import com.inversionesaraujo.api.business.request.InvitroDeliveredRequest;
 import com.inversionesaraujo.api.business.request.NotificationRequest;
 import com.inversionesaraujo.api.business.request.VitroOrderRequest;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.business.service.IEmployee;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.INotification;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
 import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.I_Invoice;
 import com.inversionesaraujo.api.model.NotificationType;
 import com.inversionesaraujo.api.model.OrderLocation;
+import com.inversionesaraujo.api.model.Permission;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -56,22 +59,25 @@ public class VitroOrderController {
     private IEmployee employeeService;
     @Autowired
     private INotification notiService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping
     public Page<VitroOrderDTO> getAll(
         @RequestParam(required = false) Long tuberId,
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "20") Integer size,
-        @RequestParam(defaultValue = "DESC") SortDirection sort,
+        @RequestParam(defaultValue = "DESC") SortDirection direction,
         @RequestParam(required = false) Month month,
         @RequestParam(required = false) Status status,
         @RequestParam(required = false) ShippingType shipType,
         @RequestParam(required = false) SortBy sortby,
         @RequestParam(defaultValue = "false") Boolean ordersReady,
         @RequestParam(required = false) Long employeeId,
-        @RequestParam(required = false) OrderLocation location
+        @RequestParam(required = false) OrderLocation location,
+        @RequestParam(required = false) Integer day
     ) {
-        return orderService.listAll(tuberId, page, size, sort, month, status, sortby, shipType, ordersReady, employeeId, location);
+        return orderService.listAll(tuberId, page, size, direction, month, status, sortby, shipType, ordersReady, employeeId, location, day);
     }
     
     @GetMapping("search")
@@ -113,7 +119,7 @@ public class VitroOrderController {
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody @Valid VitroOrderRequest request, @RequestParam(defaultValue = "true") Boolean alert) {
+    public ResponseEntity<MessageResponse> create(@RequestBody @Valid VitroOrderRequest request) {
         ClientDTO client = clientService.findById(request.getClientId());
         LocalDate initDate = request.getInitDate() != null ? request.getInitDate() : LocalDate.now();
 
@@ -131,15 +137,27 @@ public class VitroOrderController {
             .evidence(null)
             .build());
 
-        if (alert) {
+        if (request.getOperatorId() != null && request.getOperatorId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getOperatorId())
+                .operation("Creo un pedido invitro")
+                .redirectTo("/invitro/" + order.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+
             NotificationRequest notiRequest = NotificationRequest
                 .builder()
-                .userId(1L)
+                .userId(request.getOperatorId())
                 .type(NotificationType.NEW_VITRO_ORDER)
                 .redirectTo("/invitro/" + order.getId())
                 .build();
-    
-            notiService.create(notiRequest);
+
+            notiService.sendNotificationToUsersWithPermission(notiRequest, Permission.INVITRO_WATCH, request.getOperatorId());
         }
 
         return ResponseEntity.status(201).body(MessageResponse
@@ -149,12 +167,40 @@ public class VitroOrderController {
             .build());
     }
 
+    @PutMapping("{id}/delivered")
+    public ResponseEntity<MessageResponse> updateStatus(@PathVariable Long id, @RequestBody @Valid InvitroDeliveredRequest request) {
+        VitroOrderDTO order = orderService.findById(id);
+        order.setStatus(Status.ENTREGADO);
+        order.setEmployee(employeeService.findById(request.getEmployeeId()));
+        order.setEvidence(imageService.findById(request.getEvidenceId()));
+
+        orderService.save(order);
+
+        if(request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Entrego el pedido invitro")
+                .redirectTo("/invitro/" + order.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El estado del pedido se actualizo con exito")
+            .data(order)
+            .build());
+    }
+
     @PutMapping("{id}")
     public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid VitroOrderRequest request) {
         VitroOrderDTO order = orderService.findById(id);
         InvoiceDTO invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
-        ImageDTO evidence = request.getImageId() == null ? null : imageService.findById(request.getImageId());
-        EmployeeDTO employee = request.getEmployeeId() == null ? null : employeeService.findById(request.getEmployeeId());
         
         order.setDepartment(request.getDepartment());
         order.setCity(request.getCity());
@@ -166,10 +212,22 @@ public class VitroOrderController {
         order.setPending(order.getTotal() - order.getTotalAdvance());
         order.setLocation(request.getLocation());
         order.setIsReady(request.getIsReady());
-        order.setEvidence(evidence);
-        order.setEmployee(employee);
 
         VitroOrderDTO orderUpdated = orderService.save(order);
+
+        if (request.getOperatorId() != null && request.getOperatorId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getOperatorId())
+                .operation("Actualizo un pedido invitro")
+                .redirectTo("/invitro/" + order.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

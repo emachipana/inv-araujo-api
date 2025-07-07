@@ -39,4 +39,6 @@ public class ProductRequest {
     private Long categoryId;
 
     private Boolean isActive = true;
+
+    private Long employeeId;
 }

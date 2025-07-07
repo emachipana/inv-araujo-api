@@ -15,14 +15,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.InvoiceDTO;
 import com.inversionesaraujo.api.business.payload.ApiSunatResponse;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.InvoiceRequest;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.I_Invoice;
 import com.inversionesaraujo.api.business.service.I_InvoiceItem;
 import com.inversionesaraujo.api.model.InvoiceType;
 import com.inversionesaraujo.api.model.SortDirection;
+import com.inversionesaraujo.api.model.SortBy;
 
 import jakarta.validation.Valid;
 
@@ -33,15 +36,18 @@ public class InvoiceController {
     private I_Invoice invoiceService;
     @Autowired
     private I_InvoiceItem itemService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping
     public Page<InvoiceDTO> getAll(
         @RequestParam(required = false) InvoiceType type,
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "20") Integer size,
-        @RequestParam(defaultValue = "DESC") SortDirection sort
+        @RequestParam(defaultValue = "DESC") SortDirection direction,
+        @RequestParam(required = false) SortBy sortby
     ) {
-        return invoiceService.listAll(type, page, size, sort);
+        return invoiceService.listAll(type, page, size, direction, sortby);
     }
 
     @GetMapping("search")
@@ -61,7 +67,7 @@ public class InvoiceController {
     }
 
     @PostMapping("generatePDF/{id}")
-    public ResponseEntity<MessageResponse> generatePDF(@PathVariable Long id) {
+    public ResponseEntity<MessageResponse> generatePDF(@PathVariable Long id, @RequestBody Long employeeId) {
         InvoiceDTO invoice = invoiceService.findById(id);
         if(invoice.getPdfUrl() != null) {
             return ResponseEntity.status(406).body(MessageResponse
@@ -85,9 +91,23 @@ public class InvoiceController {
         invoice.setPdfUrl(sunatResponse.getEnlace_del_pdf());
         invoiceService.save(invoice);
 
+        if(employeeId != null && employeeId != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(employeeId)
+                .operation("Emitio el comprobante")
+                .redirectTo("/comprobantes/" + invoice.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
-            .message("El PDF se genero correctamente")
+            .message("El comprobante se emitio correctamente")
             .data(sunatResponse)
             .build());
     }
@@ -107,6 +127,20 @@ public class InvoiceController {
             .total(0.0)
             .build());
 
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Creo un comprobante")
+                .redirectTo("/comprobantes/" + newInvoice.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
             .message("El comprobante se creo con exito")
@@ -125,6 +159,20 @@ public class InvoiceController {
         invoice.setAddress(request.getAddress());
         InvoiceDTO updatedInvoice = invoiceService.save(invoice);
 
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Actualizo un comprobante")
+                .redirectTo("/comprobantes/" + updatedInvoice.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
         return ResponseEntity.ok().body(MessageResponse
             .builder()
             .message("El comprobante se actualizo con exito")
@@ -135,9 +183,6 @@ public class InvoiceController {
     @DeleteMapping("{id}")
     public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
         invoiceService.delete(id);
-        // String firebaseId = invoice.getPdfFirebaseId();
-        // invoiceService.delete(invoice.getId());
-        // if(firebaseId != null) imageService.deleteImage(firebaseId);
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

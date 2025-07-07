@@ -27,4 +27,6 @@ public class ExpenseRequest {
 
     @NotNull(message = "El tipo de gasto es requerido")
     private ExpenseType type;
+
+    private Long employeeId;
 }

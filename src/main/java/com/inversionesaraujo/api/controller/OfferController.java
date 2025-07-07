@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.OfferDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.OfferRequest;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.IOffer;
 
 import jakarta.validation.Valid;
@@ -24,6 +27,8 @@ import jakarta.validation.Valid;
 public class OfferController {
     @Autowired
     private IOffer offerService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping
     public List<OfferDTO> getAll() {
@@ -41,7 +46,7 @@ public class OfferController {
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()
-            .message("La oferta se encontro con exito")
+            .message("El banner se encontro con exito")
             .data(offer)
             .build());
     }
@@ -55,9 +60,23 @@ public class OfferController {
             .markedWord(request.getMarkedWord())
             .build());
 
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Creo un banner")
+                .redirectTo("/banners/" + newOffer.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
-            .message("La oferta se creo con exito")
+            .message("El banner se creo con exito")
             .data(newOffer)
             .build());
     }
@@ -71,9 +90,23 @@ public class OfferController {
         offerToUpdate.setMarkedWord(request.getMarkedWord());
         OfferDTO offerUpdated = offerService.save(offerToUpdate);
 
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Actualizo un banner")
+                .redirectTo("/banners/" + offerUpdated.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
         return ResponseEntity.ok().body(MessageResponse
             .builder()
-            .message("La oferta se actualizo con exito")
+            .message("El banner se actualizo con exito")
             .data(offerUpdated)
             .build());
     }
@@ -84,7 +117,7 @@ public class OfferController {
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()
-            .message("La oferta se elimino con exito")
+            .message("El banner se elimino con exito")
             .build());
     }
 }

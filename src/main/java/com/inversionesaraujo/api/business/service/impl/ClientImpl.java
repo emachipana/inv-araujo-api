@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.inversionesaraujo.api.business.dto.ClientDTO;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.model.Client;
+import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.repository.ClientRepository;
 
@@ -27,10 +28,10 @@ public class ClientImpl implements IClient {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<ClientDTO> filterClients(Integer page, Integer size, SortDirection direction) {
+    public Page<ClientDTO> filterClients(Integer page, Integer size, SortDirection direction, SortBy sortby) {
         Pageable pageable;
-        if(direction != null) {
-            Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "consumption");
+        if(sortby != null) {
+            Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), sortby.toString());
             pageable = PageRequest.of(page, size, sort);
         }else {
             pageable = PageRequest.of(page, size);

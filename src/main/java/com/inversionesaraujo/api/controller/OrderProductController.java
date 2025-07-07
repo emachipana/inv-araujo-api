@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.OrderDTO;
 import com.inversionesaraujo.api.business.dto.OrderProductDTO;
 import com.inversionesaraujo.api.business.dto.ProductDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.OrderProductRequest;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.IOrder;
 import com.inversionesaraujo.api.business.service.IOrderProduct;
 import com.inversionesaraujo.api.business.service.IProduct;
@@ -33,6 +36,8 @@ public class OrderProductController {
     private IOrder orderService;
     @Autowired
     private IProduct productService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
@@ -81,6 +86,20 @@ public class OrderProductController {
         product.setStock(product.getStock() - request.getQuantity());
         productService.save(product);
 
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Agrego un producto a el pedido")
+                .redirectTo("/pedidos/" + order.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
             .message("El item del pedido se creo con exito")
@@ -119,6 +138,20 @@ public class OrderProductController {
         product.setStock(firstStock - request.getQuantity());
         productService.save(product);
 
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Actualizo un producto del pedido")
+                .redirectTo("/pedidos/" + order.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
         return ResponseEntity.ok().body(MessageResponse
             .builder()
             .message("El item del pedido se actualizo correctamente")
@@ -127,7 +160,7 @@ public class OrderProductController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id, @RequestBody Long employeeId) {
         OrderProductDTO item = itemService.findById(id);
         Double subTotal = item.getSubTotal();
         OrderDTO order = orderService.findById(item.getOrderId());
@@ -140,6 +173,20 @@ public class OrderProductController {
 
         product.setStock(firstStock);
         productService.save(product);
+
+        if(employeeId != null && employeeId != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(employeeId)
+                .operation("Elimino un producto del pedido")
+                .redirectTo("/pedidos/" + order.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

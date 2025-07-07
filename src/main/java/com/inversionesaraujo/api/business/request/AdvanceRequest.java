@@ -18,4 +18,6 @@ public class AdvanceRequest {
     private Double amount;
 
     private LocalDate date;
+
+    private Long employeeId;
 }

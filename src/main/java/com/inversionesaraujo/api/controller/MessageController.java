@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.MessageDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.MessageRequest;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.IMessage;
 import com.inversionesaraujo.api.model.SortDirection;
 
@@ -25,6 +29,8 @@ import jakarta.validation.Valid;
 public class MessageController {
     @Autowired
     private IMessage messageService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping
     public Page<MessageDTO> getAll(
@@ -71,8 +77,22 @@ public class MessageController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id, @RequestBody Long employeeId) {
         messageService.delete(id);
+
+        if(employeeId != null && employeeId != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(employeeId)
+                .operation("Elimino un mensaje de contacto")
+                .redirectTo("/mensajes")
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

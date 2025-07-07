@@ -18,7 +18,7 @@ public interface IVitroOrder {
         Long tuberId, Integer page, Integer size,
         SortDirection direction, Month month, Status status,
         SortBy sortby, ShippingType shipType, Boolean ordersReady,
-        Long employeeId, OrderLocation location
+        Long employeeId, OrderLocation location, Integer day
     );
 
     OrderDataResponse getData();

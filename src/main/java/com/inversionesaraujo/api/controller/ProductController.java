@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.CategoryDTO;
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.ProductDTO;
 import com.inversionesaraujo.api.business.dto.WarehouseDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.ProductRequest;
 import com.inversionesaraujo.api.business.service.ICategory;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.IProduct;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -34,6 +37,8 @@ public class ProductController {
     private IProduct productService;
     @Autowired
     private ICategory categoryService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping
     public Page<ProductDTO> getAll(
@@ -99,6 +104,20 @@ public class ProductController {
             .isActive(request.getIsActive())
             .build());
 
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Creo un producto")
+                .redirectTo("/productos/" + productToSave.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
             .message("El producto se creo con exito")
@@ -118,6 +137,20 @@ public class ProductController {
         product.setUnit(request.getUnit());
 
         ProductDTO productUpdated = productService.save(product);
+
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Actualizo un producto")
+                .redirectTo("/productos/" + productUpdated.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

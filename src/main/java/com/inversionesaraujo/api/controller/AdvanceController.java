@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
@@ -17,12 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.AdvanceDTO;
 import com.inversionesaraujo.api.business.dto.ClientDTO;
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.ProfitDTO;
 import com.inversionesaraujo.api.business.dto.VitroOrderDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.AdvanceRequest;
 import com.inversionesaraujo.api.business.service.IAdvance;
 import com.inversionesaraujo.api.business.service.IClient;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.IProfit;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
 import jakarta.validation.Valid;
@@ -38,6 +41,8 @@ public class AdvanceController {
     private IProfit profitService;
     @Autowired
     private IClient clientService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
@@ -94,6 +99,20 @@ public class AdvanceController {
             profitService.save(profit);
         }
 
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Creo un adelanto de un pedido invitro")
+                .redirectTo("/invitro/" + order.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
             .message("El adelanto se creo con exito")
@@ -126,6 +145,20 @@ public class AdvanceController {
         profit.setIncome(income);
         profit.setProfit(income - profit.getTotalExpenses());
         profitService.save(profit);
+
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Actualizo un adelanto de un pedido invitro")
+                .redirectTo("/invitro/" + order.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

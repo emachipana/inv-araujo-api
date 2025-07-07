@@ -43,5 +43,15 @@ public class OrderSpecifications {
                     Integer.class, 
                     root.get("maxShipDate")), month.getValue())
             : null;
-    }   
+    }
+    
+    public static Specification<Order> findByDay(Integer day) {
+        return (root, query, criteriaBuilder) -> day != null
+            ? criteriaBuilder.equal(
+                criteriaBuilder.function(
+                    "DAY", 
+                    Integer.class, 
+                    root.get("maxShipDate")), day)
+            : null;
+    }
 }

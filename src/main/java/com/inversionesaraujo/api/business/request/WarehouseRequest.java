@@ -37,4 +37,6 @@ public class WarehouseRequest {
 
     @NotNull(message = "La longitud es requerida")
     private Double longitude;
+
+    private Long employeeId;
 }

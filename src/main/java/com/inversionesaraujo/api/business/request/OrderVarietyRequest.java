@@ -21,4 +21,6 @@ public class OrderVarietyRequest {
     @NotNull(message = "La cantidad es requerida")
     @Positive(message = "Deber ser mayor a 0")
     private Integer quantity;
+
+    private Long employeeId;
 }

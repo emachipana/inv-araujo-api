@@ -31,4 +31,6 @@ public class InvoiceRequest {
     private String address;
 
     private LocalDateTime issueDate;
+
+    private Long employeeId;
 }

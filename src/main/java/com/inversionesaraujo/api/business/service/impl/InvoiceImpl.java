@@ -35,6 +35,7 @@ import com.inversionesaraujo.api.model.Invoice;
 import com.inversionesaraujo.api.model.InvoiceItem;
 import com.inversionesaraujo.api.model.InvoiceType;
 import com.inversionesaraujo.api.model.SortDirection;
+import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.repository.InvoiceItemRepository;
 import com.inversionesaraujo.api.repository.InvoiceRepository;
 
@@ -47,10 +48,15 @@ public class InvoiceImpl implements I_Invoice {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<InvoiceDTO> listAll(InvoiceType type, Integer page, Integer size, SortDirection direction) {
+    public Page<InvoiceDTO> listAll(InvoiceType type, Integer page, Integer size, SortDirection direction, SortBy sortby) {
         Specification<Invoice> spec = Specification.where(InvoiceSpecifications.findByInvoiceType(type));
-        Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "issueDate");
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable;
+        if(sortby != null) {
+            Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), sortby.toString());
+            pageable = PageRequest.of(page, size, sort);
+        }else {
+            pageable = PageRequest.of(page, size);
+        }
 
         Page<Invoice> invoices = invoiceRepo.findAll(spec, pageable);
 

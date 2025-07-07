@@ -42,7 +42,7 @@ public class VitroOrderImpl implements IVitroOrder {
         Long tuberId, Integer page, Integer size, 
         SortDirection direction, Month month, Status status,
         SortBy sortby, ShippingType shipType, Boolean ordersReady,
-        Long employeeId, OrderLocation location
+        Long employeeId, OrderLocation location, Integer day
     ) {
         Specification<VitroOrder> spec = Specification.where(
             VitroOrderSpecifications.findByTuberId(tuberId)
@@ -52,6 +52,7 @@ public class VitroOrderImpl implements IVitroOrder {
             .and(VitroOrderSpecifications.ordersReady(ordersReady))
             .and(VitroOrderSpecifications.findByEmployee(employeeId))
             .and(VitroOrderSpecifications.findByLocation(location))
+            .and(VitroOrderSpecifications.findByDay(day))
         );
         Pageable pageable;
         if(sortby != null) {

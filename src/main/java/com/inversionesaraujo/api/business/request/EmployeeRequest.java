@@ -2,6 +2,7 @@ package com.inversionesaraujo.api.business.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +21,9 @@ public class EmployeeRequest {
     
     @NotEmpty(message = "El teléfono es requerido")
     private String phone;
+
+    @NotNull(message = "El id del rol es requerido")
+    private Long roleId;
 
     private Long userId;
 }

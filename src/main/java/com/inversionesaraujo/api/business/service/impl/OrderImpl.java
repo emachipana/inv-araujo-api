@@ -73,7 +73,7 @@ public class OrderImpl implements IOrder {
         Status status, Integer page, Integer size,
         SortDirection direction, Month month, SortBy sort,
         ShippingType shipType, Long warehouseId, Long employeeId,
-        OrderLocation location
+        OrderLocation location, Integer day
     ) {
         Specification<Order> spec = Specification.where(
             OrderSpecifications.findByStatus(status)
@@ -82,6 +82,7 @@ public class OrderImpl implements IOrder {
             .and(OrderSpecifications.findByWarehouse(warehouseId))
             .and(OrderSpecifications.findByEmployee(employeeId))
             .and(OrderSpecifications.findByLocation(location))
+            .and(OrderSpecifications.findByDay(day))
         );
         Pageable pageable;
         if(sort != null) {
@@ -169,16 +170,16 @@ public class OrderImpl implements IOrder {
 
     private InvoiceDTO createInvoice(OrderDTO order) {
         LocalDateTime issueDate = LocalDateTime.now();
-        InvoiceType invoiceType = order.getClient().getInvoicePreference();
+        InvoiceType invoiceType = order.getClient().getInvoiceDetail().getInvoicePreference();
 
         InvoiceDTO invoice = InvoiceDTO
             .builder()
-            .invoiceType(order.getClient().getInvoicePreference())
-            .document(order.getClient().getDocument())
-            .documentType(order.getClient().getDocumentType())
-            .rsocial(order.getClient().getRsocial())
+            .invoiceType(invoiceType)
+            .document(order.getClient().getInvoiceDetail().getDocument())
+            .documentType(order.getClient().getInvoiceDetail().getDocumentType())
+            .rsocial(order.getClient().getInvoiceDetail().getRsocial())
             .issueDate(issueDate)
-            .address(order.getClient().getAddress() != null ? order.getClient().getAddress() : order.getClient().getCity() + ", " + order.getClient().getDepartment())
+            .address(order.getClient().getInvoiceDetail().getAddress())
             .serie(invoiceType == InvoiceType.FACTURA ? "F001" : "B001")
             .total(0.0)
             .isSended(false)

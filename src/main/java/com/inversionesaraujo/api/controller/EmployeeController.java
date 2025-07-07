@@ -16,13 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.EmployeeDTO;
+import com.inversionesaraujo.api.business.dto.RoleDTO;
 import com.inversionesaraujo.api.business.dto.UserDTO;
 import com.inversionesaraujo.api.business.payload.EmployeeResponse;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.EmployeeRequest;
 import com.inversionesaraujo.api.business.service.IEmployee;
+import com.inversionesaraujo.api.business.service.IRole;
 import com.inversionesaraujo.api.business.service.IUser;
-import com.inversionesaraujo.api.model.Role;
 
 import jakarta.validation.Valid;
 
@@ -33,6 +34,8 @@ public class EmployeeController {
     private IEmployee employeeService;
     @Autowired
     private IUser userService;
+    @Autowired
+    private IRole roleService;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -67,10 +70,12 @@ public class EmployeeController {
             .phone(request.getPhone())
             .build());
 
+        RoleDTO role = roleService.findById(request.getRoleId());
+
         String defaultPassword = "12345678";
         UserDTO newUser = userService.save(UserDTO
 			.builder()
-			.role(Role.ALMACENERO)
+			.role(role)
 			.employeeId(newEmployee.getId())
 			.username(newEmployee.getEmail())
             .password(passwordEncoder.encode(defaultPassword))

@@ -7,5 +7,9 @@ public enum SortBy {
     maxShipDate,
     date,
     finishDate,
-    initDate
+    initDate,
+    total,
+    stock,
+    issueDate,
+    consumption
 }

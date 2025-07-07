@@ -6,11 +6,12 @@ import com.inversionesaraujo.api.business.dto.InvoiceDTO;
 import com.inversionesaraujo.api.business.payload.ApiSunatResponse;
 import com.inversionesaraujo.api.model.InvoiceType;
 import com.inversionesaraujo.api.model.SortDirection;
+import com.inversionesaraujo.api.model.SortBy;
 
 public interface I_Invoice {
     Page<InvoiceDTO> listAll(
         InvoiceType type, Integer pag, Integer size, 
-        SortDirection direction
+        SortDirection direction, SortBy sortby
     );
 
     InvoiceDTO save(InvoiceDTO invoice);

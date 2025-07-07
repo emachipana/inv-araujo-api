@@ -68,17 +68,18 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private ShippingType shippingType;
 
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;
+
     @ManyToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "warehouse_id")
-    @Builder.Default
-    private Warehouse warehouse = null;
+    private Warehouse warehouse;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
-    @Builder.Default
-    private Image image = null;
+    private Image image;
 }

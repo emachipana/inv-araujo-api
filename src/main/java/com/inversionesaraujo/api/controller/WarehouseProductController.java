@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.ProductDTO;
 import com.inversionesaraujo.api.business.dto.WarehouseProductDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.WarehouseProductRequest;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.IProduct;
 import com.inversionesaraujo.api.business.service.IWarehouseProduct;
 
@@ -27,6 +31,8 @@ public class WarehouseProductController {
     private IWarehouseProduct itemService;
     @Autowired
     private IProduct productService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
@@ -59,6 +65,20 @@ public class WarehouseProductController {
 
         product.setStock(product.getStock() + request.getQuantity());
         productService.save(product);
+
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Registro un nuevo lote")
+                .redirectTo("/productos")
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.status(201).body(MessageResponse
             .builder()

@@ -4,9 +4,10 @@ import org.springframework.data.domain.Page;
 
 import com.inversionesaraujo.api.business.dto.ClientDTO;
 import com.inversionesaraujo.api.model.SortDirection;
+import com.inversionesaraujo.api.model.SortBy;
 
 public interface IClient {
-    Page<ClientDTO> filterClients(Integer page, Integer size, SortDirection direction);
+    Page<ClientDTO> filterClients(Integer page, Integer size, SortDirection direction, SortBy sortby);
 
     Page<ClientDTO> search(String document, String rsocial, String city, String department, Integer page);
 

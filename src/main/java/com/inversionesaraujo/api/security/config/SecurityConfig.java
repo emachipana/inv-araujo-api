@@ -33,100 +33,111 @@ public class SecurityConfig {
             .authorizeHttpRequests(authRequest ->
                 authRequest
                     // messages
-                    .requestMatchers(HttpMethod.GET, "/api/v1/messages/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/messages/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/messages/**").hasAnyAuthority("MESSAGES_WATCH")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/messages/**").hasAnyAuthority("MESSAGES_DELETE")
                     .requestMatchers(HttpMethod.POST, "/api/v1/messages/**").permitAll()
                     // chatbot
                     .requestMatchers(HttpMethod.POST, "/api/v1/chatbot/question").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/v1/chatbot/add-data").hasAnyAuthority("ADMINISTRADOR")
                     // notifications
                     .requestMatchers(HttpMethod.POST, "/api/v1/notifications/**").permitAll()
                     .requestMatchers("/api/v1/ws/**").permitAll()
                     // payments
                     .requestMatchers(HttpMethod.POST, "/api/v1/payments/**").permitAll()
                     // tubers
-                    .requestMatchers(HttpMethod.GET, "/api/v1/tubers/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/tubers/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/tubers/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/tubers/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/tubers/**").hasAnyAuthority("TUBERS_WATCH")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/tubers/**").hasAnyAuthority("TUBERS_CREATE")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/tubers/**").hasAnyAuthority("TUBERS_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/tubers/**").hasAnyAuthority("TUBERS_DELETE")
                     // varieties
-                    .requestMatchers(HttpMethod.GET, "/api/v1/varieties/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/varieties/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/varieties/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/varieties/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/varieties/**").hasAnyAuthority("VARIETIES_WATCH")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/varieties/**").hasAnyAuthority("VARIETIES_CREATE")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/varieties/**").hasAnyAuthority("VARIETIES_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/varieties/**").hasAnyAuthority("VARIETIES_DELETE")
                     // vitroOrders
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/vitroOrders/**").hasAnyAuthority("ADMINISTRADOR", "ALMACENERO")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/vitroOrders/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/vitroOrders/**").permitAll()
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/vitroOrders/**").hasAnyAuthority("INVITRO_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/vitroOrders/**").hasAnyAuthority("INVITRO_DELETE")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/vitroOrders/**").hasAnyAuthority("INVITRO_CREATE")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/vitroOrders/**").hasAnyAuthority("INVITRO_WATCH")
                     // orderVarieties
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/orderVarieties/**").hasAnyAuthority("ADMINISTRADOR", "ALMACENERO")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/orderVarieties/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/orderVarieties/**").permitAll()
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/orderVarieties/**").hasAnyAuthority("INVITRO_ITEM_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/orderVarieties/**").hasAnyAuthority("INVITRO_ITEM_DELETE")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/orderVarieties/**").hasAnyAuthority("INVITRO_ITEM_CREATE")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/orderVarieties/**").hasAnyAuthority("INVITRO_WATCH")
                     // advances
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/advances/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/advances/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/advances/**").hasAnyAuthority("INVITRO_ADVANCE_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/advances/**").hasAnyAuthority("INVITRO_ADVANCE_DELETE")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/advances/**").hasAnyAuthority("INVITRO_ADVANCE_CREATE")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/advances/**").hasAnyAuthority("INVITRO_ADVANCE_WATCH")
                     // invoices
-                    .requestMatchers(HttpMethod.GET, "/api/v1/invoices/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/invoices/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/invoices/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/invoices/**").hasAnyAuthority("INVOICES_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/invoices/**").hasAnyAuthority("INVOICES_DELETE")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/invoices/**").hasAnyAuthority("INVOICES_CREATE")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/invoices/**").hasAnyAuthority("INVOICES_WATCH")
                     // invoiceItems
-                    .requestMatchers(HttpMethod.GET, "/api/v1/invoiceItems/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/invoiceItems/**").hasAnyAuthority("ADMINISTRADOR")
-                    // profits
-                    .requestMatchers(HttpMethod.GET, "/api/v1/profits/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/profits/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/profits/**").hasAnyAuthority("ADMINISTRADOR")
-                    // expenses
-                    .requestMatchers(HttpMethod.GET, "/api/v1/expenses").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/expenses/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/expenses/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/expenses/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/invoiceItems/**").hasAnyAuthority("INVOICES_ITEM_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/invoiceItems/**").hasAnyAuthority("INVOICES_ITEM_DELETE")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/invoiceItems/**").hasAnyAuthority("INVOICES_ITEM_CREATE")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/invoiceItems/**").hasAnyAuthority("INVOICES_WATCH")
+                    // // profits
+                    .requestMatchers(HttpMethod.GET, "/api/v1/profits/**").hasAnyAuthority("PROFITS_WATCH")
+                    // // expenses
+                    .requestMatchers(HttpMethod.GET, "/api/v1/expenses").hasAnyAuthority("EXPENSES_WATCH")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/expenses/**").hasAnyAuthority("EXPENSES_CREATE")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/expenses/**").hasAnyAuthority("EXPENSES_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/expenses/**").hasAnyAuthority("EXPENSES_DELETE")
                     // categories
                     .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/v1/categories/**").hasAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/categories/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/categories/**").hasAnyAuthority("PRODUCTS_CATEGORY_CREATE")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/categories/**").hasAnyAuthority("PRODUCTS_CATEGORY_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**").hasAnyAuthority("PRODUCTS_CATEGORY_DELETE")
                     // warehouses
                     .requestMatchers(HttpMethod.GET, "/api/v1/warehouses/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/v1/warehouses/**").hasAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/warehouses/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/warehouses/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/warehouses/**").hasAnyAuthority("WAREHOUSES_CREATE")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/warehouses/**").hasAnyAuthority("WAREHOUSES_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/warehouses/**").hasAnyAuthority("WAREHOUSES_DELETE")
                     // products
                     .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/products/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/products/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasAnyAuthority("PRODUCT_CREATE")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/products/**").hasAnyAuthority("PRODUCT_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/products/**").hasAnyAuthority("PRODUCT_DELETE")
                     // offers
                     .requestMatchers(HttpMethod.GET, "/api/v1/offers/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/v1/offers/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/offers/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/offers/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/offers/**").hasAnyAuthority("BANNERS_CREATE")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/offers/**").hasAnyAuthority("BANNERS_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/offers/**").hasAnyAuthority("BANNERS_DELETE")
                     // offerProducts
                     .requestMatchers(HttpMethod.GET, "/api/v1/offerProducts/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/v1/offerProducts/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/offerProducts/**").hasAnyAuthority("ADMINISTRADOR")
-                    // orders
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/orders/**").hasAnyAuthority("ADMINISTRADOR", "ALMACENERO")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/orders/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/orders/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/offerProducts/**").hasAnyAuthority("BANNERS_ITEM_CREATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/offerProducts/**").hasAnyAuthority("BANNERS_ITEM_DELETE")
+                    // // orders
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/orders/**").hasAnyAuthority("ORDERS_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/orders/**").hasAnyAuthority("ORDERS_DELETE")
                     // orderProducts
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/orderProducts/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/orderProducts/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/orderProducts/**").permitAll()
-                    // productImages
-                    .requestMatchers(HttpMethod.GET, "/api/v1/productImages/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/productImages/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/productImages/**").hasAnyAuthority("ADMINISTRADOR")
-                    // discounts
-                    .requestMatchers(HttpMethod.GET, "/api/v1/discounts/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/discounts/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/discounts/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/discounts/**").hasAnyAuthority("ADMINISTRADOR")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/orderProducts/**").hasAnyAuthority("ORDERS_PRODUCTS_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/orderProducts/**").hasAnyAuthority("ORDERS_PRODUCTS_DELETE")
+                    // // productImages
+                    .requestMatchers(HttpMethod.GET, "/api/v1/productImages/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/productImages/**").hasAnyAuthority("PRODUCTS_IMAGE_CREATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/productImages/**").hasAnyAuthority("PRODUCTS_IMAGE_DELETE")
+                    // // discounts
+                    .requestMatchers(HttpMethod.GET, "/api/v1/discounts/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/discounts/**").hasAnyAuthority("PRODUCTS_DISCOUNT_CREATE")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/discounts/**").hasAnyAuthority("PRODUCTS_DISCOUNT_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/discounts/**").hasAnyAuthority("PRODUCTS_DISCOUNT_DELETE")
                     // clients
                     .requestMatchers(HttpMethod.POST, "/api/v1/clients").permitAll()
-                    // admins
-                    .requestMatchers(HttpMethod.GET, "/api/v1/admins/**").hasAnyAuthority("ADMINISTRADOR")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/admins/**").hasAnyAuthority("ADMINISTRADOR")
+                    // roles
+                    .requestMatchers(HttpMethod.GET, "/api/v1/roles/**").hasAnyAuthority("ROLES_WATCH")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/roles/**").hasAnyAuthority("ROLES_CREATE")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/roles/**").hasAnyAuthority("ROLES_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/roles/**").hasAnyAuthority("ROLES_DELETE")
+                    // permissions
+                    .requestMatchers(HttpMethod.GET, "/api/v1/roles/permissions").hasAnyAuthority("PERMISSIONS_WATCH")
+                    // employees
+                    .requestMatchers(HttpMethod.GET, "/api/v1/employees/**").hasAnyAuthority("EMPLOYEES_WATCH")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/employees/**").hasAnyAuthority("EMPLOYEES_CREATE")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/employees/**").hasAnyAuthority("EMPLOYEES_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/employees/**").hasAnyAuthority("EMPLOYEES_DELETE")
                     // auth
                     .requestMatchers("/api/v1/auth/**").permitAll()
                     .anyRequest().authenticated())
@@ -135,7 +146,9 @@ public class SecurityConfig {
             .authenticationProvider(authProvider)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(exception ->
-                exception.authenticationEntryPoint(new AuthEntryPoint()))
+                exception
+                    .authenticationEntryPoint(new AuthEntryPoint())
+                    .accessDeniedHandler(new AccessDeniedCustom()))
             .build();
     }
 

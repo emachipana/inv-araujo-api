@@ -50,6 +50,16 @@ public class VitroOrderSpecifications {
             : null;
     }
 
+    public static Specification<VitroOrder> findByDay(Integer day) {
+        return (root, query, criteriaBuilder) -> day != null
+            ? criteriaBuilder.equal(
+                criteriaBuilder.function(
+                    "DAY", 
+                    Integer.class, 
+                    root.get("finishDate")), day)
+            : null;
+    }
+
     public static Specification<VitroOrder> findByShipType(ShippingType shipType) {
         return (root, query, criteriaBuilder) ->
             shipType != null ? criteriaBuilder.equal(root.get("shippingType"), shipType) : null;

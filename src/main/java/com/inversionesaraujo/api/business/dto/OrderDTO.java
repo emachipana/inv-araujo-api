@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 
 import com.inversionesaraujo.api.model.Order;
 import com.inversionesaraujo.api.model.OrderLocation;
+import com.inversionesaraujo.api.model.PaymentType;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.Status;
 
@@ -38,6 +39,7 @@ public class OrderDTO {
     private EmployeeDTO employee;
     private WarehouseDTO warehouse;
     private ImageDTO evidence;
+    private PaymentType paymentType;
 
     public static OrderDTO toDTO(Order order) {
         return OrderDTO
@@ -56,6 +58,7 @@ public class OrderDTO {
             .employee(EmployeeDTO.toDTO(order.getEmployee()))
             .warehouse(WarehouseDTO.toDTO(order.getWarehouse(), 0))
             .evidence(ImageDTO.toDTO(order.getImage()))
+            .paymentType(order.getPaymentType())
             .build();
     }
 
@@ -75,8 +78,8 @@ public class OrderDTO {
             .warehouse(WarehouseDTO.toEntity(order.getWarehouse()))
             .shippingType(order.getShippingType())
             .employee(EmployeeDTO.toEntity(order.getEmployee(), entityManager))
-            .warehouse(WarehouseDTO.toEntity(order.getWarehouse()))
             .image(ImageDTO.toEntity(order.getEvidence()))
+            .paymentType(order.getPaymentType())
             .build();
     }
 

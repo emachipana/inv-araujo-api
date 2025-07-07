@@ -1,5 +1,6 @@
 package com.inversionesaraujo.api.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.WarehouseDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.WarehouseRequest;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.IWarehouse;
 import jakarta.validation.Valid;
 
@@ -24,6 +27,8 @@ import jakarta.validation.Valid;
 public class WarehouseController {
     @Autowired
     private IWarehouse warehouseService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping
     public List<WarehouseDTO> getAll() {
@@ -55,6 +60,20 @@ public class WarehouseController {
             .longitude(request.getLongitude())
             .build());
 
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Creo un almacen")
+                .redirectTo("/almacenes/" + savedWarehouse.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
             .message("El almacén se creó con éxito")
@@ -74,6 +93,20 @@ public class WarehouseController {
         warehouse.setRef(request.getRef());
 
         WarehouseDTO warehouseUpdated = warehouseService.save(warehouse);
+
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Actualizo un almacen")
+                .redirectTo("/almacenes/" + warehouseUpdated.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

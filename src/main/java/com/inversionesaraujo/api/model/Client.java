@@ -33,16 +33,12 @@ public class Client {
 
     private String phone;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String document;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private DocumentType documentType;
-    
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private InvoiceType invoicePreference;
 
     @Column(nullable = false)
     @Builder.Default
@@ -51,14 +47,16 @@ public class Client {
     @Column(nullable = false)
     private String rsocial;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private Role createdBy = Role.CLIENTE;
+    private String createdBy = "CLIENTE";
 
     @Column(unique = true, nullable = false)
     private String email;
     
     @OneToOne(mappedBy = "client")
     private User user;
+
+    @OneToOne(mappedBy = "client")
+    private InvoiceClientDetail invoiceDetail;
 }

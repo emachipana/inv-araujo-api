@@ -1,11 +1,13 @@
 package com.inversionesaraujo.api.business.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.inversionesaraujo.api.business.dto.RoleDTO;
 import com.inversionesaraujo.api.business.dto.UserDTO;
 import com.inversionesaraujo.api.business.payload.AuthResponse;
 import com.inversionesaraujo.api.business.request.LoginRequest;
@@ -16,16 +18,20 @@ import com.inversionesaraujo.api.model.User;
 import com.inversionesaraujo.api.repository.ClientRepository;
 import com.inversionesaraujo.api.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class AuthImpl implements IAuth {
-    private final UserRepository userRepo;
-    private final JwtImpl jwtService;
-    private final ClientRepository clientRepo;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authManager;
+    @Autowired
+    private UserRepository userRepo;
+    @Autowired
+    private JwtImpl jwtService;
+    @Autowired
+    private ClientRepository clientRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthenticationManager authManager;
+    @Autowired
+    private RoleImpl roleService;
 
     @Override
     public AuthResponse login(LoginRequest request) {
@@ -48,11 +54,14 @@ public class AuthImpl implements IAuth {
     @Override
     public AuthResponse register(RegisterRequest request) {
         Client client = clientRepo.findById(request.getClientId()).orElseThrow(() -> new DataAccessException("El client no existe") {});
+        RoleDTO role = roleService.findByName("CLIENTE");
+        
         User newUser = userRepo.save(User
             .builder()
             .client(client)
             .username(client.getEmail())
             .password(passwordEncoder.encode(request.getPassword()))
+            .role(RoleDTO.toEntity(role))
             .build());
         String token = jwtService.getToken(newUser);
 

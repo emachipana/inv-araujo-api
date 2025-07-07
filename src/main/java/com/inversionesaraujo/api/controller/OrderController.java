@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,22 +18,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.ClientDTO;
-import com.inversionesaraujo.api.business.dto.EmployeeDTO;
-import com.inversionesaraujo.api.business.dto.ImageDTO;
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.InvoiceDTO;
 import com.inversionesaraujo.api.business.dto.OrderDTO;
 import com.inversionesaraujo.api.business.dto.WarehouseDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
+import com.inversionesaraujo.api.business.request.InvitroDeliveredRequest;
+import com.inversionesaraujo.api.business.request.NotificationRequest;
 import com.inversionesaraujo.api.business.request.OrderRequest;
+import com.inversionesaraujo.api.business.request.UpdateOrderRequest;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.business.service.IEmployee;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
+import com.inversionesaraujo.api.business.service.INotification;
 import com.inversionesaraujo.api.business.service.IOrder;
 import com.inversionesaraujo.api.business.service.IWarehouse;
 import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.I_Invoice;
+import com.inversionesaraujo.api.model.NotificationType;
 import com.inversionesaraujo.api.model.OrderLocation;
+import com.inversionesaraujo.api.model.Permission;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -52,6 +59,10 @@ public class OrderController {
     @Autowired
     private IWarehouse warehouseService;
     @Autowired
+    private IEmployeeOperation employeeOperationService;
+    @Autowired
+    private INotification notiService;
+    @Autowired
     private I_Image imageService;
     @Autowired
     private IEmployee employeeService;
@@ -61,15 +72,16 @@ public class OrderController {
         @RequestParam(required = false) Status status,
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "20") Integer size,
-        @RequestParam(defaultValue = "DESC") SortDirection sort,
+        @RequestParam(defaultValue = "DESC") SortDirection direction,
         @RequestParam(required = false) SortBy sortby,
         @RequestParam(required = false) Month month,
         @RequestParam(required = false) ShippingType shipType,
         @RequestParam(required = false) Long warehouseId,
         @RequestParam(required = false) Long employeeId,
-        @RequestParam(required = false) OrderLocation location
+        @RequestParam(required = false) OrderLocation location,
+        @RequestParam(required = false) Integer day
     ) {
-        return orderService.listAll(status, page, size, sort, month, sortby, shipType, warehouseId, employeeId, location);
+        return orderService.listAll(status, page, size, direction, month, sortby, shipType, warehouseId, employeeId, location, day);
     }
 
     @GetMapping("search")
@@ -110,6 +122,8 @@ public class OrderController {
             .build());
     }
 
+    // TODO - crear un endpoint para crear automaticamente la factura de un pedido o pedido invitro
+
     @PostMapping("{id}/finalize")
     public ResponseEntity<MessageResponse> postCreate(@PathVariable Long id, @RequestParam(defaultValue = "true") Boolean alert) {
         OrderDTO order = orderService.findById(id);
@@ -128,7 +142,6 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid OrderRequest request) {
         ClientDTO client = clientService.findById(request.getClientId());
-        InvoiceDTO invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
         WarehouseDTO warehouse = request.getWarehouseId() == null ? null : warehouseService.findById(request.getWarehouseId());
         LocalDate date = request.getDate() == null ? LocalDate.now() : request.getDate();
         LocalDate maxShipDate = date.plusDays(3);
@@ -136,7 +149,7 @@ public class OrderController {
         OrderDTO order = orderService.save(OrderDTO
             .builder()
             .client(client)
-            .invoice(invoice)
+            .invoice(null)
             .department(request.getDepartment())
             .city(request.getCity())
             .date(date)
@@ -148,6 +161,29 @@ public class OrderController {
             .warehouse(warehouse)
             .evidence(null)
             .build());
+
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Creo un pedido")
+                .redirectTo("/pedidos/" + order.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+
+            NotificationRequest notiRequest = NotificationRequest
+                .builder()
+                .userId(request.getEmployeeId())
+                .type(NotificationType.NEW_ORDER)
+                .redirectTo("/pedidos/" + order.getId())
+                .build();
+
+            notiService.sendNotificationToUsersWithPermission(notiRequest, Permission.ORDERS_WATCH, request.getEmployeeId());
+        }
 
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
@@ -161,8 +197,6 @@ public class OrderController {
         OrderDTO order = orderService.findById(id);
         InvoiceDTO invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
         WarehouseDTO warehouse = request.getWarehouseId() == null ? null : warehouseService.findById(request.getWarehouseId());
-        ImageDTO evidence = request.getImageId() == null ? null : imageService.findById(request.getImageId());
-        EmployeeDTO employee = request.getEmployeeId() == null ? null : employeeService.findById(request.getEmployeeId());
         LocalDate date = request.getDate();
         LocalDate maxShipDate = date.plusDays(3);
         
@@ -175,10 +209,22 @@ public class OrderController {
         order.setLocation(request.getLocation());
         order.setShippingType(request.getShippingType());
         order.setWarehouse(warehouse);
-        order.setEvidence(evidence);
-        order.setEmployee(employee);
 
         OrderDTO orderUptaded = orderService.save(order);
+
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Actualizo un pedido")
+                .redirectTo("/pedidos/" + order.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()
@@ -187,14 +233,47 @@ public class OrderController {
             .build());
     }
 
-    @PutMapping("{id}/status")
-    public ResponseEntity<MessageResponse> updateStatus(@PathVariable Long id, @RequestParam Status status) {
+    @PutMapping("{id}/delivered")
+    public ResponseEntity<MessageResponse> updateDelivered(@PathVariable Long id, @RequestBody @Valid InvitroDeliveredRequest request) {
         OrderDTO order = orderService.findById(id);
-        order.setStatus(status);
+        order.setStatus(Status.ENTREGADO);
+        order.setEmployee(employeeService.findById(request.getEmployeeId()));
+        order.setEvidence(imageService.findById(request.getEvidenceId()));
 
-        if(status == Status.PAGADO) orderService.orderPaid(order);
+        orderService.save(order);
 
-        if(status == Status.CANCELADO) orderService.cancelOrder(order);
+        if(request.getEmployeeId() != 1L) {
+            LocalDateTime now = LocalDateTime.now();
+            
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Entrego el pedido")
+                .redirectTo("/pedidos/" + order.getId())
+                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El estado del pedido se actualizo con exito")
+            .data(order)
+            .build());
+    }
+
+    @PutMapping("{id}/status")
+    public ResponseEntity<MessageResponse> updateStatus(@PathVariable Long id, @RequestBody @Valid UpdateOrderRequest request) {
+        OrderDTO order = orderService.findById(id);
+        order.setStatus(request.getStatus());
+
+        if(request.getStatus() == Status.PAGADO) {
+            order.setPaymentType(request.getPaymentType());
+            orderService.orderPaid(order);
+        }
+
+        if(request.getStatus() == Status.CANCELADO) orderService.cancelOrder(order);
 
         OrderDTO orderUpdated = orderService.save(order);
 

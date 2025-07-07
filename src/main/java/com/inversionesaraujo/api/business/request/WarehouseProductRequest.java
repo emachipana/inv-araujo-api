@@ -17,4 +17,6 @@ public class WarehouseProductRequest {
 
     @NotNull(message = "El id del almacén es requerido")
     private Long warehouseId;
+
+    private Long employeeId;
 }

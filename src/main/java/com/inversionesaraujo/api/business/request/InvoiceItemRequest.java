@@ -29,4 +29,6 @@ public class InvoiceItemRequest {
     private Integer quantity;
 
     private Boolean isIgvApply = true;
+
+    private Long employeeId;
 }
