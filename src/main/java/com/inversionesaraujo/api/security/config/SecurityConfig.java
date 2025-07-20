@@ -44,15 +44,15 @@ public class SecurityConfig {
                     // payments
                     .requestMatchers(HttpMethod.POST, "/api/v1/payments/**").permitAll()
                     // tubers
-                    .requestMatchers(HttpMethod.GET, "/api/v1/tubers/**").hasAnyAuthority("TUBERS_WATCH")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/tubers/**").hasAnyAuthority("TUBERS_CREATE")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/tubers/**").hasAnyAuthority("TUBERS_UPDATE")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/tubers/**").hasAnyAuthority("TUBERS_DELETE")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/tubers/**").hasAnyAuthority("INVITRO_WATCH")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/tubers/**").hasAnyAuthority("TUBER_CREATE")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/tubers/**").hasAnyAuthority("TUBER_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/tubers/**").hasAnyAuthority("TUBER_DELETE")
                     // varieties
-                    .requestMatchers(HttpMethod.GET, "/api/v1/varieties/**").hasAnyAuthority("VARIETIES_WATCH")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/varieties/**").hasAnyAuthority("VARIETIES_CREATE")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/varieties/**").hasAnyAuthority("VARIETIES_UPDATE")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/varieties/**").hasAnyAuthority("VARIETIES_DELETE")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/varieties/**").hasAnyAuthority("INVITRO_WATCH")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/varieties/**").hasAnyAuthority("VARIETY_CREATE")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/varieties/**").hasAnyAuthority("VARIETY_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/varieties/**").hasAnyAuthority("VARIETY_DELETE")
                     // vitroOrders
                     .requestMatchers(HttpMethod.PUT, "/api/v1/vitroOrders/**").hasAnyAuthority("INVITRO_UPDATE")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/vitroOrders/**").hasAnyAuthority("INVITRO_DELETE")
@@ -97,9 +97,9 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/warehouses/**").hasAnyAuthority("WAREHOUSES_DELETE")
                     // products
                     .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasAnyAuthority("PRODUCT_CREATE")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/products/**").hasAnyAuthority("PRODUCT_UPDATE")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/products/**").hasAnyAuthority("PRODUCT_DELETE")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasAnyAuthority("PRODUCTS_CREATE")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/products/**").hasAnyAuthority("PRODUCTS_UPDATE")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/products/**").hasAnyAuthority("PRODUCTS_DELETE")
                     // offers
                     .requestMatchers(HttpMethod.GET, "/api/v1/offers/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/offers/**").hasAnyAuthority("BANNERS_CREATE")
@@ -110,7 +110,6 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.POST, "/api/v1/offerProducts/**").hasAnyAuthority("BANNERS_ITEM_CREATE")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/offerProducts/**").hasAnyAuthority("BANNERS_ITEM_DELETE")
                     // // orders
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/orders/**").hasAnyAuthority("ORDERS_UPDATE")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/orders/**").hasAnyAuthority("ORDERS_DELETE")
                     // orderProducts
                     .requestMatchers(HttpMethod.PUT, "/api/v1/orderProducts/**").hasAnyAuthority("ORDERS_PRODUCTS_UPDATE")
@@ -125,7 +124,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.PUT, "/api/v1/discounts/**").hasAnyAuthority("PRODUCTS_DISCOUNT_UPDATE")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/discounts/**").hasAnyAuthority("PRODUCTS_DISCOUNT_DELETE")
                     // clients
-                    .requestMatchers(HttpMethod.POST, "/api/v1/clients").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/clients/**").permitAll()
                     // roles
                     .requestMatchers(HttpMethod.GET, "/api/v1/roles/**").hasAnyAuthority("ROLES_WATCH")
                     .requestMatchers(HttpMethod.POST, "/api/v1/roles/**").hasAnyAuthority("ROLES_CREATE")
@@ -158,7 +157,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000, https://inv-araujo-app.vercel.app, http://localhost:4200")
+                        .allowedOrigins("http://localhost:3000, https://inv-araujo-app.vercel.app, http://localhost:4000")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

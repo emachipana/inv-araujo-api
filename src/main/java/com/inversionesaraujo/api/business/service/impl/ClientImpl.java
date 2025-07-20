@@ -65,11 +65,11 @@ public class ClientImpl implements IClient {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<ClientDTO> search(String document, String rsocial, String city, String department, Integer page) {
+    public Page<ClientDTO> search(String document, String rsocial, Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
 
-        Page<Client> clients = clientRepo.findByRsocialContainingIgnoreCaseOrDocumentContainingIgnoreCaseOrCityContainingIgnoreCaseOrDepartmentContainingIgnoreCase(
-            rsocial, document, city, department, pageable
+        Page<Client> clients = clientRepo.findByRsocialContainingIgnoreCaseOrDocumentContainingIgnoreCase(
+            rsocial, document, pageable
         );
 
         return ClientDTO.toPageableDTO(clients);

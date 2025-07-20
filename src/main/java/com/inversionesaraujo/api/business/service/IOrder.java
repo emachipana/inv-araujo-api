@@ -17,7 +17,7 @@ public interface IOrder {
     Page<OrderDTO> listAll(
         Status status, Integer page, Integer size, SortDirection direction,
         Month month, SortBy sort, ShippingType shipType, Long warehouseId,
-        Long employeeId, OrderLocation location, Integer day
+        Long employeeId, OrderLocation location, Integer day, Long clientId
     );
 
     OrderDataResponse getData();

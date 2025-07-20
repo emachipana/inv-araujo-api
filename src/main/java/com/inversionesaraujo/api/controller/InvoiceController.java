@@ -67,7 +67,7 @@ public class InvoiceController {
     }
 
     @PostMapping("generatePDF/{id}")
-    public ResponseEntity<MessageResponse> generatePDF(@PathVariable Long id, @RequestBody Long employeeId) {
+    public ResponseEntity<MessageResponse> generatePDF(@PathVariable Long id, @RequestParam(required = false) Long employeeId) {
         InvoiceDTO invoice = invoiceService.findById(id);
         if(invoice.getPdfUrl() != null) {
             return ResponseEntity.status(406).body(MessageResponse

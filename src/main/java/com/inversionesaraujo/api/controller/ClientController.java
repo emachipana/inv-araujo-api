@@ -52,7 +52,7 @@ public class ClientController {
 
     @GetMapping("/search")
     public Page<ClientDTO> search(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
-        return clientService.search(param, param, param, param, page);
+        return clientService.search(param, param, page);
     }
 
     @GetMapping("{id}")
@@ -70,8 +70,6 @@ public class ClientController {
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid ClientRequest request) {
         ClientDTO clientToSave = clientService.save(ClientDTO
             .builder()
-            .city(request.getCity())
-            .department(request.getDepartment())
             .phone(request.getPhone())
             .document(request.getDocument())
             .documentType(request.getDocumentType())
@@ -79,7 +77,6 @@ public class ClientController {
             .createdBy(request.getCreatedBy())
             .email(request.getEmail())
             .userId(null)
-            .address(request.getAddress())
             .consumption(0.0)
             .build());
 
@@ -107,12 +104,9 @@ public class ClientController {
     @PutMapping("{id}")
     public ResponseEntity<MessageResponse> update(@RequestBody @Valid ClientRequest request, @PathVariable Long id) {
         ClientDTO client = clientService.findById(id);
-        client.setCity(request.getCity());
-        client.setDepartment(request.getDepartment());
         client.setPhone(request.getPhone());
         client.setDocument(request.getDocument());
         client.setRsocial(request.getRsocial());
-        client.setAddress(request.getAddress());
         ClientDTO clientUpdated = clientService.save(client);
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {

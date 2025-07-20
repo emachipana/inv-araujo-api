@@ -35,6 +35,11 @@ public class OrderSpecifications {
             employeeId != null ? criteriaBuilder.equal(root.get("employee").get("id"), employeeId) : null;
     }
 
+    public static Specification<Order> findByClient(Long clientId) {
+        return (root, query, criteriaBuilder) ->
+            clientId != null ? criteriaBuilder.equal(root.get("client").get("id"), clientId) : null;
+    }
+
     public static Specification<Order> findByMonth(Month month) {
         return (root, query, criteriaBuilder) -> month != null
             ? criteriaBuilder.equal(

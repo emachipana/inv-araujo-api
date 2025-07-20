@@ -35,6 +35,7 @@ import com.inversionesaraujo.api.model.InvoiceType;
 import com.inversionesaraujo.api.model.NotificationType;
 import com.inversionesaraujo.api.model.Order;
 import com.inversionesaraujo.api.model.OrderLocation;
+import com.inversionesaraujo.api.model.Permission;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -73,7 +74,7 @@ public class OrderImpl implements IOrder {
         Status status, Integer page, Integer size,
         SortDirection direction, Month month, SortBy sort,
         ShippingType shipType, Long warehouseId, Long employeeId,
-        OrderLocation location, Integer day
+        OrderLocation location, Integer day, Long clientId
     ) {
         Specification<Order> spec = Specification.where(
             OrderSpecifications.findByStatus(status)
@@ -83,6 +84,7 @@ public class OrderImpl implements IOrder {
             .and(OrderSpecifications.findByEmployee(employeeId))
             .and(OrderSpecifications.findByLocation(location))
             .and(OrderSpecifications.findByDay(day))
+            .and(OrderSpecifications.findByClient(clientId))
         );
         Pageable pageable;
         if(sort != null) {
@@ -160,12 +162,11 @@ public class OrderImpl implements IOrder {
     public void alertNewOrder(OrderDTO order) {
         NotificationRequest notiRequest = NotificationRequest
             .builder()
-            .userId(1L)
             .type(NotificationType.NEW_ORDER)
             .redirectTo("/pedidos/" + order.getId())
             .build();
 
-        notiService.create(notiRequest);
+        notiService.sendNotificationToUsersWithPermission(notiRequest, Permission.ORDERS_WATCH, -1L);
     }
 
     private InvoiceDTO createInvoice(OrderDTO order) {

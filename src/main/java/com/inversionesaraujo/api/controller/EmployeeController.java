@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.EmployeeDTO;
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.RoleDTO;
 import com.inversionesaraujo.api.business.dto.UserDTO;
 import com.inversionesaraujo.api.business.payload.EmployeeResponse;
@@ -24,6 +25,9 @@ import com.inversionesaraujo.api.business.request.EmployeeRequest;
 import com.inversionesaraujo.api.business.service.IEmployee;
 import com.inversionesaraujo.api.business.service.IRole;
 import com.inversionesaraujo.api.business.service.IUser;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
+import com.inversionesaraujo.api.model.SortBy;
+import com.inversionesaraujo.api.model.SortDirection;
 
 import jakarta.validation.Valid;
 
@@ -37,12 +41,24 @@ public class EmployeeController {
     @Autowired
     private IRole roleService;
     @Autowired
+    private IEmployeeOperation employeeOperationService;
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @GetMapping
-    public List<EmployeeDTO> getAll() {
-      return employeeService.listAll();
+    public List<EmployeeDTO> getAll(
+        @RequestParam(required = false) Long roleId,
+        @RequestParam(required = false) SortBy sortby,
+        @RequestParam(required = false) SortDirection direction
+    ) {
+      return employeeService.filterEmployees(roleId, sortby, direction);
     }
+
+    @GetMapping("operations/{employeeId}")
+    public List<EmployeeOperationDTO> getOperations(@PathVariable Long employeeId) {
+        return employeeOperationService.findByEmployeeId(employeeId);
+    }
+    
 
     @GetMapping("/search")
     public List<EmployeeDTO> search(@RequestParam String param) {

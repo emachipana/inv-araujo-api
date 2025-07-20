@@ -77,7 +77,7 @@ public class MessageController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Long id, @RequestBody Long employeeId) {
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id, @RequestParam(required = false) Long employeeId) {
         messageService.delete(id);
 
         if(employeeId != null && employeeId != 1L) {

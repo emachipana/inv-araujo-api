@@ -9,7 +9,7 @@ import com.inversionesaraujo.api.model.SortBy;
 public interface IClient {
     Page<ClientDTO> filterClients(Integer page, Integer size, SortDirection direction, SortBy sortby);
 
-    Page<ClientDTO> search(String document, String rsocial, String city, String department, Integer page);
+    Page<ClientDTO> search(String document, String rsocial, Integer page);
 
     ClientDTO save(ClientDTO client);
 

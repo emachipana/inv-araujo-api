@@ -20,8 +20,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ClientDTO {
     private Long id;
-    private String city;
-    private String department;
     private String phone;
     private String document;
     private DocumentType documentType;
@@ -30,7 +28,6 @@ public class ClientDTO {
     private String createdBy;
     private String email;
     private Long userId;
-    private String address;
     private InvoiceClientDetailDTO invoiceDetail;
 
     public static ClientDTO toDTO(Client client) {
@@ -39,8 +36,6 @@ public class ClientDTO {
         return ClientDTO
             .builder()
             .id(client.getId())
-            .city(client.getCity())
-            .department(client.getDepartment())
             .phone(client.getPhone())
             .document(client.getDocument())
             .documentType(client.getDocumentType())
@@ -50,7 +45,6 @@ public class ClientDTO {
             .email(client.getEmail())
             .invoiceDetail(InvoiceClientDetailDTO.toDTO(client.getInvoiceDetail()))
             .userId(client.getUser() != null ? client.getUser().getId() : null)
-            .address(client.getAddress())
             .build();
     }
 
@@ -64,8 +58,6 @@ public class ClientDTO {
         return Client
             .builder()
             .id(client.getId())
-            .city(client.getCity())
-            .department(client.getDepartment())
             .phone(client.getPhone())
             .document(client.getDocument())
             .documentType(client.getDocumentType())
@@ -75,7 +67,6 @@ public class ClientDTO {
             .email(client.getEmail())
             .user(user)
             .invoiceDetail(InvoiceClientDetailDTO.toEntity(client.getInvoiceDetail(), entityManager))
-            .address(client.getAddress())
             .build(); 
     }
 

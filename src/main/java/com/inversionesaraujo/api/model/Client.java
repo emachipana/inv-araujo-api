@@ -25,12 +25,6 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String city;
-
-    private String department;
-
-    private String address;
-
     private String phone;
 
     @Column(unique = true, nullable = false)

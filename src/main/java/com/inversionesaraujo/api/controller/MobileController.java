@@ -36,7 +36,7 @@ public class MobileController {
 		Page<OrderDTO> orders = orderService.listAll(
 			Status.PENDIENTE, 0, 5, SortDirection.DESC,
 			null, SortBy.maxShipDate, ShippingType.RECOJO_ALMACEN,
-			null, null, null, null);
+			null, null, null, null, null);
 
 		Page<VitroOrderDTO> vitroOrders = vitroOrderService.listAll(
 			null, 0, 5, SortDirection.DESC,

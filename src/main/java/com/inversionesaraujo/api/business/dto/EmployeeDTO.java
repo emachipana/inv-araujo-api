@@ -3,6 +3,8 @@ package com.inversionesaraujo.api.business.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+
 import com.inversionesaraujo.api.model.Employee;
 import com.inversionesaraujo.api.model.Role;
 import com.inversionesaraujo.api.model.User;
@@ -66,5 +68,10 @@ public class EmployeeDTO {
             .stream()
             .map(EmployeeDTO::toDTO)
             .collect(Collectors.toList());
+    }
+
+    public static Page<EmployeeDTO> toPageableDTO(Page<Employee> employees) {
+        return employees
+            .map(EmployeeDTO::toDTO);
     }
 }

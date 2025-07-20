@@ -79,9 +79,10 @@ public class OrderController {
         @RequestParam(required = false) Long warehouseId,
         @RequestParam(required = false) Long employeeId,
         @RequestParam(required = false) OrderLocation location,
-        @RequestParam(required = false) Integer day
+        @RequestParam(required = false) Integer day,
+        @RequestParam(required = false) Long clientId
     ) {
-        return orderService.listAll(status, page, size, direction, month, sortby, shipType, warehouseId, employeeId, location, day);
+        return orderService.listAll(status, page, size, direction, month, sortby, shipType, warehouseId, employeeId, location, day, clientId);
     }
 
     @GetMapping("search")

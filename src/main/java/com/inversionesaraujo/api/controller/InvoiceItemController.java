@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
@@ -33,6 +35,11 @@ public class InvoiceItemController {
     private I_Invoice invoiceService;
     @Autowired
     private IEmployeeOperation employeeOperationService;
+
+    @GetMapping("/invoice/{invoiceId}")
+    public List<InvoiceItemDTO> findByInvoiceId(@PathVariable Long invoiceId) {
+        return invoiceItemService.findByInvoiceId(invoiceId);
+    }
 
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
@@ -124,7 +131,7 @@ public class InvoiceItemController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Long id, @RequestBody Long employeeId) {
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id, @RequestParam(required = false) Long employeeId) {
         InvoiceItemDTO item = invoiceItemService.findById(id);
         InvoiceDTO invoice = invoiceService.findById(item.getInvoiceId());
         Double oldSubTotal = item.getSubTotal();

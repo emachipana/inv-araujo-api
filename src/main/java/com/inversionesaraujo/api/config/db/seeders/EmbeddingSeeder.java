@@ -21,13 +21,13 @@ public class EmbeddingSeeder {
         
         List<String> texts = List.of(
             // Ubicación
-            "Ubicación: Jr. San Bernardo, Sapallanga, Huancayo",
+            "Ubicacion: Jr. San Bernardo, Sapallanga, Huancayo",
             "¿Donde estan ubicados? En Sapallanga, Huancayo, a 2 cuadras del cementerio",
             "¿Donde esta ubicada la tienda? En Sapallanga, Huancayo, a 2 cuadras del cementerio",
 
             // Horarios
-            "Horario de atencion: Lunes a Viernes de 9AM a 6PM",
-            "Horario de atencion los Sábados: 9AM a 12PM",
+            "Horario de atencion: Lunes a Viernes de 9 AM a 6 PM",
+            "Horario de atencion los Sábados: 9 AM a 12 PM",
             "Domingos no hay atencion en la tienda",
             
             // Productos
@@ -46,18 +46,19 @@ public class EmbeddingSeeder {
             
             // Pagos
             "Adelanto del 50% para confirmar pedidos de plantulas",
-            "Metodos de pago: tarjeta de credito/debito y Yape",
+            "Metodos de pago: tarjeta de debito y Yape",
             
             // Envios
             "Recojo de pedidos en tienda en Sapallanga",
             "Envios a provincias mediante agencia Shalom",
-            "Método de pago: contra entrega",
+            "¿Hacen envios a otros departamentos? Si, mediante agencia Shalom",
+            "Metodo de pago: contra entrega",
             
             // Contacto
             "Contacto por WhatsApp: 990849369",
-            "Correo electrónico: inversionesaraujojl@gmail.com",
-            "Número de contacto: 990949369",
-            "Teléfono de contacto: 990949369"
+            "Correo electronico: inversionesaraujojl@gmail.com",
+            "Numero de contacto: 990949369",
+            "Telefono de contacto: 990949369"
         );
 
         for (String text : texts) {

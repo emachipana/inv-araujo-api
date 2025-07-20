@@ -12,12 +12,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ClientRequest {
-    private String city;
-
-    private String department;
-
-    private String address;
-
     @Size(min = 6)
     private String phone;
 
