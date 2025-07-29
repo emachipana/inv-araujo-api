@@ -24,7 +24,7 @@ public class OrderMessageDTO {
     private UserDTO receiver;
     private Long orderId;
     private String message;
-    private LocalDateTime date;
+    private LocalDateTime createdAt;
 
     public static OrderMessageDTO toDTO(OrderMessage orderMessage) {
         return OrderMessageDTO.builder()
@@ -33,7 +33,7 @@ public class OrderMessageDTO {
             .receiver(UserDTO.toDTO(orderMessage.getReceiver()))
             .orderId(orderMessage.getOrder().getId())
             .message(orderMessage.getMessage())
-            .date(orderMessage.getDate())
+            .createdAt(orderMessage.getCreatedAt())
             .build();
     }
 
@@ -47,7 +47,7 @@ public class OrderMessageDTO {
             .receiver(UserDTO.toEntity(orderMessageDTO.getReceiver()))
             .order(order)
             .message(orderMessageDTO.getMessage())
-            .date(orderMessageDTO.getDate())
+            .createdAt(orderMessageDTO.getCreatedAt())
             .build();
     }
 

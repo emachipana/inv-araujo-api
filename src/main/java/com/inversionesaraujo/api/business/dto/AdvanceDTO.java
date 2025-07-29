@@ -3,7 +3,7 @@ package com.inversionesaraujo.api.business.dto;
 import com.inversionesaraujo.api.model.Advance;
 import com.inversionesaraujo.api.model.VitroOrder;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +22,8 @@ public class AdvanceDTO {
     private Long id;
     private Long vitroOrderId;
     private Double amount;
-    private LocalDate date;   
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;   
     
     public static AdvanceDTO toDTO(Advance advance) {
         return AdvanceDTO
@@ -30,7 +31,8 @@ public class AdvanceDTO {
             .id(advance.getId())
             .vitroOrderId(advance.getVitroOrder().getId())
             .amount(advance.getAmount())
-            .date(advance.getDate())
+            .createdAt(advance.getCreatedAt())
+            .updatedAt(advance.getUpdatedAt())
             .build();
     }
 
@@ -43,7 +45,8 @@ public class AdvanceDTO {
             .id(advance.getId())
             .vitroOrder(order)
             .amount(advance.getAmount())
-            .date(advance.getDate())
+            .createdAt(advance.getCreatedAt())
+            .updatedAt(advance.getUpdatedAt())
             .build();
     }
 

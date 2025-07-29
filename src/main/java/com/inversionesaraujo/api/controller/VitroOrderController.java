@@ -1,7 +1,6 @@
 package com.inversionesaraujo.api.controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,14 +137,11 @@ public class VitroOrderController {
             .build());
 
         if (request.getOperatorId() != null && request.getOperatorId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getOperatorId())
                 .operation("Creo un pedido invitro")
                 .redirectTo("/invitro/" + order.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -177,14 +173,11 @@ public class VitroOrderController {
         orderService.save(order);
 
         if(request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Entrego el pedido invitro")
                 .redirectTo("/invitro/" + order.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -216,14 +209,11 @@ public class VitroOrderController {
         VitroOrderDTO orderUpdated = orderService.save(order);
 
         if (request.getOperatorId() != null && request.getOperatorId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getOperatorId())
                 .operation("Actualizo un pedido invitro")
                 .redirectTo("/invitro/" + order.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);

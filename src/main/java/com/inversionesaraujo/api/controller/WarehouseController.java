@@ -1,6 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,14 +60,11 @@ public class WarehouseController {
             .build());
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Creo un almacen")
                 .redirectTo("/almacenes/" + savedWarehouse.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -95,14 +91,11 @@ public class WarehouseController {
         WarehouseDTO warehouseUpdated = warehouseService.save(warehouse);
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Actualizo un almacen")
                 .redirectTo("/almacenes/" + warehouseUpdated.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);

@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "invoice_client_details")
 public class InvoiceClientDetail {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "invoice_client_detail_seq")
+    @SequenceGenerator(name = "invoice_client_detail_seq", sequenceName = "invoice_client_detail_seq", allocationSize = 1)
     private Long id;
 
     @Column(nullable = false)

@@ -17,4 +17,6 @@ public class ReceiverInfo {
     private String fullName;
     private String document;
     private String phone;
+    private String code;
+    private String trackingCode;
 }

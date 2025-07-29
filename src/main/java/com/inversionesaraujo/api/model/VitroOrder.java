@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +31,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "vitro_orders")
 public class VitroOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "vitro_order_seq")
+    @SequenceGenerator(name = "vitro_order_seq", sequenceName = "vitro_order_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne

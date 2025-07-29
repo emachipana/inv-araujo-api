@@ -1,5 +1,8 @@
 package com.inversionesaraujo.api.model;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +16,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeliveryAddress {
-    private String department;
-    private String city;
+public class PickupInfo {
+    private LocalTime hour;
+    private LocalDate date;
 }

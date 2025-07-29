@@ -1,6 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,14 +54,11 @@ public class TuberController {
             .build());
 
         if (request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Creo un tipo de tuberculo")
                 .redirectTo("/invitro")
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -82,14 +78,11 @@ public class TuberController {
         TuberDTO tuberUpdated = tuberService.save(tuber);
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Actualizo un tipo de tuberculo")
                 .redirectTo("/invitro")
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);

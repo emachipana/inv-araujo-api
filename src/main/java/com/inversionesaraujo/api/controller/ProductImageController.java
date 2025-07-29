@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -56,14 +54,11 @@ public class ProductImageController {
             .build());
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Creo una imagen para un producto")
                 .redirectTo("/productos/" + request.getProductId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -85,14 +80,11 @@ public class ProductImageController {
         imageService.deleteImage(image.getFirebaseId());
 
         if(employeeId != null && employeeId != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(employeeId)
                 .operation("Elimino la imagen de un producto")
                 .redirectTo("/productos/" + productImage.getProductId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);

@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -81,14 +79,11 @@ public class ClientController {
             .build());
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Creo un cliente")
                 .redirectTo("/clientes/" + clientToSave.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -110,14 +105,11 @@ public class ClientController {
         ClientDTO clientUpdated = clientService.save(client);
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Actualizo un cliente")
                 .redirectTo("/clientes/" + clientUpdated.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);

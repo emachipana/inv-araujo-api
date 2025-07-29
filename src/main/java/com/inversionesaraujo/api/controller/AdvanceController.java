@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
@@ -64,13 +62,11 @@ public class AdvanceController {
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid AdvanceRequest request) {
         VitroOrderDTO order = orderService.findById(request.getVitroOrderId());
         Double amount = request.getAmount();
-        LocalDate date = LocalDate.now();
 
         AdvanceDTO advance = advanceService.save(AdvanceDTO
             .builder()
             .vitroOrderId(order.getId())
             .amount(amount)
-            .date(date)
             .build());
 
         Double totalAdvance = order.getTotalAdvance() + amount;
@@ -82,11 +78,11 @@ public class AdvanceController {
         client.setConsumption(client.getConsumption() + amount);
         clientService.save(client);
 
-        Month month = date.getMonth();
+        Month month = advance.getCreatedAt().getMonth();
         ProfitDTO profit = profitService.findByMonth(month.toString());
         if(profit == null) {
             profitService.save(ProfitDTO.builder()
-                .date(date)
+                .date(advance.getCreatedAt().toLocalDate())
                 .income(amount)
                 .profit(amount)
                 .month(month.toString())
@@ -100,14 +96,11 @@ public class AdvanceController {
         }
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Creo un adelanto de un pedido invitro")
                 .redirectTo("/invitro/" + order.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -126,7 +119,6 @@ public class AdvanceController {
         Double amount = request.getAmount();
         Double oldAmount = advance.getAmount();
         advance.setAmount(amount);
-        advance.setDate(request.getDate());
         VitroOrderDTO order = orderService.findById(advance.getVitroOrderId());
         AdvanceDTO advanceUpdated = advanceService.save(advance);
 
@@ -139,7 +131,7 @@ public class AdvanceController {
         client.setConsumption((client.getConsumption() - oldAmount) + amount);
         clientService.save(client);
 
-        Month month = request.getDate().getMonth();
+        Month month = advance.getUpdatedAt().getMonth();
         ProfitDTO profit = profitService.findByMonth(month.toString());
         Double income = (profit.getIncome() - oldAmount) + amount;
         profit.setIncome(income);
@@ -147,14 +139,11 @@ public class AdvanceController {
         profitService.save(profit);
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Actualizo un adelanto de un pedido invitro")
                 .redirectTo("/invitro/" + order.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -182,7 +171,7 @@ public class AdvanceController {
 
         client.setConsumption(client.getConsumption() - oldAmount);
 
-        Month month = advance.getDate().getMonth();
+        Month month = advance.getUpdatedAt().getMonth();
         ProfitDTO profit = profitService.findByMonth(month.toString());
         Double income = (profit.getIncome() - oldAmount);
         profit.setIncome(income);

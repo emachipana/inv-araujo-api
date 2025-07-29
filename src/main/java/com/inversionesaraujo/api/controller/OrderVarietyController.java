@@ -1,6 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,14 +75,11 @@ public class OrderVarietyController {
         orderService.save(order);
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Creo un item del pedido invitro")
                 .redirectTo("/invitro/" + order.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -113,14 +109,11 @@ public class OrderVarietyController {
         orderService.save(order);
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Actualizo un item del pedido invitro")
                 .redirectTo("/invitro/" + order.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -146,14 +139,11 @@ public class OrderVarietyController {
         orderService.save(order);
 
         if(employeeId != null && employeeId != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(employeeId)
                 .operation("Elimino un item del pedido invitro")
                 .redirectTo("/invitro/" + order.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);

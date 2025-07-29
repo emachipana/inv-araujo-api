@@ -1,6 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,7 @@ public class OrderProductController {
     public List<OrderProductDTO> getAllByOrder(@PathVariable Long id) {
         return itemService.findByOrderId(id);
     }
-
+    
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid OrderProductRequest request) {
         OrderDTO order = orderService.findById(request.getOrderId());
@@ -71,6 +70,8 @@ public class OrderProductController {
         if(product.getDiscount() != null) price = product.getDiscount().getPrice();
         Double subTotal = price * request.getQuantity();
 
+        System.out.println("Subtotal de request: " + subTotal);
+
         OrderProductDTO newItem = itemService.save(OrderProductDTO
             .builder()
             .orderId(order.getId())
@@ -81,21 +82,20 @@ public class OrderProductController {
             .build());
 
         Double total = order.getTotal() + subTotal;
+        System.out.println("Total before save: " + total);
         order.setTotal(total);
         orderService.save(order);
+        System.out.println("Total after save: " + order.getTotal());
 
         product.setStock(product.getStock() - request.getQuantity());
         productService.save(product);
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Agrego un producto a el pedido")
                 .redirectTo("/pedidos/" + order.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -140,14 +140,11 @@ public class OrderProductController {
         productService.save(product);
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Actualizo un producto del pedido")
                 .redirectTo("/pedidos/" + order.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -176,14 +173,11 @@ public class OrderProductController {
         productService.save(product);
 
         if(employeeId != null && employeeId != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(employeeId)
                 .operation("Elimino un producto del pedido")
                 .redirectTo("/pedidos/" + order.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);

@@ -1,7 +1,6 @@
 package com.inversionesaraujo.api.controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.ClientDTO;
 import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
-import com.inversionesaraujo.api.business.dto.InvoiceDTO;
+import com.inversionesaraujo.api.business.dto.ReceiverInfoDTO;
 import com.inversionesaraujo.api.business.dto.OrderDTO;
+import com.inversionesaraujo.api.business.dto.PickupInfoDTO;
 import com.inversionesaraujo.api.business.dto.WarehouseDTO;
+import com.inversionesaraujo.api.business.payload.AvailableHours;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.business.request.InvitroDeliveredRequest;
 import com.inversionesaraujo.api.business.request.NotificationRequest;
 import com.inversionesaraujo.api.business.request.OrderRequest;
+import com.inversionesaraujo.api.business.request.PickupInfoRequest;
+import com.inversionesaraujo.api.business.request.ReceiverInfoRequest;
 import com.inversionesaraujo.api.business.request.UpdateOrderRequest;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.business.service.IEmployee;
@@ -36,7 +39,6 @@ import com.inversionesaraujo.api.business.service.INotification;
 import com.inversionesaraujo.api.business.service.IOrder;
 import com.inversionesaraujo.api.business.service.IWarehouse;
 import com.inversionesaraujo.api.business.service.I_Image;
-import com.inversionesaraujo.api.business.service.I_Invoice;
 import com.inversionesaraujo.api.model.NotificationType;
 import com.inversionesaraujo.api.model.OrderLocation;
 import com.inversionesaraujo.api.model.Permission;
@@ -54,8 +56,6 @@ public class OrderController {
     private IOrder orderService;
     @Autowired
     private IClient clientService;
-    @Autowired
-    private I_Invoice invoiceService;
     @Autowired
     private IWarehouse warehouseService;
     @Autowired
@@ -112,6 +112,17 @@ public class OrderController {
             .build());
     }
 
+    @GetMapping("availableHours")
+    public ResponseEntity<MessageResponse> getAvailableHours(@RequestParam LocalDate date) {
+        AvailableHours availableHours = orderService.getAvailableHours(date);
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("Las horas disponibles se obtuvieron con exito")
+            .data(availableHours)
+            .build());
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
         OrderDTO order = orderService.findById(id);
@@ -124,6 +135,65 @@ public class OrderController {
     }
 
     // TODO - crear un endpoint para crear automaticamente la factura de un pedido o pedido invitro
+
+    @PutMapping("{id}/updateReceiverInfo")
+    public ResponseEntity<MessageResponse> updateReceiverInfo(@PathVariable Long id, @RequestBody @Valid ReceiverInfoRequest request) {
+        OrderDTO order = orderService.findById(id);
+        if(order.getShippingType() == ShippingType.RECOJO_ALMACEN) return ResponseEntity.badRequest().body(MessageResponse
+            .builder()
+            .message("El pedido será recogido en almacén")
+            .build());
+
+        if(order.getLocation() == OrderLocation.AGENCIA) return ResponseEntity.badRequest().body(MessageResponse
+            .builder()
+            .message("El pedido ya fue enviado")
+            .build());
+
+        order.setDepartment(request.getDepartment());
+        order.setCity(request.getCity());
+        order.setReceiverInfo(
+            ReceiverInfoDTO.builder()
+                .fullName(request.getFullName())
+                .document(request.getDocument())
+                .phone(request.getPhone())
+                .build()
+        );
+        OrderDTO orderUpdated = orderService.save(order);
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("Los datos de la persona que recoje fueron actualizados")
+            .data(orderUpdated)
+            .build());
+    }
+
+    @PutMapping("{id}/updatePickupInfo")
+    public ResponseEntity<MessageResponse> updatePickupInfo(@PathVariable Long id, @RequestBody @Valid PickupInfoRequest request) {
+        OrderDTO order = orderService.findById(id);
+        if(order.getShippingType() == ShippingType.ENVIO_AGENCIA) return ResponseEntity.badRequest().body(MessageResponse
+            .builder()
+            .message("El pedido será enviado por agencia")
+            .build());
+
+        if(order.getStatus() == Status.ENVIADO) return ResponseEntity.badRequest().body(MessageResponse
+            .builder()
+            .message("El pedido ya fue entregado")
+            .build());
+
+        order.setPickupInfo(
+            PickupInfoDTO.builder()
+                .date(request.getDate())
+                .hour(request.getHour())
+                .build()
+        );
+        OrderDTO orderUpdated = orderService.save(order);
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("Los datos de recojo fueron actualizados")
+            .data(orderUpdated)
+            .build());
+    }
 
     @PostMapping("{id}/finalize")
     public ResponseEntity<MessageResponse> postCreate(@PathVariable Long id, @RequestParam(defaultValue = "true") Boolean alert) {
@@ -143,17 +213,52 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid OrderRequest request) {
         ClientDTO client = clientService.findById(request.getClientId());
-        WarehouseDTO warehouse = request.getWarehouseId() == null ? null : warehouseService.findById(request.getWarehouseId());
         LocalDate date = request.getDate() == null ? LocalDate.now() : request.getDate();
         LocalDate maxShipDate = date.plusDays(3);
+        ShippingType shippingType = request.getShippingType();
+        WarehouseDTO warehouse = null;
+        ReceiverInfoDTO receiverInfo = null;
+        String department = "";
+        String city = "";
+        
+        if(shippingType == ShippingType.RECOJO_ALMACEN) {
+            if(request.getWarehouseId() == null) return ResponseEntity.badRequest().body(MessageResponse
+                .builder()
+                .message("El id del almacén es requerido")
+                .build());
+
+            if(request.getPickupInfo() == null) return ResponseEntity.badRequest().body(MessageResponse
+                .builder()
+                .message("La fecha y hora de recojo son requeridas")
+                .build());
+
+            warehouse = warehouseService.findById(request.getWarehouseId());
+            department = "Junin";
+            city = "Huancayo";
+        }else if(shippingType == ShippingType.ENVIO_AGENCIA) {
+            if(request.getReceiverInfo() == null) return ResponseEntity.badRequest().body(MessageResponse
+                .builder()
+                .message("La información de la persona que recogerá el pedido es requerida")
+                .build());
+
+            if(request.getDepartment() == null || request.getCity() == null) return ResponseEntity.badRequest().body(MessageResponse
+                .builder()
+                .message("El departamento y la ciudad son requeridos")
+                .build());
+
+            receiverInfo = request.getReceiverInfo();
+            department = request.getDepartment();
+            city = request.getCity();
+        }
 
         OrderDTO order = orderService.save(OrderDTO
             .builder()
             .client(client)
             .invoice(null)
-            .department(request.getDepartment())
-            .city(request.getCity())
+            .department(department)
+            .city(city)
             .date(date)
+            .pickupInfo(request.getPickupInfo())
             .location(request.getLocation())
             .maxShipDate(maxShipDate)
             .shippingType(request.getShippingType())
@@ -161,17 +266,15 @@ public class OrderController {
             .total(0.0)
             .warehouse(warehouse)
             .evidence(null)
+            .receiverInfo(receiverInfo)
             .build());
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Creo un pedido")
                 .redirectTo("/pedidos/" + order.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -196,16 +299,15 @@ public class OrderController {
     @PutMapping("{id}")
     public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid OrderRequest request) {
         OrderDTO order = orderService.findById(id);
-        InvoiceDTO invoice = request.getInvoiceId() == null ? null : invoiceService.findById(request.getInvoiceId());
         WarehouseDTO warehouse = request.getWarehouseId() == null ? null : warehouseService.findById(request.getWarehouseId());
         LocalDate date = request.getDate();
         LocalDate maxShipDate = date.plusDays(3);
         
-        order.setInvoice(invoice);
         order.setDepartment(request.getDepartment());
         order.setCity(request.getCity());
         order.setStatus(request.getStatus());
         order.setDate(date);
+        order.setPickupInfo(request.getPickupInfo());
         order.setMaxShipDate(maxShipDate);
         order.setLocation(request.getLocation());
         order.setShippingType(request.getShippingType());
@@ -214,14 +316,11 @@ public class OrderController {
         OrderDTO orderUptaded = orderService.save(order);
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Actualizo un pedido")
                 .redirectTo("/pedidos/" + order.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -237,6 +336,7 @@ public class OrderController {
     @PutMapping("{id}/delivered")
     public ResponseEntity<MessageResponse> updateDelivered(@PathVariable Long id, @RequestBody @Valid InvitroDeliveredRequest request) {
         OrderDTO order = orderService.findById(id);
+
         order.setStatus(Status.ENTREGADO);
         order.setEmployee(employeeService.findById(request.getEmployeeId()));
         order.setEvidence(imageService.findById(request.getEvidenceId()));
@@ -244,14 +344,41 @@ public class OrderController {
         orderService.save(order);
 
         if(request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Entrego el pedido")
                 .redirectTo("/pedidos/" + order.getId())
-                .createdAt(now)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El estado del pedido se actualizo con exito")
+            .data(order)
+            .build());
+    }
+
+    @PutMapping("{id}/agency")
+    public ResponseEntity<MessageResponse> updateAgency(@PathVariable Long id, @RequestBody @Valid InvitroDeliveredRequest request) {
+        OrderDTO order = orderService.findById(id);
+        order.setStatus(Status.ENVIADO);
+        order.setEmployee(employeeService.findById(request.getEmployeeId()));
+        order.setEvidence(imageService.findById(request.getEvidenceId()));
+        order.getReceiverInfo().setTrackingCode(request.getTrackingCode());
+        order.getReceiverInfo().setCode(request.getCode());
+        order.setLocation(OrderLocation.AGENCIA);
+
+        orderService.save(order);
+
+        if(request.getEmployeeId() != 1L) {
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Entrego el pedido")
+                .redirectTo("/pedidos/" + order.getId())
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -273,8 +400,6 @@ public class OrderController {
             order.setPaymentType(request.getPaymentType());
             orderService.orderPaid(order);
         }
-
-        if(request.getStatus() == Status.CANCELADO) orderService.cancelOrder(order);
 
         OrderDTO orderUpdated = orderService.save(order);
 

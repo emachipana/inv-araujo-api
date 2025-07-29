@@ -1,6 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,14 +63,11 @@ public class CategoryController {
             .build());
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Creo una categoria")
                 .redirectTo("/productos")
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -96,14 +92,12 @@ public class CategoryController {
         CategoryDTO updatedCategory = categoryService.save(category);
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
 
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Actualizo una categoria")
                 .redirectTo("/productos")
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);

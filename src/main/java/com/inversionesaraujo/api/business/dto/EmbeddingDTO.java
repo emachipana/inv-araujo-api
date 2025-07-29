@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.business.dto;
 
+import java.util.List;
+
 import com.inversionesaraujo.api.model.Embedding;
 
 import lombok.AllArgsConstructor;
@@ -16,7 +18,7 @@ import lombok.Setter;
 public class EmbeddingDTO {
     private Long id;
     private String text;
-    private String vector;
+    private List<Double> vector;
 
     public static EmbeddingDTO toDTO(Embedding embedding) {
         if(embedding == null) return null;

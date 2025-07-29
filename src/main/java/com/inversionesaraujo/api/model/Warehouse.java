@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "warehouses")
 public class Warehouse {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "warehouse_seq")
+    @SequenceGenerator(name = "warehouse_seq", sequenceName = "warehouse_seq", allocationSize = 1)
     private Long id;
 
     @Column(unique = true, nullable = false)

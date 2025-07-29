@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.business.dto;
 
+import java.time.LocalDateTime;
+
 import com.inversionesaraujo.api.model.Expense;
 import com.inversionesaraujo.api.model.ExpenseType;
 import com.inversionesaraujo.api.model.Profit;
@@ -23,6 +25,8 @@ public class ExpenseDTO {
     private Double subTotal;
     private Long profitId;
     private ExpenseType type;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public static ExpenseDTO toDTO(Expense expense) {
         return ExpenseDTO
@@ -34,6 +38,8 @@ public class ExpenseDTO {
             .subTotal(expense.getSubTotal())
             .profitId(expense.getProfit().getId())
             .type(expense.getType())
+            .createdAt(expense.getCreatedAt())
+            .updatedAt(expense.getUpdatedAt())
             .build();
     }
 
@@ -50,6 +56,8 @@ public class ExpenseDTO {
             .subTotal(expense.getSubTotal())
             .profit(profit)
             .type(expense.getType())
+            .createdAt(expense.getCreatedAt())
+            .updatedAt(expense.getUpdatedAt())
             .build();
     }
 }

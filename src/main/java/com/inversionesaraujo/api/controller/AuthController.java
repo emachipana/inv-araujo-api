@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inversionesaraujo.api.business.dto.ResetDTO;
 import com.inversionesaraujo.api.business.dto.UserDTO;
 import com.inversionesaraujo.api.business.payload.AuthResponse;
+import com.inversionesaraujo.api.business.payload.GoogleAuthResponse;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.payload.ValidateCodeResponse;
 import com.inversionesaraujo.api.business.request.ChangePasswordRequest;
 import com.inversionesaraujo.api.business.request.EmailRequest;
+import com.inversionesaraujo.api.business.request.GoogleAuthRequest;
 import com.inversionesaraujo.api.business.request.LoginRequest;
 import com.inversionesaraujo.api.business.request.RegisterRequest;
 import com.inversionesaraujo.api.business.request.GenerateCodeRequest;
@@ -65,6 +67,28 @@ public class AuthController {
             .builder()
             .message("El registro se completo con exito")
             .data(newRegister)
+            .build());
+    }
+    
+    @PostMapping("google")
+    public ResponseEntity<MessageResponse> loginWithGoogle(@RequestBody @Valid GoogleAuthRequest request) {
+        GoogleAuthResponse authResponse = authService.loginWithGoogle(request);
+        
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("Inicio de sesión con Google exitoso")
+            .data(authResponse)
+            .build());
+    }
+
+    @PostMapping("google-register")
+    public ResponseEntity<MessageResponse> registerWithGoogle(@RequestBody @Valid GoogleAuthRequest request) {
+        AuthResponse authResponse = authService.registerWithGoogle(request);
+        
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("Registro con Google exitoso")
+            .data(authResponse)
             .build());
     }
 

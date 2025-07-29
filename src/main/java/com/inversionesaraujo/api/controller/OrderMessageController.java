@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +28,6 @@ public class OrderMessageController {
     public ResponseEntity<MessageResponse> sendMessage(@RequestBody @Valid OrderMessageRequest request) {
         UserDTO sender = userService.findById(request.getSenderId());
         UserDTO receiver = userService.findById(request.getReceiverId());
-        LocalDateTime date = LocalDateTime.now();
 
         OrderMessageDTO orderMessage = orderMessageService.save(
             OrderMessageDTO
@@ -39,7 +36,6 @@ public class OrderMessageController {
             .message(request.getMessage())
             .sender(sender)
             .receiver(receiver)
-            .date(date)
             .build()
         );
 

@@ -3,8 +3,6 @@ package com.inversionesaraujo.api.business.service.impl;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,22 +22,19 @@ public class EmbeddingImpl implements IEmbedding {
 	private CohereImpl cohereService;
 	@Autowired
 	private EmbeddingRepository embeddingRepository;
-	@Autowired
-	private ObjectMapper objectMapper;
     
 	@Transactional
-    @Override
-    public void saveText(String text) throws JsonProcessingException {
-        List<Double> vector = cohereService.embed(text);
-		String vectorJson = objectMapper.writeValueAsString(vector);
-		Embedding embedding = Embedding
-			.builder()
-			.text(text)
-			.vector(vectorJson)
-			.build();
+	@Override
+	public void saveText(String text) throws JsonProcessingException {
+			List<Double> vector = cohereService.embed(text);
+			Embedding embedding = Embedding
+				.builder()
+				.text(text)
+				.vector(vector)
+				.build();
 
-		embeddingRepository.save(embedding);
-    }
+			embeddingRepository.save(embedding);
+	}
 
 	@Transactional(readOnly = true)
 	@Override
@@ -71,7 +66,7 @@ public class EmbeddingImpl implements IEmbedding {
 		
 		for (Embedding embedding : embeddings) {
 			try {
-				List<Double> vector = objectMapper.readValue(embedding.getVector(), new TypeReference<List<Double>>() {});
+				List<Double> vector = embedding.getVector();
 
 				if (vector == null || vector.isEmpty() || vector.size() != questionVector.size()) {
 					log.warn("Vector inválido o de tamaño incorrecto para el embedding ID: {}", embedding.getId());

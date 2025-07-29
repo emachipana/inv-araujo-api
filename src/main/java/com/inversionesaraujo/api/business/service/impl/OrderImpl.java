@@ -1,8 +1,11 @@
 package com.inversionesaraujo.api.business.service.impl;
 
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 import java.net.URL;
 
@@ -22,9 +25,9 @@ import com.inversionesaraujo.api.business.dto.InvoiceItemDTO;
 import com.inversionesaraujo.api.business.dto.OrderDTO;
 import com.inversionesaraujo.api.business.dto.ClientDTO;
 import com.inversionesaraujo.api.business.dto.OrderProductDTO;
-import com.inversionesaraujo.api.business.dto.ProductDTO;
 import com.inversionesaraujo.api.business.dto.ProfitDTO;
 import com.inversionesaraujo.api.business.payload.ApiSunatResponse;
+import com.inversionesaraujo.api.business.payload.AvailableHours;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.business.request.EmailRequest;
@@ -65,8 +68,6 @@ public class OrderImpl implements IOrder {
     private ClientImpl clientService;
     @Autowired
     private ProfitImpl profitService;
-    @Autowired
-    private ProductImpl productService;
 
     @Transactional(readOnly = true)
     @Override
@@ -232,6 +233,11 @@ public class OrderImpl implements IOrder {
 
         String filename = String.format("%s_%s.pdf", invoice.getSerie(), invoice.getRsocial().toUpperCase());
 
+        invoice.setPdfUrl(sunatResponse.getEnlace_del_pdf());
+        invoice.setIsSended(true);
+
+        invoiceService.save(invoice);
+
         byte[] attachment = null;
         try (InputStream in = new URL(sunatResponse.getEnlace_del_pdf()).openStream()) {
             attachment = IOUtils.toByteArray(in);
@@ -240,11 +246,6 @@ public class OrderImpl implements IOrder {
         }
 
         emailService.sendEmailWithAttachment(emailRequest, attachment, filename);
-
-        invoice.setPdfUrl(sunatResponse.getEnlace_del_pdf());
-        invoice.setIsSended(true);
-
-        invoiceService.save(invoice);
 
         System.out.println("Se completo con éxito: creación, almacenamiento y envio del comprobante");
     }
@@ -276,28 +277,25 @@ public class OrderImpl implements IOrder {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public void cancelOrder(OrderDTO order) {
-        ClientDTO client = order.getClient();
+    public AvailableHours getAvailableHours(LocalDate date) {
+        LocalTime start = LocalTime.of(8, 0);
+        LocalTime end = LocalTime.of(18, 0);
+        int intervalMinutes = 30;
 
-        client.setConsumption(client.getConsumption() - order.getTotal());
-        clientService.save(client);
+        List<LocalTime> occupied = orderRepo.findOccupiedPickupHours(date);
 
-        Month month = order.getDate().getMonth();
-        ProfitDTO profit = profitService.findByMonth(month.toString());
-        Double income = (profit.getIncome() - order.getTotal());
-        profit.setIncome(income);
-        profit.setProfit(income - profit.getTotalExpenses());
-        profitService.save(profit);
-
-        List<OrderProductDTO> products = orderProductService.findByOrderId(order.getId());
-        
-        for(OrderProductDTO item : products) {
-            ProductDTO product = item.getProduct();
-            Integer firstStock = product.getStock() + item.getQuantity();
-
-            product.setStock(firstStock);
-            productService.save(product);
+        List<String> available = new ArrayList<>();
+        for (LocalTime time = start; time.isBefore(end); time = time.plusMinutes(intervalMinutes)) {
+            if (!occupied.contains(time)) {
+                available.add(time.toString());
+            }
         }
+
+        return AvailableHours.builder()
+            .date(date)
+            .hours(available)
+            .build();
     }
 }

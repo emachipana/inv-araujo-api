@@ -15,9 +15,20 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     Page<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrBrandContainingIgnoreCase
         (String name, String description, String brand, Pageable pageable);
 
-    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId AND p.id <> :productId ORDER BY RAND() LIMIT 4")
+    @Query(value = """
+        SELECT * FROM products
+        WHERE category_id = :categoryId AND id <> :productId 
+        ORDER BY RANDOM() 
+        LIMIT 4
+        """, nativeQuery = true)
     List<Product> findRelatedProducts(@Param("categoryId") Long categoryId, @Param("productId") Long productId);
-
-    @Query("SELECT p FROM Product p WHERE p.id <> :productId ORDER BY RAND() LIMIT :limit")
-    List<Product> findRandomProducts( @Param("productId") Long productId, @Param("limit") int limit);
+    
+    @Query(value = """
+        SELECT * FROM products 
+        WHERE id <> :productId 
+        ORDER BY RANDOM() 
+        LIMIT :limit
+        """, nativeQuery = true)
+    List<Product> findRandomProducts(@Param("productId") Long productId, @Param("limit") int limit);
+        
 }

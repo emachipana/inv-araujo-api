@@ -12,4 +12,7 @@ public class InvitroDeliveredRequest {
 
     @NotNull(message = "El id de la evidencia es requerido")
     private Long evidenceId;
+
+    private String trackingCode;
+    private String code;
 }

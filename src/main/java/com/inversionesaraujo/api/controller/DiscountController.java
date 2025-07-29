@@ -1,7 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,14 +58,11 @@ public class DiscountController {
             .build());
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Creo un descuento para un producto")
                 .redirectTo("/productos/" + product.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -91,14 +86,11 @@ public class DiscountController {
         DiscountDTO discountUpdated = discountService.save(discount);
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Actualizo el descuento de un producto")
                 .redirectTo("/productos/" + product.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -120,14 +112,11 @@ public class DiscountController {
         discountService.delete(discount.getId());
 
         if(employeeId != null && employeeId != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(employeeId)
                 .operation("Elimino el descuento de un producto")
                 .redirectTo("/productos/" + product.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);

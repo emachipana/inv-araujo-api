@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.business.dto;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.domain.Page;
 
 import com.inversionesaraujo.api.model.Message;
@@ -24,6 +26,7 @@ public class MessageDTO {
     private String content;
     private Origin origin;
     private String email;
+    private LocalDateTime createdAt;
 
     public static MessageDTO toDTO(Message message) {
         return MessageDTO
@@ -35,6 +38,7 @@ public class MessageDTO {
             .content(message.getContent())
             .origin(message.getOrigin())
             .email(message.getEmail())
+            .createdAt(message.getCreatedAt())
             .build();
     }
 
@@ -48,6 +52,7 @@ public class MessageDTO {
             .content(message.getContent())
             .origin(message.getOrigin())
             .email(message.getEmail())
+            .createdAt(message.getCreatedAt())
             .build();
     }
 

@@ -40,6 +40,8 @@ public class OrderDTO {
     private WarehouseDTO warehouse;
     private ImageDTO evidence;
     private PaymentType paymentType;
+    private ReceiverInfoDTO receiverInfo;
+    private PickupInfoDTO pickupInfo;
 
     public static OrderDTO toDTO(Order order) {
         return OrderDTO
@@ -59,6 +61,8 @@ public class OrderDTO {
             .warehouse(WarehouseDTO.toDTO(order.getWarehouse(), 0))
             .evidence(ImageDTO.toDTO(order.getImage()))
             .paymentType(order.getPaymentType())
+            .receiverInfo(ReceiverInfoDTO.toDTO(order.getReceiverInfo()))
+            .pickupInfo(PickupInfoDTO.toDTO(order.getPickupInfo()))
             .build();
     }
 
@@ -80,6 +84,8 @@ public class OrderDTO {
             .employee(EmployeeDTO.toEntity(order.getEmployee(), entityManager))
             .image(ImageDTO.toEntity(order.getEvidence()))
             .paymentType(order.getPaymentType())
+            .receiverInfo(ReceiverInfoDTO.toEntity(order.getReceiverInfo()))
+            .pickupInfo(PickupInfoDTO.toEntity(order.getPickupInfo()))
             .build();
     }
 

@@ -11,12 +11,14 @@ public class DatabaseSeeder {
     private AdminUserSeeder adminUserSeeder;
     @Autowired
     private MonthlyProfitSeeder monthlyProfitSeeder;
-    @Autowired
-    private EmbeddingSeeder embeddingSeeder;
+    // @Autowired
+    // private EmbeddingSeeder embeddingSeeder;
     @Autowired
     private AdminRoleSeeder adminRoleSeeder;
     @Autowired
     private ClienteRoleSeeder clienteRoleSeeder;
+    @Autowired
+    private WarehouseSeeder warehouseSeeder;
 
     @Bean
     CommandLineRunner seedAll() {
@@ -25,7 +27,8 @@ public class DatabaseSeeder {
             clienteRoleSeeder.seed();
             adminUserSeeder.seed();
             monthlyProfitSeeder.seed();
-            embeddingSeeder.seed();
+            warehouseSeeder.seed();
+            // embeddingSeeder.seed();
         };
     }
 }

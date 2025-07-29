@@ -92,14 +92,11 @@ public class InvoiceController {
         invoiceService.save(invoice);
 
         if(employeeId != null && employeeId != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(employeeId)
                 .operation("Emitio el comprobante")
                 .redirectTo("/comprobantes/" + invoice.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -128,14 +125,11 @@ public class InvoiceController {
             .build());
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Creo un comprobante")
                 .redirectTo("/comprobantes/" + newInvoice.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);
@@ -160,14 +154,11 @@ public class InvoiceController {
         InvoiceDTO updatedInvoice = invoiceService.save(invoice);
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            LocalDateTime now = LocalDateTime.now();
-            
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Actualizo un comprobante")
                 .redirectTo("/comprobantes/" + updatedInvoice.getId())
-                .createdAt(now)
                 .build();
 
             employeeOperationService.save(employeeOperation);

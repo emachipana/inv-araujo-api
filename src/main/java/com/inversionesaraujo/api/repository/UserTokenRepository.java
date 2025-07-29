@@ -8,6 +8,6 @@ import com.inversionesaraujo.api.model.UserToken;
 public interface UserTokenRepository extends JpaRepository<UserToken, Long> {
     UserToken findByUserId(Long userId);
 
-    @Query("SELECT t.token FROM UserToken t ORDER BY t.id DESC LIMIT 1")
+    @Query(value = "SELECT token FROM user_tokens ORDER BY id DESC LIMIT 1", nativeQuery = true)
     String findLastToken();
 }

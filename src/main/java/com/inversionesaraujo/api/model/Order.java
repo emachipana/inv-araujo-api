@@ -2,8 +2,11 @@ package com.inversionesaraujo.api.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -14,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,7 +31,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "orders")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_seq")
+    @SequenceGenerator(name = "order_seq", sequenceName = "order_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne
@@ -82,4 +87,21 @@ public class Order {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
     private Image image;
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "fullName", column = @Column(name = "receiver_full_name")),
+        @AttributeOverride(name = "document", column = @Column(name = "receiver_document")),
+        @AttributeOverride(name = "phone", column = @Column(name = "receiver_phone")),
+        @AttributeOverride(name = "code", column = @Column(name = "receiver_code")),
+        @AttributeOverride(name = "trackingCode", column = @Column(name = "receiver_tracking_code"))
+    })
+    private ReceiverInfo receiverInfo;
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "hour", column = @Column(name = "pickup_hour")),
+        @AttributeOverride(name = "date", column = @Column(name = "pickup_date"))
+    })
+    private PickupInfo pickupInfo;
 }

@@ -8,11 +8,15 @@ import org.springframework.context.annotation.Configuration;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.FirebaseAuth;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Bean;
 
 @Configuration
 public class FirebaseConfig {
+    
+    private FirebaseApp firebaseApp;
 
     @PostConstruct
     public void init() {
@@ -24,9 +28,14 @@ public class FirebaseConfig {
                 .setStorageBucket(System.getenv("FIREBASE_BUCKET"))
                 .build();
 
-            FirebaseApp.initializeApp(options);
-        }catch (IOException error) {
+            this.firebaseApp = FirebaseApp.initializeApp(options);
+        } catch (IOException error) {
             System.out.println(error.getMessage());
         }
+    }
+    
+    @Bean
+    public FirebaseAuth firebaseAuth() {
+        return FirebaseAuth.getInstance(firebaseApp);
     }
 }
