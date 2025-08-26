@@ -20,6 +20,8 @@ import com.inversionesaraujo.api.business.service.IExpense;
 import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.IProfit;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -41,6 +43,11 @@ public class ExpenseController {
             .message("El registro del gasto se encontro con exito")
             .data(expense)
             .build());
+    }
+
+    @GetMapping("profit/{profitId}")
+    public List<ExpenseDTO> getAllByProfitId(@PathVariable Long profitId) {
+        return expenseService.findAllByProfitId(profitId);
     }
 
     @PostMapping

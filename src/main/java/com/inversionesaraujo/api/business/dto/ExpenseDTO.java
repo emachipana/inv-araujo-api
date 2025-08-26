@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.business.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.inversionesaraujo.api.model.Expense;
 import com.inversionesaraujo.api.model.ExpenseType;
@@ -59,5 +60,9 @@ public class ExpenseDTO {
             .createdAt(expense.getCreatedAt())
             .updatedAt(expense.getUpdatedAt())
             .build();
+    }
+
+    public static List<ExpenseDTO> toDTOList(List<Expense> expenses) {
+        return expenses.stream().map(ExpenseDTO::toDTO).toList();
     }
 }

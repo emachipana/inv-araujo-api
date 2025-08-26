@@ -1,34 +1,28 @@
 package com.inversionesaraujo.api.business.request;
 
-import java.time.LocalDateTime;
-
 import com.inversionesaraujo.api.model.DocumentType;
-import com.inversionesaraujo.api.model.InvoiceType;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Setter;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-public class InvoiceRequest {
-    @NotNull(message = "El tipo de comprobante es requerido")
-    private InvoiceType invoiceType;
+public class UpdateClientRequest {
+    @Size(min = 6)
+    private String phone;
 
     @NotNull(message = "El tipo de documento es requerido")
     private DocumentType documentType;
 
-    @NotEmpty(message = "El documento es requerido")
     @Size(min = 8)
     private String document;
 
     @NotEmpty(message = "La razón social es requerida")
+    @Size(min = 3)
     private String rsocial;
 
-    @NotEmpty(message = "La dirección es requerida")
-    private String address;
-
-    private LocalDateTime issueDate;
+    private Long employeeId;
 }

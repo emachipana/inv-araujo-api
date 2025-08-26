@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.business.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,8 @@ public class OrderDTO {
     private PaymentType paymentType;
     private ReceiverInfoDTO receiverInfo;
     private PickupInfoDTO pickupInfo;
+    private String createdBy;
+    private LocalDateTime deliveredAt;
 
     public static OrderDTO toDTO(Order order) {
         return OrderDTO
@@ -63,6 +66,8 @@ public class OrderDTO {
             .paymentType(order.getPaymentType())
             .receiverInfo(ReceiverInfoDTO.toDTO(order.getReceiverInfo()))
             .pickupInfo(PickupInfoDTO.toDTO(order.getPickupInfo()))
+            .createdBy(order.getCreatedBy())
+            .deliveredAt(order.getDeliveredAt())
             .build();
     }
 
@@ -86,6 +91,8 @@ public class OrderDTO {
             .paymentType(order.getPaymentType())
             .receiverInfo(ReceiverInfoDTO.toEntity(order.getReceiverInfo()))
             .pickupInfo(PickupInfoDTO.toEntity(order.getPickupInfo()))
+            .createdBy(order.getCreatedBy())
+            .deliveredAt(order.getDeliveredAt())
             .build();
     }
 

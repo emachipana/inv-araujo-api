@@ -18,6 +18,7 @@ import com.inversionesaraujo.api.business.dto.InvoiceClientDetailDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.ClientRequest;
 import com.inversionesaraujo.api.business.request.InvoiceClientDetailRequest;
+import com.inversionesaraujo.api.business.request.UpdateClientRequest;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.I_InvoiceClientDetail;
@@ -97,10 +98,11 @@ public class ClientController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<MessageResponse> update(@RequestBody @Valid ClientRequest request, @PathVariable Long id) {
+    public ResponseEntity<MessageResponse> update(@RequestBody @Valid UpdateClientRequest request, @PathVariable Long id) {
         ClientDTO client = clientService.findById(id);
         client.setPhone(request.getPhone());
         client.setDocument(request.getDocument());
+        client.setDocumentType(request.getDocumentType());
         client.setRsocial(request.getRsocial());
         ClientDTO clientUpdated = clientService.save(client);
 

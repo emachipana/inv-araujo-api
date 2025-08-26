@@ -67,6 +67,7 @@ public class AdvanceController {
             .builder()
             .vitroOrderId(order.getId())
             .amount(amount)
+            .paymentType(request.getPaymentType())
             .build());
 
         Double totalAdvance = order.getTotalAdvance() + amount;

@@ -82,12 +82,18 @@ public class InvoiceImpl implements I_Invoice {
     @Transactional
     @Override
     public void delete(Long id) {
+        Invoice invoice = invoiceRepo.findById(id).orElseThrow(() -> new DataAccessException("El comprobante no existe") {});
+        List<InvoiceItem> items = itemRepo.findByInvoiceId(invoice.getId());
+        for(InvoiceItem item : items) {
+            itemRepo.delete(item);
+        }
+
         invoiceRepo.deleteById(id);
     }
 
     @Override
     public ApiSunatResponse sendInvoiceToSunat(InvoiceDTO invoice) {
-        Double total = invoice.getTotal();
+        Double total = BigDecimal.valueOf(invoice.getTotal()).setScale(2, RoundingMode.HALF_UP).doubleValue();
         Double subtotal = BigDecimal.valueOf(total / 1.18).setScale(2, RoundingMode.HALF_UP).doubleValue();
         Double igv = BigDecimal.valueOf(total - subtotal).setScale(2, RoundingMode.HALF_UP).doubleValue();
 
@@ -97,9 +103,9 @@ public class InvoiceImpl implements I_Invoice {
             .stream()
             .map(item -> {
                 Double priceItem = item.getPrice();
-                Double priceSub = BigDecimal.valueOf(priceItem / 1.18).setScale(2, RoundingMode.HALF_UP).doubleValue();
-                Double totalSub = priceSub * item.getQuantity();
-                Double totalItem = item.getPrice() * item.getQuantity();
+                Double priceSub = BigDecimal.valueOf(priceItem / 1.18).setScale(4, RoundingMode.HALF_UP).doubleValue();
+                Double totalSub = BigDecimal.valueOf(priceSub * item.getQuantity()).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                Double totalItem = BigDecimal.valueOf(item.getPrice() * item.getQuantity()).setScale(2, RoundingMode.HALF_UP).doubleValue();
                 Double igvItem = BigDecimal.valueOf(totalItem - totalSub).setScale(2, RoundingMode.HALF_UP).doubleValue();
 
                 String codProducto = String.format("%03d", items.indexOf(item) + 1);

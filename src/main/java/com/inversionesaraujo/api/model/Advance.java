@@ -41,6 +41,9 @@ public class Advance {
     @Column(nullable = false)
     private Double amount;
 
+    @Column(nullable = false)
+    private PaymentType paymentType;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;

@@ -25,6 +25,7 @@ import com.inversionesaraujo.api.business.dto.InvoiceItemDTO;
 import com.inversionesaraujo.api.business.dto.OrderDTO;
 import com.inversionesaraujo.api.business.dto.ClientDTO;
 import com.inversionesaraujo.api.business.dto.OrderProductDTO;
+import com.inversionesaraujo.api.business.dto.ProductDTO;
 import com.inversionesaraujo.api.business.dto.ProfitDTO;
 import com.inversionesaraujo.api.business.payload.ApiSunatResponse;
 import com.inversionesaraujo.api.business.payload.AvailableHours;
@@ -68,6 +69,8 @@ public class OrderImpl implements IOrder {
     private ClientImpl clientService;
     @Autowired
     private ProfitImpl profitService;
+    @Autowired
+    private ProductImpl productService;
 
     @Transactional(readOnly = true)
     @Override
@@ -138,7 +141,7 @@ public class OrderImpl implements IOrder {
     @Transactional(readOnly = true)
     @Override
     public OrderDataResponse getData() {
-        List<Object[]> counts = orderRepo.countOrdersByStatus();
+        List<Object[]> counts = orderRepo.countOrdersByGroupedStatus();
         Object[] result = counts.get(0); 
 
         return OrderDataResponse
@@ -185,6 +188,7 @@ public class OrderImpl implements IOrder {
             .serie(invoiceType == InvoiceType.FACTURA ? "F001" : "B001")
             .total(0.0)
             .isSended(false)
+            .isRelatedToOrder(true)
             .build();
 
         InvoiceDTO savedInvoice = invoiceService.save(invoice);
@@ -219,35 +223,38 @@ public class OrderImpl implements IOrder {
     }
 
     @Override
-    public void createAndSendInvoice(OrderDTO order) {
+    public Long createAndSendInvoice(OrderDTO order, Boolean sendByEmail) {
         InvoiceDTO invoice = createInvoice(order);
 
         ApiSunatResponse sunatResponse = invoiceService.sendInvoiceToSunat(invoice);
-
-        EmailRequest emailRequest = EmailRequest
+        
+        invoice.setPdfUrl(sunatResponse.getEnlace_del_pdf());
+        invoice.setIsSended(true);
+        invoiceService.save(invoice);
+        
+        if(sendByEmail) {
+            EmailRequest emailRequest = EmailRequest
             .builder()
             .destination(order.getClient().getEmail())
             .subject("Comprobante de pago - Inversiones Araujo")
             .content("Estimado cliente, adjuntamos el comprobante generado por su pedido.")
             .build();
+            
+            byte[] attachment = null;
+            try (InputStream in = new URL(sunatResponse.getEnlace_del_pdf()).openStream()) {
+                attachment = IOUtils.toByteArray(in);
+            } catch (Exception e) {
+                throw new RuntimeException("No se pudo descargar el PDF de SUNAT", e);
+            }
+            
+            String filename = String.format("%s_%s.pdf", invoice.getSerie(), invoice.getRsocial().toUpperCase());
 
-        String filename = String.format("%s_%s.pdf", invoice.getSerie(), invoice.getRsocial().toUpperCase());
-
-        invoice.setPdfUrl(sunatResponse.getEnlace_del_pdf());
-        invoice.setIsSended(true);
-
-        invoiceService.save(invoice);
-
-        byte[] attachment = null;
-        try (InputStream in = new URL(sunatResponse.getEnlace_del_pdf()).openStream()) {
-            attachment = IOUtils.toByteArray(in);
-        } catch (Exception e) {
-            throw new RuntimeException("No se pudo descargar el PDF de SUNAT", e);
+            emailService.sendEmailWithAttachment(emailRequest, attachment, filename);
         }
 
-        emailService.sendEmailWithAttachment(emailRequest, attachment, filename);
-
         System.out.println("Se completo con éxito: creación, almacenamiento y envio del comprobante");
+
+        return invoice.getId();
     }
 
     @Override
@@ -297,5 +304,39 @@ public class OrderImpl implements IOrder {
             .date(date)
             .hours(available)
             .build();
+    }
+
+    @Override
+    public OrderDTO cancelOrder(OrderDTO order) {
+        ClientDTO client = order.getClient();
+        InvoiceDTO invoice = order.getInvoice();
+
+        client.setConsumption(client.getConsumption() - order.getTotal());
+        clientService.save(client);
+
+        Month month = order.getDate().getMonth();
+        ProfitDTO profit = profitService.findByMonth(month.toString());
+        Double income = (profit.getIncome() - order.getTotal());
+        profit.setIncome(income);
+        profit.setProfit(income - profit.getTotalExpenses());
+        profitService.save(profit);
+
+        List<OrderProductDTO> products = orderProductService.findByOrderId(order.getId());
+        
+        for(OrderProductDTO item : products) {
+            ProductDTO product = item.getProduct();
+            Integer firstStock = product.getStock() + item.getQuantity();
+
+            product.setStock(firstStock);
+            productService.save(product);
+        }
+
+        order.setInvoice(null);
+        order.setStatus(Status.CANCELADO);
+        orderRepo.save(OrderDTO.toEntity(order, entityManager));
+
+        invoiceService.delete(invoice.getId());
+
+        return order;
     }
 }

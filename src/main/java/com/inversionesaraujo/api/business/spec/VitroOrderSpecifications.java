@@ -15,58 +15,65 @@ import jakarta.persistence.criteria.Join;
 
 public class VitroOrderSpecifications {
     public static Specification<VitroOrder> findByTuberId(Long tuberId) {
-        return (root, query, criteriaBuilder) -> {
+        return (root, query, cb) -> {
             if(tuberId == null) return null;
 
             Join<VitroOrder, OrderVariety> orderVariety = root.join("items");
             Join<OrderVariety, Variety> variety = orderVariety.join("variety");
     
-            return criteriaBuilder.equal(variety.get("tuber").get("id"), tuberId);
+            return cb.equal(variety.get("tuber").get("id"), tuberId);
         };
     }   
     
     public static Specification<VitroOrder> findByStatus(Status status) {
-        return (root, query, criteriaBuilder) -> 
-            status != null ? criteriaBuilder.equal(root.get("status"), status) : null;
+        return (root, query, cb) -> 
+            status != null ? cb.equal(root.get("status"), status) : null;
+    }
+
+    public static Specification<VitroOrder> findByClient(Long clientId) {
+        return (root, query, cb) ->
+            clientId != null ? cb.equal(root.get("client").get("id"), clientId) : null;
     }
 
     public static Specification<VitroOrder> findByLocation(OrderLocation location) {
-        return (root, query, criteriaBuilder) -> 
-            location != null ? criteriaBuilder.equal(root.get("location"), location) : null;
+        return (root, query, cb) -> 
+            location != null ? cb.equal(root.get("location"), location) : null;
     }
 
     public static Specification<VitroOrder> ordersReady(Boolean ordersReady) {
-        return (root, query, criteriaBuilder) -> 
-            ordersReady ? criteriaBuilder.isTrue(root.get("isReady")) : null;
+        return (root, query, cb) -> 
+            ordersReady ? cb.isTrue(root.get("isReady")) : null;
     }
 
     public static Specification<VitroOrder> findByMonth(Month month) {
-        return (root, query, criteriaBuilder) -> month != null 
-            ? criteriaBuilder.equal(
-                criteriaBuilder.function(
-                    "MONTH", 
-                    Integer.class, 
-                    root.get("finishDate")), month.getValue())
+        return (root, query, cb) -> month != null
+            ? cb.equal(
+                cb.function("date_part", Double.class,
+                    cb.literal("month"), root.get("finishDate")
+                ),
+                (double) month.getValue()
+            )
             : null;
     }
 
     public static Specification<VitroOrder> findByDay(Integer day) {
-        return (root, query, criteriaBuilder) -> day != null
-            ? criteriaBuilder.equal(
-                criteriaBuilder.function(
-                    "DAY", 
-                    Integer.class, 
-                    root.get("finishDate")), day)
+        return (root, query, cb) -> day != null
+            ? cb.equal(
+                cb.function("date_part", Double.class,
+                    cb.literal("day"), root.get("finishDate")
+                ),
+                (double) day
+            )
             : null;
     }
 
     public static Specification<VitroOrder> findByShipType(ShippingType shipType) {
-        return (root, query, criteriaBuilder) ->
-            shipType != null ? criteriaBuilder.equal(root.get("shippingType"), shipType) : null;
+        return (root, query, cb) ->
+            shipType != null ? cb.equal(root.get("shippingType"), shipType) : null;
     }
 
     public static Specification<VitroOrder> findByEmployee(Long employee_id) {
-        return (root, query, criteriaBuilder) ->
-            employee_id != null ? criteriaBuilder.equal(root.get("employee").get("id"), employee_id) : null;
+        return (root, query, cb) ->
+            employee_id != null ? cb.equal(root.get("employee").get("id"), employee_id) : null;
     }
 }

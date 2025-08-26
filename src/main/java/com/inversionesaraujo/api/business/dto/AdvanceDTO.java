@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.business.dto;
 
 import com.inversionesaraujo.api.model.Advance;
+import com.inversionesaraujo.api.model.PaymentType;
 import com.inversionesaraujo.api.model.VitroOrder;
 
 import java.time.LocalDateTime;
@@ -22,8 +23,9 @@ public class AdvanceDTO {
     private Long id;
     private Long vitroOrderId;
     private Double amount;
+    private PaymentType paymentType;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;   
+    private LocalDateTime updatedAt;
     
     public static AdvanceDTO toDTO(Advance advance) {
         return AdvanceDTO
@@ -31,6 +33,7 @@ public class AdvanceDTO {
             .id(advance.getId())
             .vitroOrderId(advance.getVitroOrder().getId())
             .amount(advance.getAmount())
+            .paymentType(advance.getPaymentType())
             .createdAt(advance.getCreatedAt())
             .updatedAt(advance.getUpdatedAt())
             .build();
@@ -45,6 +48,7 @@ public class AdvanceDTO {
             .id(advance.getId())
             .vitroOrder(order)
             .amount(advance.getAmount())
+            .paymentType(advance.getPaymentType())
             .createdAt(advance.getCreatedAt())
             .updatedAt(advance.getUpdatedAt())
             .build();

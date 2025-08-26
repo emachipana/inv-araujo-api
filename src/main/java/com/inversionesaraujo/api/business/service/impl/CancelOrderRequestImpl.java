@@ -11,6 +11,7 @@ import com.inversionesaraujo.api.business.dto.CancelOrderRequestDTO;
 import com.inversionesaraujo.api.business.service.ICancelOrderRequest;
 import com.inversionesaraujo.api.model.CancelOrderRequest;
 import com.inversionesaraujo.api.model.Client;
+import com.inversionesaraujo.api.model.Invoice;
 import com.inversionesaraujo.api.model.Order;
 import com.inversionesaraujo.api.model.Profit;
 import com.inversionesaraujo.api.model.Status;
@@ -37,6 +38,8 @@ public class CancelOrderRequestImpl implements ICancelOrderRequest {
     private ProductImpl productService;
     @Autowired
     private OrderRepository orderRepo;
+    @Autowired
+    private InvoiceImpl invoiceService;
 
     @Transactional
     @Override
@@ -52,6 +55,7 @@ public class CancelOrderRequestImpl implements ICancelOrderRequest {
         CancelOrderRequest cancelOrderRequest = repo.findById(id).orElseThrow(() -> new DataAccessException("La solicitud de cancelacion no existe") {});
         Order order = cancelOrderRequest.getOrder();
         Client client = order.getClient();
+        Invoice invoice = order.getInvoice();
 
         client.setConsumption(client.getConsumption() - order.getTotal());
         clientRepo.save(client);
@@ -73,11 +77,14 @@ public class CancelOrderRequestImpl implements ICancelOrderRequest {
             productService.save(product);
         }
 
+        order.setInvoice(null);
         order.setStatus(Status.CANCELADO);
         orderRepo.save(order);
 
         cancelOrderRequest.setAccepted(true);
         repo.save(cancelOrderRequest);
+
+        invoiceService.delete(invoice.getId());
 
         return true;
     }

@@ -16,8 +16,12 @@ import com.inversionesaraujo.api.business.dto.CancelOrderRequestDTO;
 import com.inversionesaraujo.api.business.dto.OrderDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.CancelRequest;
+import com.inversionesaraujo.api.business.request.NotificationRequest;
+import com.inversionesaraujo.api.business.service.INotification;
 import com.inversionesaraujo.api.business.service.ICancelOrderRequest;
 import com.inversionesaraujo.api.business.service.IOrder;
+import com.inversionesaraujo.api.model.NotificationType;
+import com.inversionesaraujo.api.model.Permission;
 
 import jakarta.validation.Valid;
 
@@ -28,6 +32,8 @@ public class CancelOrderRequestController {
     private ICancelOrderRequest cancelService;
     @Autowired
     private IOrder orderService;
+    @Autowired
+    private INotification notiService;
 
     @GetMapping("/order/{orderId}")
     public List<CancelOrderRequestDTO> getOneByOrder(@PathVariable Long orderId) {
@@ -56,6 +62,15 @@ public class CancelOrderRequestController {
             .rejected(false)
             .build());
 
+        NotificationRequest notification = NotificationRequest
+            .builder()
+            .userId(999L)
+            .type(NotificationType.CANCEL_ORDER_REQUEST)
+            .redirectTo("/pedidos/" + order.getId())
+            .build();
+
+        notiService.sendNotificationToUsersWithPermission(notification, Permission.ORDERS_WATCH, 999L);
+
         return ResponseEntity.ok().body(MessageResponse
             .builder()
             .message("La solicitud se creó con exito")
@@ -66,8 +81,18 @@ public class CancelOrderRequestController {
     @PutMapping("{id}/accept")
     public ResponseEntity<MessageResponse> accept(@PathVariable Long id) {
         CancelOrderRequestDTO cancelOrderRequest = cancelService.findById(id);
+        OrderDTO order = orderService.findById(cancelOrderRequest.getOrderId());
 
         cancelService.acceptRequest(id);
+
+        NotificationRequest notification = NotificationRequest
+            .builder()
+            .userId(order.getClient().getUserId())
+            .type(NotificationType.CANCEL_REQUEST_APROVED)
+            .redirectTo("/perfil/pedidos/" + order.getId())
+            .build();
+
+        notiService.create(notification);
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()
@@ -79,8 +104,18 @@ public class CancelOrderRequestController {
     @PutMapping("{id}/reject")
     public ResponseEntity<MessageResponse> reject(@PathVariable Long id) {
         CancelOrderRequestDTO cancelOrderRequest = cancelService.findById(id);
+        OrderDTO order = orderService.findById(cancelOrderRequest.getOrderId());
 
         cancelService.rejectRequest(id);
+
+        NotificationRequest notification = NotificationRequest
+            .builder()
+            .userId(order.getClient().getUserId())
+            .type(NotificationType.CANCEL_REQUEST_REJECTED)
+            .redirectTo("/perfil/pedidos/" + order.getId())
+            .build();
+
+        notiService.create(notification);
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

@@ -1,10 +1,13 @@
 package com.inversionesaraujo.api.business.service;
 
+import java.time.LocalDate;
 import java.time.Month;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 
 import com.inversionesaraujo.api.business.dto.VitroOrderDTO;
+import com.inversionesaraujo.api.business.payload.AvailbleByMonth;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.model.OrderLocation;
@@ -12,14 +15,18 @@ import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.model.Status;
+import com.inversionesaraujo.api.business.dto.MonthlyProductionDTO;
 
 public interface IVitroOrder {
     Page<VitroOrderDTO> listAll(
         Long tuberId, Integer page, Integer size,
         SortDirection direction, Month month, Status status,
         SortBy sortby, ShippingType shipType, Boolean ordersReady,
-        Long employeeId, OrderLocation location, Integer day
+        Long employeeId, OrderLocation location, Integer day,
+        Long clientId
     );
+
+    void alertNewOrder(VitroOrderDTO order);
 
     OrderDataResponse getData();
 
@@ -32,4 +39,10 @@ public interface IVitroOrder {
     Page<VitroOrderDTO> search(String department, String city, String rsocial, Integer page);
 
     TotalDeliverResponse totalDeliver();
+
+    AvailbleByMonth availableByMonth(LocalDate date, Integer quantity);
+    
+    List<MonthlyProductionDTO> getMonthlyProductionSummary();
+
+    Long createAndSendInvoice(VitroOrderDTO order);
 }

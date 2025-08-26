@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.model;
 
 public enum NotificationType {
+    // ADMIN
     NEW_VITRO_ORDER,
     NEW_ORDER,
     NEW_CONTACT_MESSAGE,
@@ -8,5 +9,14 @@ public enum NotificationType {
     PROX_VITRO_ORDER,
     PROX_ORDER,
     NEW_ORDER_MESSAGE,
-    NEW_VITROORDER_MESSAGE
+    NEW_VITROORDER_MESSAGE,
+    CANCEL_ORDER_REQUEST,
+    // CLIENT
+    CANCEL_REQUEST_APROVED,
+    CANCEL_REQUEST_REJECTED,
+    ORDER_DELIVERED,
+    VITRO_ORDER_DELIVERED,
+    ORDER_AT_AGENCY,
+    VITRO_ORDER_AT_AGENCY,
+    VITRO_ORDER_ALREADY
 }

@@ -1,7 +1,6 @@
 package com.inversionesaraujo.api.model;
 
 import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -59,4 +58,7 @@ public class Invoice {
     private Double total;
 
     private String pdfUrl;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean isRelatedToOrder;
 }

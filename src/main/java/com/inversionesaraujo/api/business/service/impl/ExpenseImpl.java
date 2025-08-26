@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.business.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -35,5 +37,11 @@ public class ExpenseImpl implements IExpense {
     @Override
     public void delete(Long id) {
         expenseRepo.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ExpenseDTO> findAllByProfitId(Long profitId) {
+        return ExpenseDTO.toDTOList(expenseRepo.findAllByProfitId(profitId));
     }
 }

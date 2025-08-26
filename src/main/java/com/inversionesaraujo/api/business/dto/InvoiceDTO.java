@@ -31,6 +31,7 @@ public class InvoiceDTO {
     private Boolean isSended;
     private Double total;
     private String pdfUrl;
+    private Boolean isRelatedToOrder;
 
     public static InvoiceDTO toDTO(Invoice invoice) {
         if(invoice == null) return null;
@@ -48,6 +49,7 @@ public class InvoiceDTO {
             .isSended(invoice.getIsSended())
             .total(invoice.getTotal())
             .pdfUrl(invoice.getPdfUrl())
+            .isRelatedToOrder(invoice.getIsRelatedToOrder())
             .build();
     }
 
@@ -67,6 +69,7 @@ public class InvoiceDTO {
             .serie(invoice.getSerie())
             .isSended(invoice.getIsSended())
             .total(invoice.getTotal())
+            .isRelatedToOrder(invoice.getIsRelatedToOrder())
             .build();
     }
 

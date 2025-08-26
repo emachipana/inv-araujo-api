@@ -44,30 +44,24 @@ public class SecurityConfig {
                     // payments
                     .requestMatchers(HttpMethod.POST, "/api/v1/payments/**").permitAll()
                     // tubers
-                    .requestMatchers(HttpMethod.GET, "/api/v1/tubers/**").hasAnyAuthority("INVITRO_WATCH")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/tubers/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/tubers/**").hasAnyAuthority("TUBER_CREATE")
                     .requestMatchers(HttpMethod.PUT, "/api/v1/tubers/**").hasAnyAuthority("TUBER_UPDATE")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/tubers/**").hasAnyAuthority("TUBER_DELETE")
                     // varieties
-                    .requestMatchers(HttpMethod.GET, "/api/v1/varieties/**").hasAnyAuthority("INVITRO_WATCH")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/varieties/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/varieties/**").hasAnyAuthority("VARIETY_CREATE")
                     .requestMatchers(HttpMethod.PUT, "/api/v1/varieties/**").hasAnyAuthority("VARIETY_UPDATE")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/varieties/**").hasAnyAuthority("VARIETY_DELETE")
                     // vitroOrders
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/vitroOrders/**").hasAnyAuthority("INVITRO_UPDATE")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/vitroOrders/availableByMonth").permitAll()
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/vitroOrders/**").hasAnyAuthority("INVITRO_DELETE")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/vitroOrders/**").hasAnyAuthority("INVITRO_CREATE")
-                    .requestMatchers(HttpMethod.GET, "/api/v1/vitroOrders/**").hasAnyAuthority("INVITRO_WATCH")
                     // orderVarieties
                     .requestMatchers(HttpMethod.PUT, "/api/v1/orderVarieties/**").hasAnyAuthority("INVITRO_ITEM_UPDATE")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/orderVarieties/**").hasAnyAuthority("INVITRO_ITEM_DELETE")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/orderVarieties/**").hasAnyAuthority("INVITRO_ITEM_CREATE")
-                    .requestMatchers(HttpMethod.GET, "/api/v1/orderVarieties/**").hasAnyAuthority("INVITRO_WATCH")
                     // advances
                     .requestMatchers(HttpMethod.PUT, "/api/v1/advances/**").hasAnyAuthority("INVITRO_ADVANCE_UPDATE")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/advances/**").hasAnyAuthority("INVITRO_ADVANCE_DELETE")
-                    .requestMatchers(HttpMethod.POST, "/api/v1/advances/**").hasAnyAuthority("INVITRO_ADVANCE_CREATE")
-                    .requestMatchers(HttpMethod.GET, "/api/v1/advances/**").hasAnyAuthority("INVITRO_ADVANCE_WATCH")
                     // invoices
                     .requestMatchers(HttpMethod.PUT, "/api/v1/invoices/**").hasAnyAuthority("INVOICES_UPDATE")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/invoices/**").hasAnyAuthority("INVOICES_DELETE")

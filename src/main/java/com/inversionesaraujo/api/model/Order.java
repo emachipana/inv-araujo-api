@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -87,6 +88,12 @@ public class Order {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
     private Image image;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private String createdBy = "CLIENTE";
+
+    private LocalDateTime deliveredAt;
 
     @Embedded
     @AttributeOverrides({

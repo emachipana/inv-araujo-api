@@ -42,7 +42,7 @@ public class MobileController {
 			null, 0, 5, SortDirection.DESC,
 			null, Status.PENDIENTE, SortBy.finishDate, 
 			ShippingType.RECOJO_ALMACEN, true, null,
-			null, null);
+			null, null, null);
 
 		TotalDeliverResponse orderTotal = orderService.totalDeliver();
 		TotalDeliverResponse vitroTotal = vitroOrderService.totalDeliver();

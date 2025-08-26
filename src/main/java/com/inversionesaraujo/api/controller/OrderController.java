@@ -2,6 +2,8 @@ package com.inversionesaraujo.api.controller;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Map;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -71,9 +73,9 @@ public class OrderController {
     public Page<OrderDTO> getAll(
         @RequestParam(required = false) Status status,
         @RequestParam(defaultValue = "0") Integer page,
-        @RequestParam(defaultValue = "20") Integer size,
+        @RequestParam(defaultValue = "9") Integer size,
         @RequestParam(defaultValue = "DESC") SortDirection direction,
-        @RequestParam(required = false) SortBy sortby,
+        @RequestParam(defaultValue = "date") SortBy sortby,
         @RequestParam(required = false) Month month,
         @RequestParam(required = false) ShippingType shipType,
         @RequestParam(required = false) Long warehouseId,
@@ -133,8 +135,6 @@ public class OrderController {
             .data(order)
             .build());
     }
-
-    // TODO - crear un endpoint para crear automaticamente la factura de un pedido o pedido invitro
 
     @PutMapping("{id}/updateReceiverInfo")
     public ResponseEntity<MessageResponse> updateReceiverInfo(@PathVariable Long id, @RequestBody @Valid ReceiverInfoRequest request) {
@@ -201,7 +201,7 @@ public class OrderController {
 
         if(alert) orderService.alertNewOrder(order);
 
-        orderService.createAndSendInvoice(order);
+        orderService.createAndSendInvoice(order, true);
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()
@@ -267,6 +267,7 @@ public class OrderController {
             .warehouse(warehouse)
             .evidence(null)
             .receiverInfo(receiverInfo)
+            .createdBy(request.getCreatedBy())
             .build());
 
         if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
@@ -340,6 +341,7 @@ public class OrderController {
         order.setStatus(Status.ENTREGADO);
         order.setEmployee(employeeService.findById(request.getEmployeeId()));
         order.setEvidence(imageService.findById(request.getEvidenceId()));
+        order.setDeliveredAt(LocalDateTime.now());
 
         orderService.save(order);
 
@@ -370,6 +372,7 @@ public class OrderController {
         order.getReceiverInfo().setTrackingCode(request.getTrackingCode());
         order.getReceiverInfo().setCode(request.getCode());
         order.setLocation(OrderLocation.AGENCIA);
+        order.setDeliveredAt(LocalDateTime.now());
 
         orderService.save(order);
 
@@ -382,6 +385,17 @@ public class OrderController {
                 .build();
 
             employeeOperationService.save(employeeOperation);
+        }
+
+        if(order.getClient().getUserId() != null) {
+            NotificationRequest notification = NotificationRequest
+                .builder()
+                .userId(order.getClient().getUserId())
+                .type(NotificationType.ORDER_AT_AGENCY)
+                .redirectTo("/perfil/pedidos/" + order.getId())
+                .build();
+    
+            notiService.create(notification);
         }
 
         return ResponseEntity.ok().body(MessageResponse
@@ -399,6 +413,13 @@ public class OrderController {
         if(request.getStatus() == Status.PAGADO) {
             order.setPaymentType(request.getPaymentType());
             orderService.orderPaid(order);
+        }else if(request.getStatus() == Status.CANCELADO) {
+            OrderDTO orderUpdated = orderService.cancelOrder(order);
+            return ResponseEntity.ok().body(MessageResponse
+                .builder()
+                .message("El pedido fue cancelado")
+                .data(orderUpdated)
+                .build());
         }
 
         OrderDTO orderUpdated = orderService.save(order);
@@ -427,6 +448,25 @@ public class OrderController {
         return ResponseEntity.ok().body(MessageResponse
             .builder()
             .message("El pedido se elimino con exito")
+            .build());
+    }
+
+    @PostMapping("{id}/generate-invoice")
+    public ResponseEntity<MessageResponse> generateInvoice(@PathVariable Long id) {
+        OrderDTO order = orderService.findById(id);
+        if(order.getStatus() != Status.PAGADO) {
+            return ResponseEntity.status(400).body(MessageResponse
+                .builder()
+                .message("El pedido debe estar pagado para generar el comprobante")
+                .build());
+        }
+
+        Long invoiceId = orderService.createAndSendInvoice(order, false);
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El pedido se notifico y se envió el comprobante con éxito")
+            .data(Map.of("invoiceId", invoiceId))
             .build());
     }
 }

@@ -17,7 +17,7 @@ public class InvoiceItemRequest {
     @NotEmpty(message = "El nombre del item es requerido")
     private String name;
 
-    @NotEmpty(message = "La unidad del item es requerida")
+    @NotNull(message = "La unidad del item es requerida")
     private ProductUnit unit;
 
     @NotNull(message = "El precio del item es requerido")
@@ -29,6 +29,4 @@ public class InvoiceItemRequest {
     private Integer quantity;
 
     private Boolean isIgvApply = true;
-
-    private Long employeeId;
 }

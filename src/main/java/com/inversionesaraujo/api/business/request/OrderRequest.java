@@ -22,6 +22,7 @@ public class OrderRequest {
     private ShippingType shippingType;
     
     private OrderLocation location = OrderLocation.ALMACEN;
+    private String createdBy = "CLIENTE";
     private String department;
     private String city;
     private Status status = Status.PENDIENTE;

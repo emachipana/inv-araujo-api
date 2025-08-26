@@ -36,9 +36,11 @@ public interface IOrder {
 
     void alertNewOrder(OrderDTO order);
 
-    void createAndSendInvoice(OrderDTO order);
+    Long createAndSendInvoice(OrderDTO order, Boolean sendByEmail);
 
     void orderPaid(OrderDTO order);
+
+    OrderDTO cancelOrder(OrderDTO order);
 
     AvailableHours getAvailableHours(LocalDate date);
 }

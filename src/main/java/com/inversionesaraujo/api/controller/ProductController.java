@@ -45,7 +45,7 @@ public class ProductController {
         @RequestParam(required = false) Double minPrice,
         @RequestParam(required = false) Double maxPrice,
         @RequestParam(defaultValue = "0") Integer page,
-        @RequestParam(defaultValue = "16") Integer size,
+        @RequestParam(defaultValue = "9") Integer size,
         @RequestParam(required = false) SortBy sortby,
         @RequestParam(required = false) SortDirection direction,
         @RequestParam(required = false) String categoryName,

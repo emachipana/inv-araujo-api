@@ -33,8 +33,8 @@ public class MessageController {
     @GetMapping
     public Page<MessageDTO> getAll(
         @RequestParam(defaultValue = "0") Integer page,
-        @RequestParam(defaultValue = "50") Integer size,
-        @RequestParam(required = false) SortDirection sort
+        @RequestParam(defaultValue = "5") Integer size,
+        @RequestParam(defaultValue = "DESC") SortDirection sort
     ) {
         return messageService.listAll(page, size, sort);
     }

@@ -18,6 +18,8 @@ public class DatabaseSeeder {
     @Autowired
     private ClienteRoleSeeder clienteRoleSeeder;
     @Autowired
+    private AlmaceneroRoleSeeder almaceneroRoleSeeder;
+    @Autowired
     private WarehouseSeeder warehouseSeeder;
 
     @Bean
@@ -25,6 +27,7 @@ public class DatabaseSeeder {
         return args -> {
             adminRoleSeeder.seed();
             clienteRoleSeeder.seed();
+            almaceneroRoleSeeder.seed();
             adminUserSeeder.seed();
             monthlyProfitSeeder.seed();
             warehouseSeeder.seed();

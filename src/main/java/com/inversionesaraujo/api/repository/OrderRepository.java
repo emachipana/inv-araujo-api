@@ -22,11 +22,14 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
 				Pageable pageable
 			);
 
-		@Query("SELECT " +
-				"COALESCE(SUM(CASE WHEN o.status = 'ENTREGADO' THEN 1 ELSE 0 END), 0), " +
-				"COALESCE(SUM(CASE WHEN o.status = 'PENDIENTE' THEN 1 ELSE 0 END), 0) " +
-				"FROM Order o")
-		List<Object[]> countOrdersByStatus();
+			@Query("""
+					SELECT 
+							COALESCE(SUM(CASE WHEN o.status IN ('ENTREGADO', 'ENVIADO') THEN 1 ELSE 0 END), 0), 
+							COALESCE(SUM(CASE WHEN o.status IN ('PENDIENTE', 'PAGADO') THEN 1 ELSE 0 END), 0) 
+					FROM Order o
+			""")
+			List<Object[]> countOrdersByGroupedStatus();
+		
 
 		@Query("SELECT COUNT(o) " +
 				"FROM Order o " +
