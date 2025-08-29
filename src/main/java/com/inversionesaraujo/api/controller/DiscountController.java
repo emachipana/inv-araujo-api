@@ -7,12 +7,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.DiscountDTO;
-import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.ProductDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.DiscountRequest;
 import com.inversionesaraujo.api.business.service.IDiscount;
-import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.IProduct;
 
 import jakarta.validation.Valid;
@@ -31,8 +29,6 @@ public class DiscountController {
     private IDiscount discountService;
     @Autowired
     private IProduct productService;
-    @Autowired
-    private IEmployeeOperation employeeOperationService;
 
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
@@ -57,16 +53,8 @@ public class DiscountController {
             .percentage(percentage)
             .build());
 
-        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
-                .builder()
-                .employeeId(request.getEmployeeId())
-                .operation("Creo un descuento para un producto")
-                .redirectTo("/productos/" + product.getId())
-                .build();
-
-            employeeOperationService.save(employeeOperation);
-        }
+        product.setPriceDiscount(request.getPrice());
+        productService.save(product);
 
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
@@ -85,16 +73,8 @@ public class DiscountController {
         discount.setPrice(request.getPrice());
         DiscountDTO discountUpdated = discountService.save(discount);
 
-        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
-            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
-                .builder()
-                .employeeId(request.getEmployeeId())
-                .operation("Actualizo el descuento de un producto")
-                .redirectTo("/productos/" + product.getId())
-                .build();
-
-            employeeOperationService.save(employeeOperation);
-        }
+        product.setPriceDiscount(request.getPrice());
+        productService.save(product);
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()
@@ -111,16 +91,8 @@ public class DiscountController {
         productService.save(product);
         discountService.delete(discount.getId());
 
-        if(employeeId != null && employeeId != 1L) {
-            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
-                .builder()
-                .employeeId(employeeId)
-                .operation("Elimino el descuento de un producto")
-                .redirectTo("/productos/" + product.getId())
-                .build();
-
-            employeeOperationService.save(employeeOperation);
-        }
+        product.setPriceDiscount(0.0);
+        productService.save(product);
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

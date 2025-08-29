@@ -51,6 +51,10 @@ public class Product {
     private Double price;
 
     @Column(nullable = false)
+    @Builder.Default
+    private Double priceDiscount = 0.0;
+
+    @Column(nullable = false)
     private Double purchasePrice;
 
     @Column(nullable = false)

@@ -7,11 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.inversionesaraujo.api.business.payload.MessageResponse;
-import com.inversionesaraujo.api.business.request.DataEmbedRequest;
-import com.inversionesaraujo.api.business.request.QuestionRequest;
-import com.inversionesaraujo.api.business.service.IEmbedding;
+import com.inversionesaraujo.api.business.service.IClientChat;
+import com.inversionesaraujo.api.business.request.ClientChatRequest;
 
 import jakarta.validation.Valid;
 
@@ -19,26 +16,11 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/chatbot")
 public class ChatBotController {
 	@Autowired
-	private IEmbedding embeddingService;
+	private IClientChat clientChat;
 
-	@PostMapping("/question")
-	public ResponseEntity<MessageResponse> answer(@RequestBody @Valid QuestionRequest request) throws JsonProcessingException {
-		String answer = embeddingService.answer(request.getQuestion());
-
-		return ResponseEntity.ok().body(MessageResponse
-			.builder()
-			.message("La respuesta se genero con éxito")
-			.data(answer)
-			.build());
-	}
-
-	@PostMapping("/add-data")
-	public ResponseEntity<MessageResponse> addData(@RequestBody @Valid DataEmbedRequest request) throws JsonProcessingException {
-		embeddingService.saveText(request.getText());
-
-		return ResponseEntity.ok().body(MessageResponse
-			.builder()
-			.message("El texto se guardo con éxito")
-			.build());
+	@PostMapping("/client")
+	public ResponseEntity<String> answer(@Valid @RequestBody ClientChatRequest request) {
+		return ResponseEntity.ok().body(clientChat.answer(request.getQuestion()));
 	}
 }
+	

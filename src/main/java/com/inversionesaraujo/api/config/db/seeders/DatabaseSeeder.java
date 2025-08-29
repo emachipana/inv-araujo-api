@@ -11,8 +11,6 @@ public class DatabaseSeeder {
     private AdminUserSeeder adminUserSeeder;
     @Autowired
     private MonthlyProfitSeeder monthlyProfitSeeder;
-    // @Autowired
-    // private EmbeddingSeeder embeddingSeeder;
     @Autowired
     private AdminRoleSeeder adminRoleSeeder;
     @Autowired
@@ -31,7 +29,6 @@ public class DatabaseSeeder {
             adminUserSeeder.seed();
             monthlyProfitSeeder.seed();
             warehouseSeeder.seed();
-            // embeddingSeeder.seed();
         };
     }
 }

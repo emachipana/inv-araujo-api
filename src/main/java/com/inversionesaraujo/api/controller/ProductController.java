@@ -98,6 +98,7 @@ public class ProductController {
             .price(request.getPrice())
             .isActive(true)
             .stock(0)
+            .priceDiscount(0.0)
             .purchasePrice(request.getPurchasePrice())
             .unit(request.getUnit())
             .isActive(request.getIsActive())

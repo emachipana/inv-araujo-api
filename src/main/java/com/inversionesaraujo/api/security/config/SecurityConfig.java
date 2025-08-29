@@ -37,7 +37,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/messages/**").hasAnyAuthority("MESSAGES_DELETE")
                     .requestMatchers(HttpMethod.POST, "/api/v1/messages/**").permitAll()
                     // chatbot
-                    .requestMatchers(HttpMethod.POST, "/api/v1/chatbot/question").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/chatbot/client").permitAll()
                     // notifications
                     .requestMatchers(HttpMethod.POST, "/api/v1/notifications/**").permitAll()
                     .requestMatchers("/api/v1/ws/**").permitAll()
