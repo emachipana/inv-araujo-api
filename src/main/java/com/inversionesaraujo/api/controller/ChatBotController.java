@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.business.service.IAdminChat;
 import com.inversionesaraujo.api.business.service.IClientChat;
-import com.inversionesaraujo.api.business.request.ClientChatRequest;
+import com.inversionesaraujo.api.business.payload.MessageResponse;
+import com.inversionesaraujo.api.business.request.ChatRequest;
 
 import jakarta.validation.Valid;
 
@@ -17,10 +19,24 @@ import jakarta.validation.Valid;
 public class ChatBotController {
 	@Autowired
 	private IClientChat clientChat;
+	@Autowired
+	private IAdminChat adminChat;
 
 	@PostMapping("/client")
-	public ResponseEntity<String> answer(@Valid @RequestBody ClientChatRequest request) {
-		return ResponseEntity.ok().body(clientChat.answer(request.getQuestion()));
+	public ResponseEntity<MessageResponse> answerClient(@Valid @RequestBody ChatRequest request) {
+		String answer = clientChat.answer(request.getQuestion());
+
+		return ResponseEntity.ok().body(
+			MessageResponse
+				.builder()
+				.data(answer)
+				.message("Respuesta del chatbot")
+				.build()
+			);
+	}
+
+	@PostMapping("/admin")
+	public ResponseEntity<String> answerAdmin(@Valid @RequestBody ChatRequest request) {
+		return ResponseEntity.ok().body(adminChat.answer(request.getQuestion()));
 	}
 }
-	

@@ -30,5 +30,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
         LIMIT :limit
         """, nativeQuery = true)
     List<Product> findRandomProducts(@Param("productId") Long productId, @Param("limit") int limit);
-        
+
+    Boolean existsByNameIgnoreCaseContaining(String name);        
 }

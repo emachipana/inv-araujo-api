@@ -28,4 +28,6 @@ public interface IProduct {
     List<WarehouseDTO> getWarehouses(Long productId);
 
     List<ProductDTO> findRelatedProducts(Long productId, Long categoryId);
+
+    Boolean existsByName(String name);
 }

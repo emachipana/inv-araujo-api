@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ClientChatRequest {
+public class ChatRequest {
     @NotEmpty(message = "La consulta es requerida")
     private String question;
 }
