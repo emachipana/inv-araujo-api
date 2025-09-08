@@ -46,7 +46,6 @@ import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.IWarehouse;
 import com.inversionesaraujo.api.model.NotificationType;
 import com.inversionesaraujo.api.model.OrderLocation;
-import com.inversionesaraujo.api.model.Permission;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -86,14 +85,23 @@ public class VitroOrderController {
         @RequestParam(required = false) Long employeeId,
         @RequestParam(required = false) OrderLocation location,
         @RequestParam(required = false) Integer day,
-        @RequestParam(required = false) Long clientId
+        @RequestParam(required = false) Long clientId,
+        @RequestParam(required = false) Double pending
     ) {
-        return orderService.listAll(tuberId, page, size, direction, month, status, sortby, shipType, ordersReady, employeeId, location, day, clientId);
+        return orderService.listAll(tuberId, page, size, direction, month, status, sortby, shipType, ordersReady, employeeId, location, day, clientId, pending);
     }
     
     @GetMapping("search")
-    public Page<VitroOrderDTO> search(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
-        return orderService.search(param, param, param, page);
+    public Page<VitroOrderDTO> search(
+        @RequestParam String param,
+        @RequestParam(required = false) Boolean ordersReady,
+        @RequestParam(required = false) ShippingType shipType,
+        @RequestParam(defaultValue = "0") Integer page,
+        @RequestParam(required = false) Status status,
+        @RequestParam(required = false) Double pending
+    ) {
+        System.out.println(param);
+        return orderService.search(param, param, pending, ordersReady, shipType, status, page);
     }
 
     @GetMapping("data")
@@ -303,15 +311,6 @@ public class VitroOrderController {
                 .build();
 
             employeeOperationService.save(employeeOperation);
-
-            NotificationRequest notiRequest = NotificationRequest
-                .builder()
-                .userId(request.getOperatorId())
-                .type(NotificationType.NEW_VITRO_ORDER)
-                .redirectTo("/invitro/" + order.getId())
-                .build();
-
-            notiService.sendNotificationToUsersWithPermission(notiRequest, Permission.INVITRO_WATCH, request.getOperatorId());
         }
 
         return ResponseEntity.status(201).body(MessageResponse
@@ -362,7 +361,7 @@ public class VitroOrderController {
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
-                .operation("Entrego el pedido")
+                .operation("Puso el pedido invitro en agencia")
                 .redirectTo("/invitro/" + order.getId())
                 .build();
 

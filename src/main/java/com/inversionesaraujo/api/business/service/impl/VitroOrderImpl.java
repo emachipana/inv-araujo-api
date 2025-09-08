@@ -66,7 +66,7 @@ public class VitroOrderImpl implements IVitroOrder {
         Long tuberId, Integer page, Integer size, 
         SortDirection direction, Month month, Status status,
         SortBy sortby, ShippingType shipType, Boolean ordersReady,
-        Long employeeId, OrderLocation location, Integer day, Long clientId
+        Long employeeId, OrderLocation location, Integer day, Long clientId, Double pending
     ) {
         Specification<VitroOrder> spec = Specification.where(
             VitroOrderSpecifications.findByTuberId(tuberId)
@@ -78,6 +78,7 @@ public class VitroOrderImpl implements IVitroOrder {
             .and(VitroOrderSpecifications.findByLocation(location))
             .and(VitroOrderSpecifications.findByDay(day))
             .and(VitroOrderSpecifications.findByClient(clientId))
+            .and(VitroOrderSpecifications.filterByPending(pending))
         );
         Pageable pageable;
         if(sortby != null) {
@@ -116,12 +117,36 @@ public class VitroOrderImpl implements IVitroOrder {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<VitroOrderDTO> search(String department, String city, String rsocial, Integer page) {
+    public Page<VitroOrderDTO> search(String document, String rsocial, Double pending, Boolean isReady, ShippingType shipType, Status status, Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
-
-        Page<VitroOrder> orders = orderRepo.findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(
-            department, city, rsocial, pageable
+        
+        // Prepare search term - if both are null/empty, pass empty string to get all records
+        String searchTerm = null;
+        if (document != null && !document.trim().isEmpty()) {
+            searchTerm = document.trim();
+        } else if (rsocial != null && !rsocial.trim().isEmpty()) {
+            searchTerm = rsocial.trim();
+        } else {
+            searchTerm = "";
+        }
+        
+        // Log the search parameters for debugging
+        System.out.println("Searching with params - searchTerm: " + searchTerm + 
+                         ", pending: " + pending + 
+                         ", isReady: " + isReady + 
+                         ", shipType: " + shipType + 
+                         ", status: " + status);
+        
+        Page<VitroOrder> orders = orderRepo.searchOrders(
+            searchTerm,
+            pending,
+            isReady,
+            shipType,
+            status,
+            pageable
         );
+
+        System.out.println("Found " + orders.getTotalElements() + " orders");
 
         return VitroOrderDTO.toPageableDTO(orders);
     }
@@ -142,11 +167,13 @@ public class VitroOrderImpl implements IVitroOrder {
     @Transactional(readOnly = true)
     @Override
     public TotalDeliverResponse totalDeliver() {
-        Long total = orderRepo.totalDeliver();
+        List<Object[]> counts = orderRepo.countPaidOrdersByShippingType();
+        Object[] result = counts.get(0);
 
         return TotalDeliverResponse
             .builder()
-            .total(total)
+            .totalAtAgency(((Number) result[0]).longValue())
+            .totalAtWarehouse(((Number) result[1]).longValue())
             .build();
     }
 

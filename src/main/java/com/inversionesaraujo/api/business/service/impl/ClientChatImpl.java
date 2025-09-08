@@ -30,6 +30,8 @@ public class ClientChatImpl implements IClientChat {
     
                 return generateNaturalAnswer(question, results);
             }catch(Exception e) {
+                System.out.println(sql);
+                System.out.println(e);
                 return "Lo siento no encontré la información que buscabas.";
             }
 
@@ -67,16 +69,20 @@ public class ClientChatImpl implements IClientChat {
     private String generateSQL(String question) {
         String prompt = """
             Eres un asistente que genera SQL válido para PostgreSQL y coherente.
-            Reglas:
+            Reglas estrictas:
+            - Devuelve únicamente la consulta SQL cruda, sin explicaciones, sin comentarios y sin ```sql ni backticks.
             - Para buscar productos por nombre usa "ILIKE" para no depender de mayusculas o minusculas
+            - Solo si se pide explicitamente productos con/en descuento aplicas el filtrado con el campo "price_discount > 0"
             - El producto tiene descuento solo si el campo "price_discount" es mayor a 0
+            - Siempre que se pida productos es importante mostrar el nombre del producto
+            - Para dar una mejor información selecciona siempre los campos mostrados en las tablas
 
             Tablas:
             - products(id, name, price, category_id, stock, price_discount)
             - categories(id, name)
 
             Pregunta: "%s"
-            Devuelve solo la consulta SQL.
+            Devuelve solo la consulta SQL válida para PostgreSQL.
         """.formatted(question);
 
         return gptService.ask(prompt);

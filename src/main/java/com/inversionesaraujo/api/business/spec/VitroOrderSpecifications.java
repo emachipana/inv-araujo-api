@@ -76,4 +76,9 @@ public class VitroOrderSpecifications {
         return (root, query, cb) ->
             employee_id != null ? cb.equal(root.get("employee").get("id"), employee_id) : null;
     }
+
+    public static Specification<VitroOrder> filterByPending(Double pending) {
+        return (root, query, cb) ->
+            pending != null ? cb.lessThanOrEqualTo(root.get("pending"), pending) : null;
+    }
 }

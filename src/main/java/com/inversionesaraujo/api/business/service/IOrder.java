@@ -30,7 +30,7 @@ public interface IOrder {
 
     void delete(Long id);
 
-    Page<OrderDTO> search(String department, String city, String rsocial, Integer page);
+    Page<OrderDTO> search(String dni, String rsocial, Integer page, Status status, ShippingType shippingType);
 
     TotalDeliverResponse totalDeliver();
 

@@ -23,7 +23,7 @@ public interface IVitroOrder {
         SortDirection direction, Month month, Status status,
         SortBy sortby, ShippingType shipType, Boolean ordersReady,
         Long employeeId, OrderLocation location, Integer day,
-        Long clientId
+        Long clientId, Double pending
     );
 
     void alertNewOrder(VitroOrderDTO order);
@@ -36,7 +36,7 @@ public interface IVitroOrder {
 
     void delete(Long id);
 
-    Page<VitroOrderDTO> search(String department, String city, String rsocial, Integer page);
+    Page<VitroOrderDTO> search(String document, String rsocial, Double pending, Boolean ordersReady, ShippingType shipType, Status status,Integer page);
 
     TotalDeliverResponse totalDeliver();
 

@@ -15,6 +15,9 @@ import com.inversionesaraujo.api.model.Client;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.repository.ClientRepository;
+import com.inversionesaraujo.api.repository.OrderRepository;
+import com.inversionesaraujo.api.repository.VitroOrderRepository;
+import com.inversionesaraujo.api.business.payload.TotalOrdersByClient;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -25,6 +28,10 @@ public class ClientImpl implements IClient {
     private EntityManager entityManager;
     @Autowired 
     private ClientRepository clientRepo;
+    @Autowired
+    private OrderRepository orderRepo;
+    @Autowired
+    private VitroOrderRepository vitroOrderRepo;
 
     @Transactional(readOnly = true)
     @Override
@@ -73,5 +80,16 @@ public class ClientImpl implements IClient {
         );
 
         return ClientDTO.toPageableDTO(clients);
+    }
+
+    @Override
+    public TotalOrdersByClient getTotalOrdersByClient(Long clientId) {
+        Long orders = orderRepo.countByClientId(clientId);
+        Long vitroOrders = vitroOrderRepo.countByClientId(clientId);
+
+        return TotalOrdersByClient.builder()
+            .orders(orders)
+            .vitroOrders(vitroOrders)
+            .build();
     }
 }

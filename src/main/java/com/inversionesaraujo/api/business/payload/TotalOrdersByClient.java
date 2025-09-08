@@ -4,10 +4,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Builder
 @Getter
 @Setter
-public class TotalDeliverResponse {
-    private Long totalAtWarehouse;
-    private Long totalAtAgency;
+@Builder
+public class TotalOrdersByClient {
+    private Long orders;
+    private Long vitroOrders;  
 }

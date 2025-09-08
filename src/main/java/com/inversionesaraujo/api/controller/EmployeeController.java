@@ -59,7 +59,6 @@ public class EmployeeController {
         return employeeOperationService.findByEmployeeId(employeeId);
     }
     
-
     @GetMapping("/search")
     public List<EmployeeDTO> search(@RequestParam String param) {
         return employeeService.search(param, param, param);
@@ -113,6 +112,8 @@ public class EmployeeController {
     @PutMapping("{id}")
     public ResponseEntity<MessageResponse> update(@RequestBody @Valid EmployeeRequest request, @PathVariable Long id) {
         EmployeeDTO employee = employeeService.findById(id);
+        employee.setRsocial(request.getRsocial());
+        employee.setDocument(request.getDocument());
         employee.setPhone(request.getPhone());
         EmployeeDTO employeeUpdated = employeeService.save(employee);
 
@@ -126,10 +127,11 @@ public class EmployeeController {
     @DeleteMapping("{id}")
     public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
         EmployeeDTO employee = employeeService.findById(id);
+        Long userId = employee.getUserId();
         employee.setUserId(null);
         employeeService.save(employee);
 
-        userService.delete(employee.getUserId());
+        userService.delete(userId);
         employeeService.delete(id);
 
         return ResponseEntity.ok().body(MessageResponse

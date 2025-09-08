@@ -16,6 +16,7 @@ import com.inversionesaraujo.api.business.dto.ClientDTO;
 import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.InvoiceClientDetailDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
+import com.inversionesaraujo.api.business.payload.TotalOrdersByClient;
 import com.inversionesaraujo.api.business.request.ClientRequest;
 import com.inversionesaraujo.api.business.request.InvoiceClientDetailRequest;
 import com.inversionesaraujo.api.business.request.UpdateClientRequest;
@@ -38,6 +39,17 @@ public class ClientController {
     private I_InvoiceClientDetail invoiceClientDetailService;
     @Autowired
     private IEmployeeOperation employeeOperationService;
+
+    @GetMapping("{id}/totalOrders")
+    public ResponseEntity<MessageResponse> getTotalOrdersByClient(@PathVariable Long id) {
+        TotalOrdersByClient totalOrdersByClient = clientService.getTotalOrdersByClient(id);
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El total de ordenes del cliente se encontro con exito")
+            .data(totalOrdersByClient)
+            .build());
+    }
 
     @GetMapping
     public Page<ClientDTO> getAll(

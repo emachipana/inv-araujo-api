@@ -43,7 +43,6 @@ import com.inversionesaraujo.api.business.service.IWarehouse;
 import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.model.NotificationType;
 import com.inversionesaraujo.api.model.OrderLocation;
-import com.inversionesaraujo.api.model.Permission;
 import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
@@ -88,8 +87,13 @@ public class OrderController {
     }
 
     @GetMapping("search")
-    public Page<OrderDTO> search(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
-        return orderService.search(param, param, param, page);
+    public Page<OrderDTO> search(
+        @RequestParam String param, 
+        @RequestParam(defaultValue = "0") Integer page,
+        @RequestParam(required = false) Status status,
+        @RequestParam(required = false) ShippingType shipType
+    ) {
+        return orderService.search(param, param, page, status, shipType);
     }
 
     @GetMapping("data")
@@ -279,15 +283,6 @@ public class OrderController {
                 .build();
 
             employeeOperationService.save(employeeOperation);
-
-            NotificationRequest notiRequest = NotificationRequest
-                .builder()
-                .userId(request.getEmployeeId())
-                .type(NotificationType.NEW_ORDER)
-                .redirectTo("/pedidos/" + order.getId())
-                .build();
-
-            notiService.sendNotificationToUsersWithPermission(notiRequest, Permission.ORDERS_WATCH, request.getEmployeeId());
         }
 
         return ResponseEntity.status(201).body(MessageResponse
@@ -380,7 +375,7 @@ public class OrderController {
             EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
                 .builder()
                 .employeeId(request.getEmployeeId())
-                .operation("Entrego el pedido")
+                .operation("Puso en agencia el pedido")
                 .redirectTo("/pedidos/" + order.getId())
                 .build();
 

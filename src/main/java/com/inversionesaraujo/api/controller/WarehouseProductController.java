@@ -69,7 +69,7 @@ public class WarehouseProductController {
                 .builder()
                 .employeeId(request.getEmployeeId())
                 .operation("Registro un nuevo lote")
-                .redirectTo("/productos")
+                .redirectTo("/productos/" + request.getProductId())
                 .build();
 
             employeeOperationService.save(employeeOperation);

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inversionesaraujo.api.business.dto.EmployeeDTO;
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.service.IEmployee;
 import com.inversionesaraujo.api.business.spec.EmployeeSpecification;
 import com.inversionesaraujo.api.model.Employee;
@@ -26,6 +27,8 @@ public class EmployeeImpl implements IEmployee {
     private EntityManager entityManager;
     @Autowired
     private EmployeeRepository employeeRepo;
+    @Autowired
+    private EmployeeOperationImpl employeeOperationService;
 
     @Transactional(readOnly = true)
     @Override
@@ -62,6 +65,11 @@ public class EmployeeImpl implements IEmployee {
     @Transactional
     @Override
     public void delete(Long id) {
+        List<EmployeeOperationDTO> operations = employeeOperationService.findByEmployeeId(id);
+        for(EmployeeOperationDTO operation : operations) {
+            employeeOperationService.delete(operation.getId());
+        }
+
         employeeRepo.deleteById(id);
     }
 

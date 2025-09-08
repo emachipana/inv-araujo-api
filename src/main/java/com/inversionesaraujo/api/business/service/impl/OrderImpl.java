@@ -127,13 +127,20 @@ public class OrderImpl implements IOrder {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<OrderDTO> search(String department, String city, String rsocial, Integer page) {
+    public Page<OrderDTO> search(String document, String rsocial, Integer page, Status status, ShippingType shipType) {
         Pageable pageable = PageRequest.of(page, 10);
-
-        Page<Order> orders = orderRepo
-            .findByDepartmentContainingIgnoreCaseOrCityContainingIgnoreCaseOrClient_RsocialContainingIgnoreCase(
-                department, city, rsocial, pageable
-            );
+        
+        // Use the first non-null and non-empty parameter as the search term
+        String searchTerm = (document != null && !document.trim().isEmpty()) ? document : 
+                          (rsocial != null && !rsocial.trim().isEmpty()) ? rsocial : 
+                          null;
+        
+        Page<Order> orders = orderRepo.searchOrders(
+            searchTerm,
+            status,
+            shipType,
+            pageable
+        );
 
         return OrderDTO.toPageableDTO(orders);
     }
@@ -154,11 +161,13 @@ public class OrderImpl implements IOrder {
     @Transactional(readOnly = true)
     @Override
     public TotalDeliverResponse totalDeliver() {
-        Long total = orderRepo.totalDeliver();
+        List<Object[]> counts = orderRepo.countPaidOrdersByShippingType();
+        Object[] result = counts.get(0);
 
         return TotalDeliverResponse
             .builder()
-            .total(total)
+            .totalAtAgency(((Number) result[0]).longValue())
+            .totalAtWarehouse(((Number) result[1]).longValue())
             .build();
     }
 

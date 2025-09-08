@@ -99,7 +99,7 @@ public class AdminChatImpl implements IAdminChat {
         String prompt = """
             Eres un asistente para un administrador.
     
-            Devuelve SIEMPRE un objeto JSON con la forma:
+            Devuelve SIEMPRE un objeto JSON válido y puro (sin bloques de código, sin comentarios, sin texto adicional) con la forma:
             {
               "type": "text" | "chart",
               "content": string | {
@@ -115,15 +115,22 @@ public class AdminChatImpl implements IAdminChat {
                - Si hay un solo valor → muestra el valor directamente.
                - Si hay varios valores → muestra un resumen en texto.
                - Si no hay datos → explica que no se encontraron resultados.
-            
+               - Si vas a mencionar precios, ganancias, gastos o lo que sea que sea dinero usa S/.
+               - Si se pide productos en descuento y el campo price_discount es mayor a 0 significa que el producto o productos tiene descuento, solo ahí menciona el descuento y nombre de producto o productos.
+                - Debes responder siempre algo aunque no haya datos.
+
             2. Si la pregunta pide PREDICCIÓN:
-               - Usa solo hasta 3 meses de datos históricos.
                - Predicción máxima = 3 meses al futuro.
                - Para predicciones de 1 mes (ejm. el proximo mes) → haz la predicción usando los datos históricos disponibles y responde en texto.
-               - Para predicciones de 2 o 3 meses → genera un gráfico mostrando solo la predicción (chart), haz la predicción usando los datos históricos disponibles máximo 3 meses al futuro.
+               - Para predicciones de 2 o 3 meses → genera un gráfico mostrando solo la predicción (chart), haz la predicción usando los datos históricos disponibles usando la cantidad de meses solicitada (como máximo 3 meses al futuro).
                - Si pide más de 3 meses → responde en texto explicando que solo se pueden hasta 3 meses para mantener precisión.
+               - Los valores de predicción deben ser números enteros
+               - Para mostrar el grafico (chart) en labels, debe ir siempre el nombre de los meses (ejm. junio, diciembre, marzo)
                - Si pide semanas u otra granularidad → responde en texto explicando amablemente que solo se hacen predicciones mensuales.
                - Si no hay datos → responde en texto explicando que no se puede predecir por falta de datos.
+
+            3. Fallback:
+                - Si no estás seguro, responde igualmente en type "text" diciendo que no hay resultados o que no puedes responder.
     
             Datos de la DB:
             %s
@@ -140,7 +147,7 @@ public class AdminChatImpl implements IAdminChat {
             SELECT gs.month::date AS mes, 
                 COALESCE(SUM(op.quantity),0) AS total_vendido
             FROM generate_series(
-                date_trunc('month', CURRENT_DATE) - INTERVAL '2 months',
+                date_trunc('month', CURRENT_DATE) - INTERVAL '3 months',
                 date_trunc('month', CURRENT_DATE),
                 '1 month'
             ) gs(month)
@@ -157,24 +164,26 @@ public class AdminChatImpl implements IAdminChat {
         String sqlPrompt = """
             Genera SOLO una consulta SQL válida para PostgreSQL y coherente.
 
-            Reglas:
+            Reglas estrictas:
+            - Devuelve únicamente la consulta SQL cruda, sin explicaciones, sin comentarios y sin ```sql ni backticks.
             - Usa ILIKE para búsquedas por nombre %%nombre%%.
-            - Producto con descuento → price_discount > 0
+            - Para saber que productos estan en descuento usa el campo "price_discount > 0"
             - Resumen de ingresos/gastos/ganancias → profits
             - Ventas de productos → orders + order_products + products
             - Para filtrar ganancias con la tabla profits usa rangos de fechas
+            - Siempre que vas a mostrar datos de la tabla profits, debes mostrar siempre el nombre del mes también
             - Si vas a mostrar precios o dinero usa S/.
             - El año actual es 2025
 
             Tablas:
-            - products(id, name, price, category_id, stock, price_discount)
-            - categories(id, name)
             - profits(id, date, totalExpenses, income, profit)
             - orders(id, total, date)
+            - categories(id, name)
             - order_products(id, order_id, product_id, quantity, subTotal, price)
+            - products(id, name, price, category_id, stock, price_discount)
 
             Pregunta: "%s"
-            Devuelve solo la consulta SQL.
+            Devuelve solo la consulta SQL válida para PostgreSQL.
         """.formatted(question);
     
         return gptService.ask(sqlPrompt);

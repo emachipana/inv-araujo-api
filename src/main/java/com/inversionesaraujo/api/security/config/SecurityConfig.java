@@ -151,7 +151,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000, https://inv-araujo-app.vercel.app, http://localhost:4200")
+                        .allowedOrigins("http://localhost:3000, https://inv-araujo.vercel.app, http://localhost:4200, https://inversiones-araujo.web.app")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

@@ -17,13 +17,14 @@ public class GptImpl implements IGpt {
     @Override
     public String ask(String question) {
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-            .model("gpt-3.5-turbo")
+            .model("gpt-4.1-mini")
             .addUserMessage(question)
             .build();
 
         ChatCompletion completion = client.chat().completions().create(params);
 
         Choice choice = completion.choices().get(0);
+        System.out.println(choice);
         String message = choice._message().asObject().get().get("content").toString();
 
         return message;
