@@ -41,7 +41,7 @@ public class RemoveStock {
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String reason;
 
     @CreatedDate

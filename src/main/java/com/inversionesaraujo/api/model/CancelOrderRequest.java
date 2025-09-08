@@ -34,7 +34,7 @@ public class CancelOrderRequest {
     @SequenceGenerator(name = "cancel_order_request_seq", sequenceName = "cancel_order_request_seq", allocationSize = 1)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String reason;
 
     @ManyToOne
