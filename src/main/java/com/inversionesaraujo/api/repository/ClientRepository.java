@@ -8,7 +8,7 @@ import com.inversionesaraujo.api.model.Client;
 
 public interface ClientRepository extends JpaRepository<Client, Long> {
     Page<Client> 
-    findByRsocialContainingIgnoreCaseOrDocumentContainingIgnoreCaseOrCityContainingIgnoreCaseOrDepartmentContainingIgnoreCase(
-        String rsocial, String document, String city, String department, Pageable pageable
+    findByRsocialContainingIgnoreCaseOrDocumentContainingIgnoreCase(
+        String rsocial, String document, Pageable pageable
     );
 }

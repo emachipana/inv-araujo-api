@@ -4,12 +4,18 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inversionesaraujo.api.business.dto.EmployeeDTO;
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.service.IEmployee;
+import com.inversionesaraujo.api.business.spec.EmployeeSpecification;
 import com.inversionesaraujo.api.model.Employee;
+import com.inversionesaraujo.api.model.SortBy;
+import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.repository.EmployeeRepository;
 
 import jakarta.persistence.EntityManager;
@@ -21,12 +27,22 @@ public class EmployeeImpl implements IEmployee {
     private EntityManager entityManager;
     @Autowired
     private EmployeeRepository employeeRepo;
+    @Autowired
+    private EmployeeOperationImpl employeeOperationService;
 
     @Transactional(readOnly = true)
     @Override
-    public List<EmployeeDTO> listAll() {
-        List<Employee> employees = employeeRepo.findAll();
+    public List<EmployeeDTO> filterEmployees(Long roleId, SortBy sortby, SortDirection direction) {
+        Specification<Employee> spec = Specification.where(
+            EmployeeSpecification.belongsToRole(roleId)
+        );
 
+        Sort sort = Sort.unsorted();
+        if(sortby != null) {
+            sort = Sort.by(Sort.Direction.fromString(direction.toString()), sortby.toString());
+        }
+
+        List<Employee> employees = employeeRepo.findAll(spec, sort);
         return EmployeeDTO.toListDTO(employees);
     }
 
@@ -49,6 +65,11 @@ public class EmployeeImpl implements IEmployee {
     @Transactional
     @Override
     public void delete(Long id) {
+        List<EmployeeOperationDTO> operations = employeeOperationService.findByEmployeeId(id);
+        for(EmployeeOperationDTO operation : operations) {
+            employeeOperationService.delete(operation.getId());
+        }
+
         employeeRepo.deleteById(id);
     }
 

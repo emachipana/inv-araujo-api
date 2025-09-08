@@ -1,7 +1,6 @@
 package com.inversionesaraujo.api.model;
 
-import java.time.LocalDate;
-
+import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,6 +8,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +23,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "invoices")
 public class Invoice {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "invoice_seq")
+    @SequenceGenerator(name = "invoice_seq", sequenceName = "invoice_seq", allocationSize = 1)
     private Long id;
 
     @Column(nullable = false)
@@ -41,20 +42,23 @@ public class Invoice {
     private String rsocial;
 
     @Column(nullable = false)
-    private LocalDate issueDate;
+    private LocalDateTime issueDate;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String comment;
-
-    private String pdfUrl;
-    private String pdfFirebaseId;
+    @Column(nullable = false)
     private String address;
+
+    @Column(nullable = false)
     private String serie;
 
     @Builder.Default
     @Column(nullable = false)
-    private Boolean isGenerated = false;
+    private Boolean isSended = false;
 
     @Column(nullable = false)
     private Double total;
+
+    private String pdfUrl;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean isRelatedToOrder;
 }

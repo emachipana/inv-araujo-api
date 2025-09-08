@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inversionesaraujo.api.business.dto.ImageDTO;
 import com.inversionesaraujo.api.business.dto.UserDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
+import com.inversionesaraujo.api.business.request.NewPasswordRequest;
 import com.inversionesaraujo.api.business.request.UserRequest;
 import com.inversionesaraujo.api.business.service.IUser;
 import com.inversionesaraujo.api.business.service.I_Image;
@@ -46,6 +47,28 @@ public class UserController {
             .builder()
             .message("El usuario se encontro con exito")
             .data(currentUser)
+            .build());
+    }
+
+    @PutMapping("profile/change-password") 
+    public ResponseEntity<MessageResponse> changePassword(@RequestBody @Valid NewPasswordRequest request, Authentication auth) {
+        String username = auth.getName();
+        UserDTO user = userService.findByUsername(username);
+        
+        if(!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            return ResponseEntity.status(406).body(MessageResponse
+                .builder()
+                .message("La contraseña actual es incorrecta")
+                .build());
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        UserDTO updatedUser = userService.save(user);
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("La contraseña se actualizo con exito")
+            .data(updatedUser)
             .build());
     }
 

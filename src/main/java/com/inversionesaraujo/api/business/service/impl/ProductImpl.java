@@ -116,4 +116,9 @@ public class ProductImpl implements IProduct {
 
         return ProductDTO.toDTOList(relatedProducts);
     }
+
+    @Override
+    public Boolean existsByName(String name) {
+        return productRepo.existsByNameIgnoreCaseContaining(name);
+    }
 }

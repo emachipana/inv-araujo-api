@@ -1,6 +1,5 @@
 package com.inversionesaraujo.api.controller;
 
-import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 
@@ -17,12 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.AdvanceDTO;
 import com.inversionesaraujo.api.business.dto.ClientDTO;
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.ProfitDTO;
 import com.inversionesaraujo.api.business.dto.VitroOrderDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.AdvanceRequest;
 import com.inversionesaraujo.api.business.service.IAdvance;
 import com.inversionesaraujo.api.business.service.IClient;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.IProfit;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
 import jakarta.validation.Valid;
@@ -38,6 +39,8 @@ public class AdvanceController {
     private IProfit profitService;
     @Autowired
     private IClient clientService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
@@ -59,13 +62,12 @@ public class AdvanceController {
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid AdvanceRequest request) {
         VitroOrderDTO order = orderService.findById(request.getVitroOrderId());
         Double amount = request.getAmount();
-        LocalDate date = LocalDate.now();
 
         AdvanceDTO advance = advanceService.save(AdvanceDTO
             .builder()
             .vitroOrderId(order.getId())
             .amount(amount)
-            .date(date)
+            .paymentType(request.getPaymentType())
             .build());
 
         Double totalAdvance = order.getTotalAdvance() + amount;
@@ -77,11 +79,11 @@ public class AdvanceController {
         client.setConsumption(client.getConsumption() + amount);
         clientService.save(client);
 
-        Month month = date.getMonth();
+        Month month = advance.getCreatedAt().getMonth();
         ProfitDTO profit = profitService.findByMonth(month.toString());
         if(profit == null) {
             profitService.save(ProfitDTO.builder()
-                .date(date)
+                .date(advance.getCreatedAt().toLocalDate())
                 .income(amount)
                 .profit(amount)
                 .month(month.toString())
@@ -92,6 +94,17 @@ public class AdvanceController {
             profit.setIncome(income);
             profit.setProfit(income - profit.getTotalExpenses());
             profitService.save(profit);
+        }
+
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Creo un adelanto de un pedido invitro")
+                .redirectTo("/invitro/" + order.getId())
+                .build();
+
+            employeeOperationService.save(employeeOperation);
         }
 
         return ResponseEntity.status(201).body(MessageResponse
@@ -107,7 +120,6 @@ public class AdvanceController {
         Double amount = request.getAmount();
         Double oldAmount = advance.getAmount();
         advance.setAmount(amount);
-        advance.setDate(request.getDate());
         VitroOrderDTO order = orderService.findById(advance.getVitroOrderId());
         AdvanceDTO advanceUpdated = advanceService.save(advance);
 
@@ -120,12 +132,23 @@ public class AdvanceController {
         client.setConsumption((client.getConsumption() - oldAmount) + amount);
         clientService.save(client);
 
-        Month month = request.getDate().getMonth();
+        Month month = advance.getUpdatedAt().getMonth();
         ProfitDTO profit = profitService.findByMonth(month.toString());
         Double income = (profit.getIncome() - oldAmount) + amount;
         profit.setIncome(income);
         profit.setProfit(income - profit.getTotalExpenses());
         profitService.save(profit);
+
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Actualizo un adelanto de un pedido invitro")
+                .redirectTo("/invitro/" + order.getId())
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()
@@ -149,7 +172,7 @@ public class AdvanceController {
 
         client.setConsumption(client.getConsumption() - oldAmount);
 
-        Month month = advance.getDate().getMonth();
+        Month month = advance.getUpdatedAt().getMonth();
         ProfitDTO profit = profitService.findByMonth(month.toString());
         Double income = (profit.getIncome() - oldAmount);
         profit.setIncome(income);

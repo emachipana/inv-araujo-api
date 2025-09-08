@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.InvoiceDTO;
-import com.inversionesaraujo.api.business.payload.FileResponse;
+import com.inversionesaraujo.api.business.payload.ApiSunatResponse;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.InvoiceRequest;
-import com.inversionesaraujo.api.business.service.I_Image;
 import com.inversionesaraujo.api.business.service.I_Invoice;
+import com.inversionesaraujo.api.business.service.I_InvoiceItem;
 import com.inversionesaraujo.api.model.InvoiceType;
 import com.inversionesaraujo.api.model.SortDirection;
+import com.inversionesaraujo.api.model.SortBy;
 
 import jakarta.validation.Valid;
 
@@ -30,16 +33,17 @@ public class InvoiceController {
     @Autowired
     private I_Invoice invoiceService;
     @Autowired
-    private I_Image imageService;
+    private I_InvoiceItem itemService;
 
     @GetMapping
     public Page<InvoiceDTO> getAll(
         @RequestParam(required = false) InvoiceType type,
         @RequestParam(defaultValue = "0") Integer page,
-        @RequestParam(defaultValue = "20") Integer size,
-        @RequestParam(defaultValue = "DESC") SortDirection sort
+        @RequestParam(defaultValue = "9") Integer size,
+        @RequestParam(defaultValue = "DESC") SortDirection direction,
+        @RequestParam(required = false) SortBy sortby
     ) {
-        return invoiceService.listAll(type, page, size, sort);
+        return invoiceService.listAll(type, page, size, direction, sortby);
     }
 
     @GetMapping("search")
@@ -58,18 +62,17 @@ public class InvoiceController {
             .build());
     }
 
-    @PostMapping("generatePDF/{id}")
-    public ResponseEntity<MessageResponse> generatePDF(@PathVariable Long id) {
+    @PostMapping("sendToSunat/{id}")
+    public ResponseEntity<MessageResponse> sendToSunat(@PathVariable Long id) {
         InvoiceDTO invoice = invoiceService.findById(id);
-        if(invoice.getPdfUrl() != null) {
+        if(invoice.getIsSended()) {
             return ResponseEntity.status(406).body(MessageResponse
                 .builder()
-                .message("El comprobante ya tienen un pdf generado")
+                .message("El comprobante ya se envio a sunat")
                 .build());
         }
 
-        // TODO - Get items by query
-        Integer items = 0;
+        Integer items = itemService.countByInvoiceId(id);
 
         if(items == 0) {
             return ResponseEntity.status(406).body(MessageResponse
@@ -78,42 +81,16 @@ public class InvoiceController {
                 .build());
         }
 
-        FileResponse response = invoiceService.generateAndUploadPDF(invoice);
-        invoice.setPdfUrl(response.getFileUrl());
-        invoice.setIsGenerated(true);
-        invoice.setSerie((invoice.getInvoiceType() == InvoiceType.BOLETA ? "B-" : "F-") + invoice.getId());
-        invoice.setPdfFirebaseId(response.getFileName());
-        InvoiceDTO updatedInvoice = invoiceService.save(invoice);
+        ApiSunatResponse sunatResponse = invoiceService.sendInvoiceToSunat(invoice);
+
+        invoice.setIsSended(true);
+        invoice.setPdfUrl(sunatResponse.getEnlace_del_pdf());
+        invoiceService.save(invoice);
 
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
-            .message("El PDF se genero correctamente")
-            .data(updatedInvoice)
-            .build());
-    }
-
-    @DeleteMapping("deletePDF/{id}")
-    public ResponseEntity<MessageResponse> deletePDF(@PathVariable Long id) {
-        InvoiceDTO invoice = invoiceService.findById(id);
-        if(invoice.getPdfUrl() == null) {
-            return ResponseEntity.status(406).body(MessageResponse
-                .builder()
-                .message("El comprobante not tiene un pdf generado")
-                .build());
-        }
-
-        imageService.deleteImage(invoice.getPdfFirebaseId());
-        invoice.setPdfUrl(null);
-        invoice.setIsGenerated(false);
-        invoice.setSerie(null);
-        invoice.setPdfFirebaseId(null);
-
-        InvoiceDTO updatedInvoice = invoiceService.save(invoice);
-
-        return ResponseEntity.ok().body(MessageResponse
-            .builder()
-            .message("El PDF se elimino correctamente")
-            .data(updatedInvoice)
+            .message("El comprobante se emitio correctamente")
+            .data(sunatResponse)
             .build());
     }
 
@@ -125,6 +102,12 @@ public class InvoiceController {
             .document(request.getDocument())
             .documentType(request.getDocumentType())
             .rsocial(request.getRsocial())
+            .serie(request.getInvoiceType() == InvoiceType.BOLETA ? "BM01" : "FM01")
+            .address(request.getAddress())
+            .issueDate(request.getIssueDate() != null ? request.getIssueDate() : LocalDateTime.now())
+            .isSended(false)
+            .isRelatedToOrder(false)
+            .total(0.0)
             .build());
 
         return ResponseEntity.status(201).body(MessageResponse
@@ -142,7 +125,6 @@ public class InvoiceController {
         invoice.setDocument(request.getDocument());
         invoice.setRsocial(request.getRsocial());
         invoice.setIssueDate(request.getIssueDate());
-        invoice.setComment(request.getComment());
         invoice.setAddress(request.getAddress());
         InvoiceDTO updatedInvoice = invoiceService.save(invoice);
 
@@ -155,10 +137,7 @@ public class InvoiceController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
-        InvoiceDTO invoice = invoiceService.findById(id);
-        String firebaseId = invoice.getPdfFirebaseId();
-        invoiceService.delete(invoice.getId());
-        if(firebaseId != null) imageService.deleteImage(firebaseId);
+        invoiceService.delete(id);
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

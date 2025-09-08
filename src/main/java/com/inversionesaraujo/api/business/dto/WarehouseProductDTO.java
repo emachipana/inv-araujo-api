@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.business.dto;
 
+import java.time.LocalDateTime;
+
 import com.inversionesaraujo.api.model.Product;
 import com.inversionesaraujo.api.model.Warehouse;
 import com.inversionesaraujo.api.model.WarehouseProduct;
@@ -20,6 +22,8 @@ public class WarehouseProductDTO {
     private Integer quantity;
     private Long productId;
     private Long warehouseId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public static WarehouseProductDTO toDTO(WarehouseProduct item) {
         if(item == null) return null;
@@ -30,6 +34,8 @@ public class WarehouseProductDTO {
             .quantity(item.getQuantity() != null ? item.getQuantity() : 0)
             .productId(item.getProduct() != null ? item.getProduct().getId() : null)
             .warehouseId(item.getWarehouse() != null ? item.getWarehouse().getId() : null)
+            .createdAt(item.getCreatedAt())
+            .updatedAt(item.getUpdatedAt())
             .build();
     }
 
@@ -46,6 +52,8 @@ public class WarehouseProductDTO {
             .quantity(item.getQuantity())
             .product(product)
             .warehouse(warehouse)
+            .createdAt(item.getCreatedAt())
+            .updatedAt(item.getUpdatedAt())
             .build();
     }
 }

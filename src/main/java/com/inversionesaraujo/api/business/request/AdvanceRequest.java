@@ -1,6 +1,6 @@
 package com.inversionesaraujo.api.business.request;
 
-import java.time.LocalDate;
+import com.inversionesaraujo.api.model.PaymentType;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -17,5 +17,8 @@ public class AdvanceRequest {
     @Positive(message = "Debe ser mayor a 0")
     private Double amount;
 
-    private LocalDate date;
+    @NotNull(message = "El tipo de pago es requerido")
+    private PaymentType paymentType;
+
+    private Long employeeId;
 }

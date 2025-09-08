@@ -12,8 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.inversionesaraujo.api.business.dto.ClientDTO;
 import com.inversionesaraujo.api.business.service.IClient;
 import com.inversionesaraujo.api.model.Client;
+import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.repository.ClientRepository;
+import com.inversionesaraujo.api.repository.OrderRepository;
+import com.inversionesaraujo.api.repository.VitroOrderRepository;
+import com.inversionesaraujo.api.business.payload.TotalOrdersByClient;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -24,13 +28,17 @@ public class ClientImpl implements IClient {
     private EntityManager entityManager;
     @Autowired 
     private ClientRepository clientRepo;
+    @Autowired
+    private OrderRepository orderRepo;
+    @Autowired
+    private VitroOrderRepository vitroOrderRepo;
 
     @Transactional(readOnly = true)
     @Override
-    public Page<ClientDTO> filterClients(Integer page, Integer size, SortDirection direction) {
+    public Page<ClientDTO> filterClients(Integer page, Integer size, SortDirection direction, SortBy sortby) {
         Pageable pageable;
-        if(direction != null) {
-            Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "consumption");
+        if(sortby != null) {
+            Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), sortby.toString());
             pageable = PageRequest.of(page, size, sort);
         }else {
             pageable = PageRequest.of(page, size);
@@ -64,13 +72,24 @@ public class ClientImpl implements IClient {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<ClientDTO> search(String document, String rsocial, String city, String department, Integer page) {
+    public Page<ClientDTO> search(String document, String rsocial, Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
 
-        Page<Client> clients = clientRepo.findByRsocialContainingIgnoreCaseOrDocumentContainingIgnoreCaseOrCityContainingIgnoreCaseOrDepartmentContainingIgnoreCase(
-            rsocial, document, city, department, pageable
+        Page<Client> clients = clientRepo.findByRsocialContainingIgnoreCaseOrDocumentContainingIgnoreCase(
+            rsocial, document, pageable
         );
 
         return ClientDTO.toPageableDTO(clients);
+    }
+
+    @Override
+    public TotalOrdersByClient getTotalOrdersByClient(Long clientId) {
+        Long orders = orderRepo.countByClientId(clientId);
+        Long vitroOrders = vitroOrderRepo.countByClientId(clientId);
+
+        return TotalOrdersByClient.builder()
+            .orders(orders)
+            .vitroOrders(vitroOrders)
+            .build();
     }
 }

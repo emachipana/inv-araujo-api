@@ -16,7 +16,7 @@ public class CategoryRequest {
     @Size(min = 10)
     private String description;
 
-    private Long categoryId;
     private Long imageId;
-    private Long iconId;
+
+    private Long employeeId;
 }

@@ -8,5 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TotalDeliverResponse {
-    private Long total;
+    private Long totalAtWarehouse;
+    private Long totalAtAgency;
 }

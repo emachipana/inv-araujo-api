@@ -13,34 +13,57 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.ClientDTO;
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
+import com.inversionesaraujo.api.business.dto.InvoiceClientDetailDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
+import com.inversionesaraujo.api.business.payload.TotalOrdersByClient;
 import com.inversionesaraujo.api.business.request.ClientRequest;
+import com.inversionesaraujo.api.business.request.InvoiceClientDetailRequest;
+import com.inversionesaraujo.api.business.request.UpdateClientRequest;
 import com.inversionesaraujo.api.business.service.IClient;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
+import com.inversionesaraujo.api.business.service.I_InvoiceClientDetail;
 import com.inversionesaraujo.api.model.SortDirection;
+import com.inversionesaraujo.api.model.SortBy;
 
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 @RequestMapping("/api/v1/clients")
 public class ClientController {
     @Autowired
     private IClient clientService;
+    @Autowired
+    private I_InvoiceClientDetail invoiceClientDetailService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
+
+    @GetMapping("{id}/totalOrders")
+    public ResponseEntity<MessageResponse> getTotalOrdersByClient(@PathVariable Long id) {
+        TotalOrdersByClient totalOrdersByClient = clientService.getTotalOrdersByClient(id);
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El total de ordenes del cliente se encontro con exito")
+            .data(totalOrdersByClient)
+            .build());
+    }
 
     @GetMapping
     public Page<ClientDTO> getAll(
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "20") Integer size,
-        @RequestParam(required = false) SortDirection sort
+        @RequestParam(required = false) SortDirection direction,
+        @RequestParam(required = false) SortBy sortby
     ) {
-        return clientService.filterClients(page, size, sort);
+        return clientService.filterClients(page, size, direction, sortby);
     }
 
     @GetMapping("/search")
     public Page<ClientDTO> search(@RequestParam String param, @RequestParam(defaultValue = "0") Integer page) {
-        return clientService.search(param, param, param, param, page);
+        return clientService.search(param, param, page);
     }
 
     @GetMapping("{id}")
@@ -58,18 +81,27 @@ public class ClientController {
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid ClientRequest request) {
         ClientDTO clientToSave = clientService.save(ClientDTO
             .builder()
-            .city(request.getCity())
-            .department(request.getDepartment())
             .phone(request.getPhone())
             .document(request.getDocument())
             .documentType(request.getDocumentType())
             .rsocial(request.getRsocial())
             .createdBy(request.getCreatedBy())
             .email(request.getEmail())
-            .userId(request.getUserId())
+            .userId(null)
             .consumption(0.0)
             .build());
 
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Creo un cliente")
+                .redirectTo("/clientes/" + clientToSave.getId())
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+        
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
             .message("El client se creo con exito")
@@ -78,12 +110,24 @@ public class ClientController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<MessageResponse> update(@RequestBody @Valid ClientRequest request, @PathVariable Long id) {
+    public ResponseEntity<MessageResponse> update(@RequestBody @Valid UpdateClientRequest request, @PathVariable Long id) {
         ClientDTO client = clientService.findById(id);
-        client.setCity(request.getCity());
-        client.setDepartment(request.getDepartment());
         client.setPhone(request.getPhone());
+        client.setDocument(request.getDocument());
+        client.setDocumentType(request.getDocumentType());
+        client.setRsocial(request.getRsocial());
         ClientDTO clientUpdated = clientService.save(client);
+
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Actualizo un cliente")
+                .redirectTo("/clientes/" + clientUpdated.getId())
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()
@@ -99,6 +143,42 @@ public class ClientController {
         return ResponseEntity.ok().body(MessageResponse
             .builder()
             .message("El cliente se elimino con exito")
+            .build());
+    }
+
+    @PostMapping("/{id}/invoiceDetails")
+    public ResponseEntity<MessageResponse> createInvoiceDetail(@PathVariable Long id, @RequestBody @Valid InvoiceClientDetailRequest request) {
+        InvoiceClientDetailDTO detailToSave = invoiceClientDetailService.save(InvoiceClientDetailDTO
+            .builder()
+            .document(request.getDocument())
+            .documentType(request.getDocumentType())
+            .rsocial(request.getRsocial())
+            .address(request.getAddress())
+            .invoicePreference(request.getInvoicePreference())
+            .clientId(id)
+            .build());
+
+        return ResponseEntity.status(201).body(MessageResponse
+            .builder()
+            .message("El detalle de facturación del cliente se creo con exito")
+            .data(detailToSave)
+            .build());
+    }
+
+    @PutMapping("/{id}/invoiceDetails/{detailId}")
+    public ResponseEntity<MessageResponse> updateInvoiceDetail(@PathVariable Long id, @PathVariable Long detailId, @RequestBody @Valid InvoiceClientDetailRequest request) {
+        InvoiceClientDetailDTO detail = invoiceClientDetailService.findById(detailId);
+        detail.setDocument(request.getDocument());
+        detail.setDocumentType(request.getDocumentType());
+        detail.setRsocial(request.getRsocial());
+        detail.setAddress(request.getAddress());
+        detail.setInvoicePreference(request.getInvoicePreference());
+        InvoiceClientDetailDTO detailUpdated = invoiceClientDetailService.save(detail);
+
+        return ResponseEntity.ok().body(MessageResponse
+            .builder()
+            .message("El detalle de facturación del cliente se actualizo con exito")
+            .data(detailUpdated)
             .build());
     }
 }

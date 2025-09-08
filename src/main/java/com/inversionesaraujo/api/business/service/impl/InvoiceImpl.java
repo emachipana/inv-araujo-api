@@ -1,9 +1,10 @@
 package com.inversionesaraujo.api.business.service.impl;
 
-import java.text.DecimalFormat;
-import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -12,37 +13,50 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
-import org.xhtmlrenderer.pdf.ITextRenderer;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
 
-import com.google.cloud.storage.Bucket;
-import com.google.firebase.cloud.StorageClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.inversionesaraujo.api.business.dto.InvoiceSunatDTO;
 import com.inversionesaraujo.api.business.dto.InvoiceDTO;
-import com.inversionesaraujo.api.business.payload.FileResponse;
+import com.inversionesaraujo.api.business.dto.InvoiceDetailSunatDTO;
+import com.inversionesaraujo.api.business.payload.ApiSunatResponse;
 import com.inversionesaraujo.api.business.service.I_Invoice;
 import com.inversionesaraujo.api.business.spec.InvoiceSpecifications;
+import com.inversionesaraujo.api.model.DocumentType;
 import com.inversionesaraujo.api.model.Invoice;
+import com.inversionesaraujo.api.model.InvoiceItem;
 import com.inversionesaraujo.api.model.InvoiceType;
 import com.inversionesaraujo.api.model.SortDirection;
+import com.inversionesaraujo.api.model.SortBy;
+import com.inversionesaraujo.api.repository.InvoiceItemRepository;
 import com.inversionesaraujo.api.repository.InvoiceRepository;
-import com.inversionesaraujo.api.utils.Capitalize;
 
 @Service
 public class InvoiceImpl implements I_Invoice {
     @Autowired
     private InvoiceRepository invoiceRepo;
     @Autowired
-    private TemplateEngine templateEngine;
+    private InvoiceItemRepository itemRepo;
 
     @Transactional(readOnly = true)
     @Override
-    public Page<InvoiceDTO> listAll(InvoiceType type, Integer page, Integer size, SortDirection direction) {
+    public Page<InvoiceDTO> listAll(InvoiceType type, Integer page, Integer size, SortDirection direction, SortBy sortby) {
         Specification<Invoice> spec = Specification.where(InvoiceSpecifications.findByInvoiceType(type));
-        Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), "issueDate");
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable;
+        if(sortby != null) {
+            Sort sort = Sort.by(Sort.Direction.fromString(direction.toString()), sortby.toString());
+            pageable = PageRequest.of(page, size, sort);
+        }else {
+            pageable = PageRequest.of(page, size);
+        }
 
         Page<Invoice> invoices = invoiceRepo.findAll(spec, pageable);
 
@@ -68,52 +82,122 @@ public class InvoiceImpl implements I_Invoice {
     @Transactional
     @Override
     public void delete(Long id) {
+        Invoice invoice = invoiceRepo.findById(id).orElseThrow(() -> new DataAccessException("El comprobante no existe") {});
+        List<InvoiceItem> items = itemRepo.findByInvoiceId(invoice.getId());
+        for(InvoiceItem item : items) {
+            itemRepo.delete(item);
+        }
+
         invoiceRepo.deleteById(id);
     }
 
     @Override
-    public FileResponse generateAndUploadPDF(InvoiceDTO invoice) {
-        Context context = new Context();
-        LocalDate date = invoice.getIssueDate();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
-        context.setVariable("issueDate", date.format(formatter));
-        context.setVariable("invoiceType", invoice.getInvoiceType());  
-        context.setVariable("serie", (invoice.getInvoiceType() == InvoiceType.BOLETA ? "B-" : "F-") + invoice.getId());
-        context.setVariable("rsocial", Capitalize.capitalizeEachWord(invoice.getRsocial()));   
-        context.setVariable("document", invoice.getDocumentType() + ":" + " " + invoice.getDocument());
-        String address = invoice.getAddress().isEmpty() ? "-" : Capitalize.capitalizeEachWord(invoice.getAddress());
-        context.setVariable("address", address);
-        // TODO get items
-        // context.setVariable("items", invoice.getItems());
-        String comment = invoice.getComment().isEmpty() ? "-" : Capitalize.capitalizeEachWord(invoice.getComment());
-        context.setVariable("comment", comment);
-        Double total = invoice.getTotal();
-        Double base = total / 1.18;
-        Double igv = base * 0.18;
-        DecimalFormat df = new DecimalFormat("#.00");
-        context.setVariable("base", df.format(base));
-        context.setVariable("igv", df.format(igv));
-        context.setVariable("total", invoice.getTotal());
+    public ApiSunatResponse sendInvoiceToSunat(InvoiceDTO invoice) {
+        Double total = BigDecimal.valueOf(invoice.getTotal()).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        Double subtotal = BigDecimal.valueOf(total / 1.18).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        Double igv = BigDecimal.valueOf(total - subtotal).setScale(2, RoundingMode.HALF_UP).doubleValue();
 
-        String htmlContent = templateEngine.process("invoice", context);
-        ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
-        ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocumentFromString(htmlContent);
-        renderer.layout();
-        renderer.createPDF(byteOutput);
-        byte[] pdfBytes = byteOutput.toByteArray();
+        List<InvoiceItem> items = itemRepo.findByInvoiceId(invoice.getId());
 
-        Bucket bucket = StorageClient.getInstance().bucket();
-        String type = invoice.getInvoiceType().toString();
-        String fileName = type.toLowerCase() + "-" + invoice.getId() + "-" + invoice.getRsocial().toLowerCase().replaceAll("\\s+", "");
-        bucket.create(fileName, pdfBytes, "application/pdf");
-        String pdfUrl = String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media", bucket.getName(), fileName);
+        List<InvoiceDetailSunatDTO> details = items
+            .stream()
+            .map(item -> {
+                Double priceItem = item.getPrice();
+                Double priceSub = BigDecimal.valueOf(priceItem / 1.18).setScale(4, RoundingMode.HALF_UP).doubleValue();
+                Double totalSub = BigDecimal.valueOf(priceSub * item.getQuantity()).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                Double totalItem = BigDecimal.valueOf(item.getPrice() * item.getQuantity()).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                Double igvItem = BigDecimal.valueOf(totalItem - totalSub).setScale(2, RoundingMode.HALF_UP).doubleValue();
 
-        return FileResponse
+                String codProducto = String.format("%03d", items.indexOf(item) + 1);
+                return InvoiceDetailSunatDTO
+                    .builder()
+                    .unidad_de_medida(item.getUnit())
+                    .codigo(codProducto)
+                    .descripcion(item.getName())
+                    .cantidad(item.getQuantity())
+                    .valor_unitario(priceSub)
+                    .precio_unitario(priceItem)
+                    .subtotal(totalSub)
+                    .total(totalItem)
+                    .igv(igvItem)
+                    .tipo_de_igv(1)
+                    .anticipo_regularizacion(false)
+                    .build();
+            })
+            .toList();
+
+        LocalDateTime localDateTime = invoice.getIssueDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String issueDate = localDateTime.format(formatter);
+
+        Boolean isFirstType = invoice.getInvoiceType() == InvoiceType.FACTURA;
+
+        InvoiceSunatDTO payload = InvoiceSunatDTO
             .builder()
-            .fileUrl(pdfUrl)
-            .fileName(fileName)
+            .operacion("generar_comprobante")
+            .tipo_de_comprobante(isFirstType ? 1 : 2)
+            .serie(invoice.getSerie())
+            .numero(invoice.getId().intValue())
+            .sunat_transaction(1)
+            .cliente_tipo_de_documento(invoice.getDocumentType() == DocumentType.RUC ? 6 : 1)
+            .cliente_numero_de_documento(invoice.getDocument())
+            .cliente_denominacion(invoice.getRsocial())
+            .cliente_direccion(invoice.getAddress())
+            .fecha_de_emision(issueDate)
+            .moneda(1)
+            .porcentaje_de_igv(18.0)
+            .total_gravada(subtotal)
+            .total_igv(igv)
+            .total(total)
+            .detraccion(false)
+            .enviar_automaticamente_a_la_sunat(true)
+            .enviar_automaticamente_al_cliente(false)
+            .items(details)
             .build();
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonDebug = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(payload);
+            System.out.println("JSON enviado a la API externa:\n" + jsonDebug);
+        } catch (Exception e) {
+            System.out.println("No se pudo imprimir el JSON: " + e.getMessage());
+        }
+
+        String apiUrl = System.getenv("SUNAT_URL");
+        String apiToken = System.getenv("SUNAT_TOKEN");
+
+        ApiSunatResponse apiResponse;
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", apiToken);
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<InvoiceSunatDTO> requestEntity = new HttpEntity<>(payload, headers);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                // Debug: imprime el JSON de respuesta
+                System.out.println("Respuesta de la API Sunat:\n" + response.getBody());
+
+                ObjectMapper mapper = new ObjectMapper();
+                apiResponse = mapper.readValue(response.getBody(), ApiSunatResponse.class);
+            } else {
+                throw new RuntimeException("Error: " + response.getStatusCode());
+            }
+        } catch (HttpClientErrorException | HttpServerErrorException ex) {
+            System.out.println("Error");
+            System.out.println("Codigo: " + ex.getStatusCode());
+            System.out.println("Response: " + ex.getResponseBodyAsString());
+            throw new RuntimeException(ex);
+        } catch (Exception e) {
+            System.out.println("Error");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        return apiResponse;
     }
 
     @Transactional(readOnly = true)

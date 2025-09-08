@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.MessageDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.MessageRequest;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.IMessage;
 import com.inversionesaraujo.api.model.SortDirection;
 
@@ -25,12 +27,14 @@ import jakarta.validation.Valid;
 public class MessageController {
     @Autowired
     private IMessage messageService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping
     public Page<MessageDTO> getAll(
         @RequestParam(defaultValue = "0") Integer page,
-        @RequestParam(defaultValue = "50") Integer size,
-        @RequestParam(required = false) SortDirection sort
+        @RequestParam(defaultValue = "5") Integer size,
+        @RequestParam(defaultValue = "DESC") SortDirection sort
     ) {
         return messageService.listAll(page, size, sort);
     }
@@ -71,8 +75,19 @@ public class MessageController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id, @RequestParam(required = false) Long employeeId) {
         messageService.delete(id);
+
+        if(employeeId != null && employeeId != 1L) {
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(employeeId)
+                .operation("Elimino un mensaje de contacto")
+                .redirectTo("/mensajes")
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

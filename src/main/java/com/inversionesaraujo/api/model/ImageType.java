@@ -2,5 +2,6 @@ package com.inversionesaraujo.api.model;
 
 public enum ImageType {
     IMAGE,
-    ICON
+    GOOGLE_PROFILE,
+    ICON,
 }

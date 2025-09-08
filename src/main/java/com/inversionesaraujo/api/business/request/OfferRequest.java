@@ -21,4 +21,6 @@ public class OfferRequest {
     private String markedWord;
 
     private Boolean isUsed = false;
+
+    private Long employeeId;
 }

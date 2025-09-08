@@ -16,7 +16,6 @@ import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.business.service.IOrder;
 import com.inversionesaraujo.api.business.service.IProduct;
 import com.inversionesaraujo.api.business.service.IVitroOrder;
-import com.inversionesaraujo.api.model.ShippingType;
 import com.inversionesaraujo.api.model.SortBy;
 import com.inversionesaraujo.api.model.SortDirection;
 import com.inversionesaraujo.api.model.Status;
@@ -34,15 +33,15 @@ public class MobileController {
 	@GetMapping("/onHome")
 	public ResponseEntity<MessageResponse> loadOnHome() {
 		Page<OrderDTO> orders = orderService.listAll(
-			Status.PENDIENTE, 0, 5, SortDirection.DESC,
-			null, SortBy.maxShipDate, ShippingType.RECOJO_ALMACEN,
-			null, null, null);
+			Status.PAGADO, 0, 5, SortDirection.ASC,
+			null, SortBy.date, null,
+			null, null, null, null, null);
 
 		Page<VitroOrderDTO> vitroOrders = vitroOrderService.listAll(
 			null, 0, 5, SortDirection.DESC,
 			null, Status.PENDIENTE, SortBy.finishDate, 
-			ShippingType.RECOJO_ALMACEN, true, null,
-			null);
+			null, true, null,
+			null, null, null, 0.0);
 
 		TotalDeliverResponse orderTotal = orderService.totalDeliver();
 		TotalDeliverResponse vitroTotal = vitroOrderService.totalDeliver();
@@ -56,7 +55,8 @@ public class MobileController {
 			.builder()
 			.orders(orders.getContent())
 			.vitroOrders(vitroOrders.getContent())
-			.totalDeliver(orderTotal.getTotal() + vitroTotal.getTotal())
+			.totalAtWarehouse(orderTotal.getTotalAtWarehouse() + vitroTotal.getTotalAtWarehouse())
+			.totalAtAgency(orderTotal.getTotalAtAgency() + vitroTotal.getTotalAtAgency())
 			.lowProductsStock(products.getContent())
 			.build();
 

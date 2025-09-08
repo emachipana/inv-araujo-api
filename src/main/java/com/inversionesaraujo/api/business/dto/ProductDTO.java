@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 
 import com.inversionesaraujo.api.model.Category;
 import com.inversionesaraujo.api.model.Product;
+import com.inversionesaraujo.api.model.ProductUnit;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,7 @@ public class ProductDTO {
     private String name;
     private String description;
     private String brand;
-    private String unit;
+    private ProductUnit unit;
     private Double price;
     private Double purchasePrice;
     private Integer stock;
@@ -32,6 +33,7 @@ public class ProductDTO {
     private String categoryName;
     private Boolean isActive;
     private List<ProductImageDTO> images;
+    private Double priceDiscount;
     private DiscountDTO discount;
 
     public static ProductDTO toDTO(Product product) {
@@ -51,6 +53,7 @@ public class ProductDTO {
             .categoryName(product.getCategory().getName())
             .isActive(product.getIsActive())
             .images(ProductImageDTO.toDTOList(product.getImages()))
+            .priceDiscount(product.getPriceDiscount())
             .discount(DiscountDTO.toDTO(product.getDiscount()))
             .build();
     }
@@ -74,6 +77,7 @@ public class ProductDTO {
             .stock(product.getStock() == null ? 0 : product.getStock())
             .category(category)
             .isActive(product.getIsActive())
+            .priceDiscount(product.getPriceDiscount())
             .build();
     }
 

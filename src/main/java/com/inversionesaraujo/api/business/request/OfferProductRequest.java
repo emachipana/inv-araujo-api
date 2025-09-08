@@ -12,4 +12,6 @@ public class OfferProductRequest {
 
     @NotNull(message = "El id de la oferta es requerido")
     private Long offerId;
+
+    private Long employeeId;
 }

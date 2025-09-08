@@ -11,4 +11,6 @@ public class TuberRequest {
     @NotEmpty(message = "El nombre es requerido")
     @Size(min = 2)
     private String name;
+
+    private Long employeeId;
 }

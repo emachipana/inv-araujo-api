@@ -24,4 +24,6 @@ public class VarietyRequest {
 
     @NotNull(message = "El id del tubérculo es requerido")
     private Long tuberId;
+
+    private Long employeeId;
 }

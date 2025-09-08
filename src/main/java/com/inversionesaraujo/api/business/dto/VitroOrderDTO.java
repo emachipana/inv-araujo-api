@@ -1,6 +1,7 @@
 package com.inversionesaraujo.api.business.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,6 @@ public class VitroOrderDTO {
     private Double pending;
     private LocalDate initDate;
     private LocalDate finishDate;
-    private LocalDate pickDate;
     private Status status;
     private OrderLocation location;
     private ShippingType shippingType;
@@ -41,6 +41,11 @@ public class VitroOrderDTO {
     private Boolean isReady;
     private InvoiceDTO invoice;
     private ImageDTO evidence;
+    private ReceiverInfoDTO receiverInfo;
+    private PickupInfoDTO pickupInfo;
+    private String createdBy;
+    private LocalDateTime deliveredAt;
+    private WarehouseDTO warehouse;
 
     public static VitroOrderDTO toDTO(VitroOrder order) {
         return VitroOrderDTO
@@ -54,14 +59,18 @@ public class VitroOrderDTO {
             .pending(order.getPending() != null ? order.getPending() : 0)
             .initDate(order.getInitDate())
             .finishDate(order.getFinishDate())
-            .pickDate(order.getPickDate())
             .status(order.getStatus())
             .location(order.getLocation())
             .shippingType(order.getShippingType())
+            .warehouse(WarehouseDTO.toDTO(order.getWarehouse(), 0))
             .employee(EmployeeDTO.toDTO(order.getEmployee()))
             .invoice(InvoiceDTO.toDTO(order.getInvoice()))
             .isReady(order.getIsReady())
             .evidence(ImageDTO.toDTO(order.getImage()))
+            .receiverInfo(ReceiverInfoDTO.toDTO(order.getReceiverInfo()))
+            .pickupInfo(PickupInfoDTO.toDTO(order.getPickupInfo()))
+            .createdBy(order.getCreatedBy())
+            .deliveredAt(order.getDeliveredAt())
             .build();
     }
 
@@ -77,14 +86,18 @@ public class VitroOrderDTO {
             .pending(order.getPending() != null ? order.getPending() : 0)
             .initDate(order.getInitDate())
             .finishDate(order.getFinishDate())
-            .pickDate(order.getPickDate())
             .status(order.getStatus())
             .location(order.getLocation())
             .shippingType(order.getShippingType())
+            .warehouse(WarehouseDTO.toEntity(order.getWarehouse()))
             .employee(EmployeeDTO.toEntity(order.getEmployee(), entityManager))
             .invoice(InvoiceDTO.toEntity(order.getInvoice()))
             .isReady(order.getIsReady() != null ? order.getIsReady() : false)
             .image(ImageDTO.toEntity(order.getEvidence()))
+            .receiverInfo(ReceiverInfoDTO.toEntity(order.getReceiverInfo()))
+            .pickupInfo(PickupInfoDTO.toEntity(order.getPickupInfo()))
+            .createdBy(order.getCreatedBy())
+            .deliveredAt(order.getDeliveredAt())
             .build();
     }
 

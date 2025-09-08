@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.TuberDTO;
 import com.inversionesaraujo.api.business.dto.VarietyDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.VarietyRequest;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.ITuber;
 import com.inversionesaraujo.api.business.service.IVariety;
 
@@ -29,6 +31,8 @@ public class VarietyController {
     private IVariety varietyService;
     @Autowired
     private ITuber tuberService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping("tuber/{tuberId}")
     public List<VarietyDTO> getByTuberId(@PathVariable Long tuberId) {
@@ -58,6 +62,17 @@ public class VarietyController {
             .name(request.getName())
             .minPrice(request.getMinPrice())
             .build());
+
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Creo una variedad")
+                .redirectTo("/invitro")
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
         
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
@@ -73,6 +88,17 @@ public class VarietyController {
         variety.setPrice(request.getPrice());
         variety.setMinPrice(request.getMinPrice());
         VarietyDTO varietyUpdated = varietyService.save(variety);
+
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Actualizo una variedad")
+                .redirectTo("/invitro")
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

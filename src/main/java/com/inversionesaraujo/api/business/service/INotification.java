@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.inversionesaraujo.api.business.dto.NotificationDTO;
 import com.inversionesaraujo.api.business.request.NotificationRequest;
+import com.inversionesaraujo.api.model.Permission;
 
 public interface INotification {
     NotificationDTO save(NotificationDTO notification);
@@ -13,6 +14,8 @@ public interface INotification {
     List<NotificationDTO> findByUsername(String username);
 
     void sendNotification(NotificationDTO notification);
+
+    void sendNotificationToUsersWithPermission(NotificationRequest request, Permission permission, Long excludeUserId);
 
     NotificationDTO create(NotificationRequest request);
 

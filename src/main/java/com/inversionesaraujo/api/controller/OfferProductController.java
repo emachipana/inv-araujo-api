@@ -10,12 +10,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.OfferProductDTO;
 import com.inversionesaraujo.api.business.dto.ProductDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.OfferProductRequest;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.IOfferProduct;
 import com.inversionesaraujo.api.business.service.IProduct;
 
@@ -28,6 +31,8 @@ public class OfferProductController {
     private IOfferProduct itemService;
     @Autowired
     private IProduct productService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping("offer/{offerId}")
     public List<OfferProductDTO> getByOfferId(@PathVariable Long offerId) {
@@ -40,7 +45,7 @@ public class OfferProductController {
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()
-            .message("El item de la oferta se encontro con exito")
+            .message("El item del banner se encontro con exito")
             .data(item)
             .build());
     }
@@ -55,20 +60,42 @@ public class OfferProductController {
             .offerId(request.getOfferId())
             .build());
 
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Agrego un producto al banner")
+                .redirectTo("/banners/" + newItem.getOfferId())
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
-            .message("El item de la oferta se encontro con exito")
+            .message("El item del banner se encontro con exito")
             .data(newItem)
             .build());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id, @RequestParam(required = false) Long employeeId) {
         itemService.delete(id);
+
+        if(employeeId != null && employeeId != 1L) {
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(employeeId)
+                .operation("Elimino un producto del banner")
+                .redirectTo("/banners/" + id)
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()
-            .message("El item de la oferta se elimino con exito")
+            .message("El item del banner se elimino con exito")
             .build());
     }
 }

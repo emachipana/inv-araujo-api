@@ -16,6 +16,7 @@ import lombok.Setter;
 public class MobileOnHomeResponse {
 	private List<OrderDTO> orders;
 	private List<VitroOrderDTO> vitroOrders;
-	private Long totalDeliver;
+	private Long totalAtWarehouse;
+	private Long totalAtAgency;
 	private List<ProductDTO> lowProductsStock;
 }

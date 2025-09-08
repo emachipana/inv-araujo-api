@@ -1,5 +1,7 @@
 package com.inversionesaraujo.api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,6 +30,11 @@ public class InvoiceItemController {
     @Autowired
     private I_Invoice invoiceService;
 
+    @GetMapping("/invoice/{invoiceId}")
+    public List<InvoiceItemDTO> findByInvoiceId(@PathVariable Long invoiceId) {
+        return invoiceItemService.findByInvoiceId(invoiceId);
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
         InvoiceItemDTO item = invoiceItemService.findById(id);
@@ -52,6 +59,7 @@ public class InvoiceItemController {
             .price(request.getPrice())
             .quantity(request.getQuantity())
             .isIgvApply(request.getIsIgvApply())
+            .unit(request.getUnit())
             .build());
 
         invoice.setTotal(invoice.getTotal() + subTotal);

@@ -11,12 +11,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inversionesaraujo.api.business.dto.EmployeeOperationDTO;
 import com.inversionesaraujo.api.business.dto.ExpenseDTO;
 import com.inversionesaraujo.api.business.dto.ProfitDTO;
 import com.inversionesaraujo.api.business.payload.MessageResponse;
 import com.inversionesaraujo.api.business.request.ExpenseRequest;
 import com.inversionesaraujo.api.business.service.IExpense;
+import com.inversionesaraujo.api.business.service.IEmployeeOperation;
 import com.inversionesaraujo.api.business.service.IProfit;
+
+import java.util.List;
 
 import jakarta.validation.Valid;
 
@@ -27,6 +31,8 @@ public class ExpenseController {
     private IExpense expenseService;
     @Autowired
     private IProfit profitService;
+    @Autowired
+    private IEmployeeOperation employeeOperationService;
 
     @GetMapping("{id}")
     public ResponseEntity<MessageResponse> getOneById(@PathVariable Long id) {
@@ -37,6 +43,11 @@ public class ExpenseController {
             .message("El registro del gasto se encontro con exito")
             .data(expense)
             .build());
+    }
+
+    @GetMapping("profit/{profitId}")
+    public List<ExpenseDTO> getAllByProfitId(@PathVariable Long profitId) {
+        return expenseService.findAllByProfitId(profitId);
     }
 
     @PostMapping
@@ -55,6 +66,17 @@ public class ExpenseController {
             .build());
 
         updateProfit(profit, subTotal);
+
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Registro un gasto")
+                .redirectTo("/gastos/" + expense.getId())
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
 
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
@@ -80,9 +102,20 @@ public class ExpenseController {
         profit.setTotalExpenses(profit.getTotalExpenses() - oldSubTotal);
         updateProfit(profit, subTotal);
 
+        if(request.getEmployeeId() != null && request.getEmployeeId() != 1L) {
+            EmployeeOperationDTO employeeOperation = EmployeeOperationDTO
+                .builder()
+                .employeeId(request.getEmployeeId())
+                .operation("Actualizo el registro de un gasto")
+                .redirectTo("/gastos/" + expense.getId())
+                .build();
+
+            employeeOperationService.save(employeeOperation);
+        }
+
         return ResponseEntity.ok().body(MessageResponse
             .builder()
-            .message("El registro del gasto se creo con exito")
+            .message("El registro del gasto se actualizo con exito")
             .data(updatedExpense)
             .build());
     }

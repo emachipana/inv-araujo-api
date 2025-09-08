@@ -28,6 +28,7 @@ public class WarehouseImpl implements IWarehouse {
         return WarehouseDTO.toDTOList(warehouses, itemRepo);
     }
 
+    @Transactional
     @Override
     public WarehouseDTO save(WarehouseDTO warehouse) {
         Warehouse warehouseSaved = warehouseRepo.save(WarehouseDTO.toEntity(warehouse));
@@ -37,6 +38,7 @@ public class WarehouseImpl implements IWarehouse {
         return WarehouseDTO.toDTO(warehouseSaved, products);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public WarehouseDTO findById(Long id) {
         Warehouse warehouse = warehouseRepo.findById(id).orElseThrow(() -> new DataAccessException("El almacén no existe") {});
@@ -45,8 +47,17 @@ public class WarehouseImpl implements IWarehouse {
         return WarehouseDTO.toDTO(warehouse, products);
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
         warehouseRepo.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public WarehouseDTO findByName(String name) {
+        Warehouse warehouse = warehouseRepo.findByName(name);
+        
+        return WarehouseDTO.toDTO(warehouse, 0);
     }    
 }

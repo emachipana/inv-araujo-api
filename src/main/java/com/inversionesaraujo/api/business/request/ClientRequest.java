@@ -1,7 +1,6 @@
 package com.inversionesaraujo.api.business.request;
 
 import com.inversionesaraujo.api.model.DocumentType;
-import com.inversionesaraujo.api.model.Role;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,12 +12,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ClientRequest {
-    @Size(min = 3)
-    private String city;
-
-    @Size(min = 3)
-    private String department;
-
     @Size(min = 6)
     private String phone;
 
@@ -33,11 +26,11 @@ public class ClientRequest {
     private String rsocial;
 
     @NotNull(message = "El origen de creación es requerido")
-    private Role createdBy;
+    private String createdBy;
 
     @NotEmpty(message = "El email es requerido")
     @Email(message = "El formato es incorrecto")
     private String email;
 
-    private Long userId;
+    private Long employeeId;
 }

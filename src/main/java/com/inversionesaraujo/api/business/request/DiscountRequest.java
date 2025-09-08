@@ -14,4 +14,6 @@ public class DiscountRequest {
     @NotNull(message = "El precio de descuento es requerido")
     @Positive(message = "Debe ser mayor a 0")
     private Double price;
+
+    private Long employeeId;
 }

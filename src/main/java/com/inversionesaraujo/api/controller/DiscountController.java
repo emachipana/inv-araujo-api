@@ -3,6 +3,7 @@ package com.inversionesaraujo.api.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inversionesaraujo.api.business.dto.DiscountDTO;
@@ -52,6 +53,9 @@ public class DiscountController {
             .percentage(percentage)
             .build());
 
+        product.setPriceDiscount(request.getPrice());
+        productService.save(product);
+
         return ResponseEntity.status(201).body(MessageResponse
             .builder()
             .message("El descuento se creo con exito")
@@ -69,6 +73,9 @@ public class DiscountController {
         discount.setPrice(request.getPrice());
         DiscountDTO discountUpdated = discountService.save(discount);
 
+        product.setPriceDiscount(request.getPrice());
+        productService.save(product);
+
         return ResponseEntity.ok().body(MessageResponse
             .builder()
             .message("El descuento se actualizo con exito")
@@ -77,12 +84,15 @@ public class DiscountController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
+    public ResponseEntity<MessageResponse> delete(@PathVariable Long id, @RequestParam(required = false) Long employeeId) {
         DiscountDTO discount = discountService.findById(id);
         ProductDTO product = productService.findById(discount.getProductId());
         product.setDiscount(null);
         productService.save(product);
         discountService.delete(discount.getId());
+
+        product.setPriceDiscount(0.0);
+        productService.save(product);
 
         return ResponseEntity.ok().body(MessageResponse
             .builder()

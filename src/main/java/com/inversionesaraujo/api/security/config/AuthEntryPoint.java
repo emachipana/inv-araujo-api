@@ -21,13 +21,13 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
             AuthenticationException authException) throws IOException, ServletException {
         MessageResponse messageResponse = MessageResponse
             .builder()
-            .message("Acceso denegado, por favor inicia sesión")
+            .message("Acceso denegado, por favor inicia sesion")
             .build();
         ObjectMapper mapper = new ObjectMapper();
         String jsonResponse = mapper.writeValueAsString(messageResponse);
 
         response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write(jsonResponse);
     }
 }

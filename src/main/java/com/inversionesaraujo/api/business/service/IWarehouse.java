@@ -11,5 +11,7 @@ public interface IWarehouse {
 
     WarehouseDTO findById(Long id);
 
+    WarehouseDTO findByName(String name);
+
     void delete(Long id);
 }

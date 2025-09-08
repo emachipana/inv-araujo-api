@@ -13,4 +13,6 @@ public interface WarehouseRepository extends JpaRepository<Warehouse, Long> {
                "JOIN warehouse_products wp ON w.id = wp.warehouse_id " +
                "WHERE wp.product_id = :productId", nativeQuery = true)
     List<Warehouse> findByProductId(@Param("productId") Long productId);
+
+    Warehouse findByName(String name);
 }

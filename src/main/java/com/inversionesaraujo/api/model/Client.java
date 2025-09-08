@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,22 +23,19 @@ import lombok.NoArgsConstructor;
 @Table(name = "clients")
 public class Client {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "client_seq")
+    @SequenceGenerator(name = "client_seq", sequenceName = "client_seq", allocationSize = 1)
     private Long id;
-
-    private String city;
-
-    private String department;
 
     private String phone;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String document;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private DocumentType documentType;
-    
+
     @Column(nullable = false)
     @Builder.Default
     private Double consumption = 0.0;
@@ -45,14 +43,16 @@ public class Client {
     @Column(nullable = false)
     private String rsocial;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private Role createdBy = Role.CLIENTE;
+    private String createdBy = "CLIENTE";
 
     @Column(unique = true, nullable = false)
     private String email;
     
     @OneToOne(mappedBy = "client")
     private User user;
+
+    @OneToOne(mappedBy = "client")
+    private InvoiceClientDetail invoiceDetail;
 }

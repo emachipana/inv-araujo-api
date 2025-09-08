@@ -1,6 +1,6 @@
 package com.inversionesaraujo.api.business.request;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.inversionesaraujo.api.model.DocumentType;
 import com.inversionesaraujo.api.model.InvoiceType;
@@ -27,7 +27,8 @@ public class InvoiceRequest {
     @NotEmpty(message = "La razón social es requerida")
     private String rsocial;
 
-    private LocalDate issueDate;
-    private String comment;
+    @NotEmpty(message = "La dirección es requerida")
     private String address;
+
+    private LocalDateTime issueDate;
 }

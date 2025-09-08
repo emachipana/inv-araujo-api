@@ -12,4 +12,6 @@ public class ProductImageRequest {
 
     @NotNull(message = "El id del producto es requerido")
     private Long productId;
+
+    private Long employeeId;
 }

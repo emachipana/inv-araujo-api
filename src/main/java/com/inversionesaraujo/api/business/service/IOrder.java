@@ -1,10 +1,12 @@
 package com.inversionesaraujo.api.business.service;
 
+import java.time.LocalDate;
 import java.time.Month;
 
 import org.springframework.data.domain.Page;
 
 import com.inversionesaraujo.api.business.dto.OrderDTO;
+import com.inversionesaraujo.api.business.payload.AvailableHours;
 import com.inversionesaraujo.api.business.payload.OrderDataResponse;
 import com.inversionesaraujo.api.business.payload.TotalDeliverResponse;
 import com.inversionesaraujo.api.model.OrderLocation;
@@ -17,7 +19,7 @@ public interface IOrder {
     Page<OrderDTO> listAll(
         Status status, Integer page, Integer size, SortDirection direction,
         Month month, SortBy sort, ShippingType shipType, Long warehouseId,
-        Long employeeId, OrderLocation location
+        Long employeeId, OrderLocation location, Integer day, Long clientId
     );
 
     OrderDataResponse getData();
@@ -28,9 +30,17 @@ public interface IOrder {
 
     void delete(Long id);
 
-    Page<OrderDTO> search(String department, String city, String rsocial, Integer page);
+    Page<OrderDTO> search(String dni, String rsocial, Integer page, Status status, ShippingType shippingType);
 
     TotalDeliverResponse totalDeliver();
 
-    void sendNewOrder(OrderDTO order, Double total);
+    void alertNewOrder(OrderDTO order);
+
+    Long createAndSendInvoice(OrderDTO order, Boolean sendByEmail);
+
+    void orderPaid(OrderDTO order);
+
+    OrderDTO cancelOrder(OrderDTO order);
+
+    AvailableHours getAvailableHours(LocalDate date);
 }

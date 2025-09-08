@@ -5,6 +5,8 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +30,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "products")
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_seq")
+    @SequenceGenerator(name = "product_seq", sequenceName = "product_seq", allocationSize = 1)
     private Long id;
 
     @Column(unique = true, nullable = false)
@@ -39,11 +43,16 @@ public class Product {
     @Column(nullable = false)
     private String brand;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String unit;
+    private ProductUnit unit;
 
     @Column(nullable = false)
     private Double price;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Double priceDiscount = 0.0;
 
     @Column(nullable = false)
     private Double purchasePrice;
