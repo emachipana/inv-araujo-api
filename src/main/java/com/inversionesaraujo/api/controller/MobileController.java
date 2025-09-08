@@ -49,7 +49,7 @@ public class MobileController {
 		Page<ProductDTO> products = productService.filterProducts(
 			null, null, null, 0,
 			4, null, null, null,
-			3, false, false);
+			10, false, false);
 
 		MobileOnHomeResponse response = MobileOnHomeResponse
 			.builder()
